@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CWO_app</string>
+    <string name="login">Login</string>
+    <string name="hint_email_adres">E-mail adres</string>
+    <string name="hint_password">Paswoord</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Registreer</string>
+    <string name="text_register">Klik hier om een nieuw account te registreren.</string>
+    <string name="text_login">Klik hier om met een bestaand account in te loggen.</string>
+    <string name="text_fields_filled_wrong">Vul alle velden juist in om door te gaan.</string>
+</resources>
