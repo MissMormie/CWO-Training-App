@@ -1,5 +1,6 @@
 package nl.multimedia_engineer.cwo_app;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -28,7 +29,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean showingLoginIfNotLoggedIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null && currentUser.isAnonymous()) {
-            // TODO send to login activity.
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
             return true;
         }
         return false;

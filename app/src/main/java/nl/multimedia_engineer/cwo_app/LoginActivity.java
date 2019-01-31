@@ -1,5 +1,6 @@
 package nl.multimedia_engineer.cwo_app;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,16 +17,35 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 
+import nl.multimedia_engineer.cwo_app.util.ValidationUtil;
+
 public class LoginActivity extends BaseActivity {
     final private String TAG = "LoginActivity";
     final private String STATE_LOGIN = "Login";
     final private String STATE_REGISTER = "Register";
+    private String currentState = STATE_LOGIN;
 
+    // UI elements
     private EditText editEmail, editPassword;
     private Button btnAction;
     private TextView textSwitchLoginRegister;
+    private ProgressBar progressBar;
 
-    private String currentState = STATE_LOGIN;
+    // On click listeners
+    View.OnClickListener textSwitchClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switchState();
+        }
+    };
+
+    View.OnClickListener btnActionClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            doAction();
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,23 +55,11 @@ public class LoginActivity extends BaseActivity {
         editPassword = findViewById(R.id.edit_password);
         btnAction = findViewById(R.id.btn_login);
         textSwitchLoginRegister = findViewById(R.id.text_login_register_switch);
+        progressBar = findViewById(R.id.pb_login);
 
-        // Set on click listener to switch between login and register.
-        View.OnClickListener textSwitchClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchState();
-            }
-        };
-        textSwitchLoginRegister.setOnClickListener(textSwitchClickListener);
 
-        View.OnClickListener btnActionClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doAction();
-            }
-        };
-        btnAction.setOnClickListener(btnActionClickListener);
+        // Set on click listeners.
+        setUserInteraction(true);
     }
 
     private void doAction() {
@@ -68,16 +77,57 @@ public class LoginActivity extends BaseActivity {
 
     private boolean fieldsFilledCorrectly() {
         return (!editPassword.getText().toString().isEmpty() &&
-            !editEmail.getText().toString().isEmpty());
+                ValidationUtil.isValidEmailAddress(editEmail.getText().toString()));
     }
 
     private void login(){
-        // todo
+        String email = editEmail.getText().toString();
+        String password = editPassword.getText().toString();
+        setUserInteraction(false);
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            goToMenu(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                            setUserInteraction(true);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * sets onClickListeners to on or off.
+     * @param active
+     */
+
+
+    private void setUserInteraction(boolean active) {
+        if(active) {
+            textSwitchLoginRegister.setOnClickListener(textSwitchClickListener);
+            btnAction.setOnClickListener(btnActionClickListener);
+            progressBar.setVisibility(View.INVISIBLE);
+        } else {
+            textSwitchLoginRegister.setOnClickListener(null);
+            btnAction.setOnClickListener(null);
+            progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     private void register() {
         String email = editEmail.getText().toString();
         String password = editPassword.getText().toString();
+        setUserInteraction(false);
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -86,20 +136,22 @@ public class LoginActivity extends BaseActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
+                            goToMenu(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(LoginActivity.this, task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            setUserInteraction(true);
                         }
-
-                        // ...
                     }
                 });
     }
 
+    private void goToMenu(FirebaseUser user) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 
     private void switchState() {
         if(currentState.equals(STATE_LOGIN)) {
