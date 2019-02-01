@@ -15,6 +15,11 @@
         android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity"
             android:noHistory="true">
+
+        </activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,10 +27,14 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <receiver
+            android:name=".notification.AlarmReceiver"
+            android:process=":remote" >
+        </receiver>
+        <service
+            android:name=".notification.NotificationService"
+            android:exported="false" />
 
-        </activity>
     </application>
 
 </manifest>

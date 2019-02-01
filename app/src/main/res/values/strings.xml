@@ -1,4 +1,65 @@
 <resources>
+    <string name="nieuwe_cursist">Nieuwe cursist</string>
+    <string name="cursisten_lijst">Overzicht cursisten</string>
+    <string name="nieuwe_training">Training</string>
+    <string name="diploma_uitgeven">Diploma uitgeven</string>
+    <string name="error_message">Er is iets fout gegaan, probeer het later opnieuw.</string>
+
+    <!-- Preferences -->
+    <string name="pref_show_already_completed_label">Laat al gehaald zien.</string>
+    <string name="pref_show_already_completed_key" translatable="false">show_already_completed</string>
+    <string name="pref_show_already_completed_summary_off">Je ziet geen cursisten die al hebben geleerd wat er in de training gedaan is.</string>
+    <string name="pref_show_already_completed_summary_on">Je ziet wel cursisten die al hebben geleerd wat er in de training gedaan is.</string>
+
+    <string name="pref_show_diploma_after_create_label">Diploma na nieuwe cursist</string>
+    <string name="pref_show_diploma_after_create_key" translatable="false">show_diploma_after_create_cursist</string>
+    <string name="pref_show_diploma_after_create_summary_off">Na het maken van een nieuwe cursist kun je geen diploma\'s geven.</string>
+    <string name="pref_show_diploma_after_create_summary_on">Na het maken van een nieuwe cursist kun je direct diploma\'s opgeven.</string>
+
+    <!-- Knoppen -->
+    <string name="nee">Nee</string>
+    <string name="ja">Ja</string>
+
+    <!-- Cursist detail -->
+    <string name="cursist">Cursist</string>
+    <string name="echt_verwijderen">Weet je zeker dat je deze cursist wil verwijderen?</string>
+    <string name="cursist_wijzigen">Cursist wijzigen</string>
+
+    <!-- Cursist form -->
+    <string name="voornaam">Voornaam</string>
+    <string name="tussenvoegsel">Tussenvoegsel</string>
+    <string name="achternaam">Achternaam</string>
+    <string name="opmerkingen">Opmerkingen</string>
+    <string name="paspoort">Paspoort uitgegeven</string>
+    <string name="opslaan">Opslaan</string>
+    <string name="cursist_opgeslagen">Curist opgeslagen</string>
+    <string name="cursist_verwijderd">Cursist verwijderd</string>
+    <string name="cursist_verborgen">Cursist verborgen</string>
+    <string name="cursist_niet_verborgen">Cursist niet meer verborgen</string>
+    <string name="minimum_form_demand">Vul op z\'n minst de voornaam van de cursist in.</string>
+
+    <!-- Training list -->
+    <string name="volgende">Volgende</string>
+    <string name="ok">OK</string>
+    <string name="wat_geoefend">Welke onderdelen zijn getraind?</string>
+
+    <!-- cursist menu -->
+    <string name="edit">Edit</string>
+    <string name="delete">Verwijderen</string>
+    <string name="verbergen">Verbergen</string>
+    <string name="niet_verbergen">Niet meer verbergen</string>
+    <string name="search">Zoeken</string>
+
+    <!-- Diploma uitgeven -->
+    <string name="diploma_uitgeven_tekst">Kies welk diploma je wil uitgeven.</string>
+
+    <!-- Error tekst -->
+    <string name="opslaan_mislukt">Opslaan mislukt, probeer het later opnieuw.</string>
+    <string name="title_activity_cursisten_behalen_diploma">CursistenBehalenDiplomaActivity</string>
+
+
+    <!-- titel labels -->
+
     <string name="app_name">CWO_app</string>
     <string name="login">Login</string>
     <string name="hint_email_adres">E-mail adres</string>
@@ -12,4 +73,7 @@
     <!-- Menu items -->
     <string name="action_logout">Uitloggen</string>
     <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

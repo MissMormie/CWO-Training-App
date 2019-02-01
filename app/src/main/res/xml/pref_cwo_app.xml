@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/pref_show_already_completed_default"
+        android:key="@string/pref_show_already_completed_key"
+        android:summaryOff="@string/pref_show_already_completed_summary_off"
+        android:summaryOn="@string/pref_show_already_completed_summary_on"
+        android:title="@string/pref_show_already_completed_label" />
+    <CheckBoxPreference
+        android:defaultValue="@bool/pref_show_diploma_after_create_cursist"
+        android:key="@string/pref_show_diploma_after_create_key"
+        android:summaryOff="@string/pref_show_diploma_after_create_summary_off"
+        android:summaryOn="@string/pref_show_diploma_after_create_summary_on"
+        android:title="@string/pref_show_diploma_after_create_label" />
+
+
+</PreferenceScreen>
