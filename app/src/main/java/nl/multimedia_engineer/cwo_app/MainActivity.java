@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,18 +21,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.time.DayOfWeek;
 import java.util.Calendar;
 import java.util.Map;
 
 import nl.multimedia_engineer.cwo_app.notification.AlarmReceiver;
 import nl.multimedia_engineer.cwo_app.notification.NotificationService;
+import nl.multimedia_engineer.cwo_app.util.ConnectionIssuesUtil;
+import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 import nl.multimedia_engineer.cwo_app.util.DateUtil;
 
 public class MainActivity extends BaseActivity {
     private Toolbar mTopToolbar;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,30 +41,73 @@ public class MainActivity extends BaseActivity {
         mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(mTopToolbar);
 
-        readFromDb();
+        getGroupDataOrMakeGroup();
 
+        // todo move this to settings and add time
 //        setNotification();
     }
 
-    private void readFromDb() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("exameneisen");
+    /**
+     * Gets group data for this user, if no group data
+     */
+    private void getGroupDataOrMakeGroup() {
+        // Check if we already have the required group data.
+        final SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        if(sharedPreferences.contains(getResources().getString(R.string.pref_current_group)) && sharedPreferences.contains(getResources().getString(R.string.pref_all_groups))) {
+            // all group settings are available.
+            return;
+        }
+        showLoading(true);
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = DatabaseRefUtil.getUserGroupsRef(mAuth);
+        final Context context = this;
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                Log.d(TAG, "Value is: " + map.toString());
+                Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
+                if(map.isEmpty()) {
+                    // User does not have a group
+                    Intent intent = new Intent(context, CreateOrJoinGroupActivity.class);
+                    startActivity(intent);
+                } else {
+                    // User does have a group but data was removed from device, adding again.
+                    StringBuilder allGroups = new StringBuilder();
+                    String currentGroup = "";
+                    // todo should use an sql database for these key value pairs, but it's really overkill for the 1 discipline that exists atm
+
+                    for(Map.Entry<String, String> entry : map.entrySet()) {
+                        allGroups.append(entry.getKey())
+                                 .append(":")
+                                 .append(entry.getValue())
+                                 .append(",");
+                        currentGroup = entry.getKey() + ":" + entry.getValue();
+                    }
+                    allGroups.deleteCharAt(allGroups.length()-1); // remove excess ,
+                    sharedPreferences.edit().putString(getResources().getString(R.string.pref_all_groups), allGroups.toString()).commit();
+                    sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group), currentGroup).commit();
+                }
+
+                showLoading(false);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
+                ConnectionIssuesUtil.unableToConnect(context);
+                showLoading(false);
             }
         });
+    }
+
+
+    private void showLoading(boolean show) {
+        // TODO
+        Toast.makeText(this, "Loading data, please wait", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -86,15 +129,17 @@ public class MainActivity extends BaseActivity {
                 return true;
             case R.id.action_logout:
                 mAuth.signOut();
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
+                Intent startLoginActivity = new Intent(this, LoginActivity.class);
+                startActivity(startLoginActivity);
                 return true;
-
+            case R.id.action_new_group:
+                Intent startMakeGroupActivity = new Intent(this, CreateOrJoinGroupActivity.class);
+                startActivity(startMakeGroupActivity);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
-
         }
     }
 

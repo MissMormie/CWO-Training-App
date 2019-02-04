@@ -16,6 +16,11 @@
     <string name="pref_show_diploma_after_create_summary_off">Na het maken van een nieuwe cursist kun je geen diploma\'s geven.</string>
     <string name="pref_show_diploma_after_create_summary_on">Na het maken van een nieuwe cursist kun je direct diploma\'s opgeven.</string>
 
+    <string name="pref_current_group_name" translatable="false">CurrentGroupName</string>
+    <string name="pref_current_group_id" translatable="false">CurrentGroupID</string>
+    <string name="pref_all_groups" translatable="false">AllGroups</string>
+    <string name="pref_discipline" translatable="false">Discipline</string>
+
     <!-- Knoppen -->
     <string name="nee">Nee</string>
     <string name="ja">Ja</string>
@@ -59,7 +64,6 @@
 
 
     <!-- titel labels -->
-
     <string name="app_name">CWO_app</string>
     <string name="login">Login</string>
     <string name="hint_email_adres">E-mail adres</string>
@@ -73,7 +77,14 @@
     <!-- Menu items -->
     <string name="action_logout">Uitloggen</string>
     <string name="action_settings">Settings</string>
+    <string name="action_new_group">Groep toevoegen</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Groepen -->
+    <string name="description_new_group">Kies de naam van de groep om een nieuwe groep te maken.</string>
+    <string name="hint_group_name">Groepsnaam</string>
+    <string name="btn_new_group">Maak nieuwe groep</string>
+    <string name="description_join_group">Wanneer een trainer van een gezamelijke groep al een groep heeft aangemaakt kun je bij deze groep toegevoegd worden. Vraag aan je collega om een toegangscode.</string>
+    <string name="hint_group_access_code">Toegangscode</string>
+    <string name="btn_join_group">Groep toevoegen</string>
+    <string name="error_msg_access_code_wrong">De toegangscode is onjuist.</string>
 </resources>

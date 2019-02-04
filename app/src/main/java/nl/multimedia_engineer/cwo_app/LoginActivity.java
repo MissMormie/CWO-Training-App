@@ -1,6 +1,7 @@
 package nl.multimedia_engineer.cwo_app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,9 +57,22 @@ public class LoginActivity extends BaseActivity {
         textSwitchLoginRegister = findViewById(R.id.text_login_register_switch);
         progressBar = findViewById(R.id.pb_login);
 
-
         // Set on click listeners.
+        setDiscipline();
         setUserInteraction(true);
+    }
+
+    private void setDiscipline() {
+        String discipline = getResources().getString(R.string.pref_discipline);
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        if(! sharedPreferences.contains(getResources().getString(R.string.pref_discipline))) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(discipline, "windsurfen");
+            // Todo for now discipline is hardcoded windsurfen as that's the only option. Once
+            // different disciplines are available this needs to become an option in the app,
+            // probably per group.
+        }
+
     }
 
     private void doAction() {
