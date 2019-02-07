@@ -110,21 +110,9 @@ public class CreateOrJoinGroupActivity extends BaseActivity {
 
 
     private void addGroupToSharedPreferences(String groupId, String groupName) {
-        // Add to sharedPreferences.
         SharedPreferences sp = getPreferences(MODE_PRIVATE);
 
-        StringBuilder sbGroup = new StringBuilder()
-                .append(getResources().getString(R.string.pref_all_groups))
-                .append(",")
-                .append(groupId)
-                .append(":")
-                .append(groupName);
-        String allGroups = sbGroup.toString();
-
-
-        sp.edit().putString(getResources().getString(R.string.pref_all_groups), allGroups).apply();
-
-        // Using commit because we'll need these values on the next screen.
+         // Using commit because we'll need these values on the next screen.
         sp.edit().putString(getResources().getString(R.string.pref_current_group_name), groupName).commit();
         sp.edit().putString(getResources().getString(R.string.pref_current_group_id), groupId).commit();
 

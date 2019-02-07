@@ -2,15 +2,15 @@ package nl.multimedia_engineer.cwo_app.model;
 
 import java.util.List;
 
-public class Group {
+public class Group extends GroupPartial {
 
     private String discipline;
     private List<Cursist> cursisten;
-    private String name;
 
     public Group(String discipline, String name) {
-        this.discipline = discipline;
-        this.name = name;
+        super();
+        setDiscipline(discipline);
+        setName(name);
     }
 
     public String getDiscipline() {
@@ -29,11 +29,5 @@ public class Group {
         this.cursisten = cursisten;
     }
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 }

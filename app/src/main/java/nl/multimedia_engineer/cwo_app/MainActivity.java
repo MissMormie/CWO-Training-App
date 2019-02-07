@@ -1,18 +1,22 @@
 package nl.multimedia_engineer.cwo_app;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -31,20 +35,42 @@ import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 import nl.multimedia_engineer.cwo_app.util.DateUtil;
 
 public class MainActivity extends BaseActivity {
-    private Toolbar mTopToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(mTopToolbar);
 
         getGroupDataOrMakeGroup();
 
+        testFunctionShowAlarmDialog();
+
         // todo move this to settings and add time
 //        setNotification();
+    }
+
+    private void testFunctionShowAlarmDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setMessage("message");
+        dialogBuilder.setTitle("alert");
+        dialogBuilder.setNeutralButton("btn ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        dialogBuilder.setNegativeButton("btn nee ", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 
     /**
@@ -53,42 +79,34 @@ public class MainActivity extends BaseActivity {
     private void getGroupDataOrMakeGroup() {
         // Check if we already have the required group data.
         final SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        if(sharedPreferences.contains(getResources().getString(R.string.pref_current_group)) && sharedPreferences.contains(getResources().getString(R.string.pref_all_groups))) {
+        if(sharedPreferences.contains(getResources().getString(R.string.pref_current_group_id)) &&
+           sharedPreferences.contains(getResources().getString(R.string.pref_current_group_name))) {
             // all group settings are available.
             return;
         }
         showLoading(true);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = DatabaseRefUtil.getUserGroupsRef(mAuth);
         final Context context = this;
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
+                    Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
                 if(map.isEmpty()) {
                     // User does not have a group
                     Intent intent = new Intent(context, CreateOrJoinGroupActivity.class);
                     startActivity(intent);
                 } else {
                     // User does have a group but data was removed from device, adding again.
-                    StringBuilder allGroups = new StringBuilder();
-                    String currentGroup = "";
-                    // todo should use an sql database for these key value pairs, but it's really overkill for the 1 discipline that exists atm
-
                     for(Map.Entry<String, String> entry : map.entrySet()) {
-                        allGroups.append(entry.getKey())
-                                 .append(":")
-                                 .append(entry.getValue())
-                                 .append(",");
-                        currentGroup = entry.getKey() + ":" + entry.getValue();
+                        // Only need 1, to set as current group.
+                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), entry.getValue()).commit();
+                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), entry.getKey()).commit();
+                        break;
                     }
-                    allGroups.deleteCharAt(allGroups.length()-1); // remove excess ,
-                    sharedPreferences.edit().putString(getResources().getString(R.string.pref_all_groups), allGroups.toString()).commit();
-                    sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group), currentGroup).commit();
                 }
 
                 showLoading(false);
@@ -104,11 +122,6 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-
-    private void showLoading(boolean show) {
-        // TODO
-        Toast.makeText(this, "Loading data, please wait", Toast.LENGTH_SHORT).show();
-    }
 
 
 
@@ -132,9 +145,9 @@ public class MainActivity extends BaseActivity {
                 Intent startLoginActivity = new Intent(this, LoginActivity.class);
                 startActivity(startLoginActivity);
                 return true;
-            case R.id.action_new_group:
-                Intent startMakeGroupActivity = new Intent(this, CreateOrJoinGroupActivity.class);
-                startActivity(startMakeGroupActivity);
+            case R.id.action_maintain_groups:
+                Intent startGroupActivity = new Intent(this, GroupActivity.class);
+                startActivity(startGroupActivity);
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
@@ -143,38 +156,34 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    /**
+
     public void onClickCursistenLijst(View view) {
-        Context context = this;
-        Class destinationClass = CursistListActivity.class;
-        Intent intent = new Intent(context, destinationClass);
-        startActivity(intent);
+//        Context context = this;
+//        Class destinationClass = CursistListActivity.class;
+//        Intent intent = new Intent(context, destinationClass);
+//        startActivity(intent);
     }
 
     public void onClickNieuweTraining(View view) {
-        Context context = this;
-        Class destinationClass = TrainingActivity.class;
-        Intent intent = new Intent(context, destinationClass);
-        startActivity(intent);
+//        Context context = this;
+//        Class destinationClass = TrainingActivity.class;
+//        Intent intent = new Intent(context, destinationClass);
+//        startActivity(intent);
     }
 
     public void onClickNieuweCursist(View view) {
-        Context context = this;
-        Class destinationClass = CreateCursistActivity.class;
-        Intent intent = new Intent(context, destinationClass);
-        startActivity(intent);
+//        Context context = this;
+//        Class destinationClass = CreateCursistActivity.class;
+//        Intent intent = new Intent(context, destinationClass);
+//        startActivity(intent);
     }
 
     public void onClickUitgevenDiploma(View view) {
-        Context context = this;
-        Class destinationClass = DiplomaUitgevenActivity.class;
-        Intent intent = new Intent(context, destinationClass);
-        startActivity(intent);
+//        Context context = this;
+//        Class destinationClass = DiplomaUitgevenActivity.class;
+//        Intent intent = new Intent(context, destinationClass);
+//        startActivity(intent);
     }
-
-     **/
-
-
 
     private void setNotification() {
         // Low overhead, needs to happen before any notifications can be send.

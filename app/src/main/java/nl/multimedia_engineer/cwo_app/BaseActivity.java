@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,6 +51,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         FirebaseApp.getInstance();
         mAuth = FirebaseAuth.getInstance();
+    }
+
+    protected void showLoading(boolean show) {
+        if(show) {
+            Toast.makeText(this, "Loading data, please wait", Toast.LENGTH_SHORT).show();
+        }
+        // TODO
     }
 
 }
