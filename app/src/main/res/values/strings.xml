@@ -1,8 +1,10 @@
 <resources>
-    <string name="nieuwe_cursist">Nieuwe cursist</string>
-    <string name="cursisten_lijst">Overzicht cursisten</string>
-    <string name="nieuwe_training">Training</string>
-    <string name="diploma_uitgeven">Diploma uitgeven</string>
+    <!-- Main activity -->
+    <string name="text_active_group">Groep:</string>
+    <string name="btn_nieuwe_cursist">Nieuwe cursist</string>
+    <string name="btn_cursisten_lijst">Overzicht cursisten</string>
+    <string name="btn_nieuwe_training">Training</string>
+    <string name="btn_diploma_uitgeven">Diploma uitgeven</string>
     <string name="error_message">Er is iets fout gegaan, probeer het later opnieuw.</string>
 
     <!-- Preferences -->
@@ -61,7 +63,6 @@
     <string name="opslaan_mislukt">Opslaan mislukt, probeer het later opnieuw.</string>
     <string name="title_activity_cursisten_behalen_diploma">CursistenBehalenDiplomaActivity</string>
 
-
     <!-- titel labels -->
     <string name="app_name">CWO_app</string>
     <string name="login">Login</string>
@@ -86,5 +87,20 @@
     <string name="hint_group_access_code">Toegangscode</string>
     <string name="btn_join_group">Groep toevoegen</string>
     <string name="error_msg_access_code_wrong">De toegangscode is onjuist.</string>
-    <string name="text_explanation_groups">De groep die nu actief is wordt met groen aangegeven, klik op een andere groep om deze actief te maken. Met het pennetje kun je de naam wijzigen, de rode x verwijderd de groep. Klik op de zwevende actieknop onderaan om een nieuwe groep te maken.</string>
+    <string name="text_explanation_groups">De groep die nu actief is wordt met een vinkje aangegeven, klik op een andere groep om deze actief te maken. Met het pennetje kun je de naam wijzigen, de rode x verwijderd de groep. Klik op de zwevende actieknop onderaan om een nieuwe groep te maken.</string>
+
+    <!-- Alert Dialog -->
+    <string name="alert_dialog_title_delete">Verwijderen</string>
+    <string name="alert_dialog_text_delete_group">Wil je deze groep verwijderen? Indien andere mensen deze groep ook beheren blijft de groep voor hun wel bestaan. Zo niet wordt de groep definitief verwijderd.</string>
+
+    <string name="alert_dialog_title_update">Wijzigen</string>
+    <string name="alert_dialog_text_update_group">Vul hier een nieuwe naam in voor je groep. Deze nieuwe naam is enkel voor jou zichtbaar, voor andere beheerders van de groep veranderd er niets.</string>
+
+    <string name="alert_dialog_text_ok">OK</string>
+    <string name="alert_dialog_text_no">Nee</string>
+    <string name="alert_dialog_text_yes">Ja</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

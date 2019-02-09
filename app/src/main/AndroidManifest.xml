@@ -13,15 +13,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GroupActivity"></activity>
+        <activity android:name=".DemandsPerDisciplineActivity"></activity>
+        <activity android:name=".CursistListActivity" />
+        <activity android:name=".GroupActivity" />
         <activity android:name=".CreateOrJoinGroupActivity" />
         <activity
             android:name=".LoginActivity"
             android:noHistory="true" />
         <activity
             android:name=".MainActivity"
-            android:noHistory="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

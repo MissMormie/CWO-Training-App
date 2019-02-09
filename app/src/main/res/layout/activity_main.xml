@@ -7,31 +7,42 @@
     android:padding="32dp"
     tools:context="nl.multimedia_engineer.cwo_app.MainActivity">
 
+
+    <TextView
+        android:id="@+id/tv_active_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/text_active_group"
+        android:textSize="24sp" />
+
     <Button
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="86dp"
         android:onClick="onClickNieuweTraining"
-        android:text="@string/nieuwe_training" />
+        android:text="@string/btn_nieuwe_training" />
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="86dp"
         android:onClick="onClickCursistenLijst"
-        android:text="@string/cursisten_lijst" />
+        android:text="@string/btn_cursisten_lijst" />
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="86dp"
         android:onClick="onClickNieuweCursist"
-        android:text="@string/nieuwe_cursist" />
+        android:text="@string/btn_nieuwe_cursist" />
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="86dp"
         android:onClick="onClickUitgevenDiploma"
-        android:text="@string/diploma_uitgeven" />
+        android:text="@string/btn_diploma_uitgeven" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="86dp"
+        android:onClick="onClickShowDisciplines"
+        android:text="Bekijk diploma eisen" />
 </LinearLayout>

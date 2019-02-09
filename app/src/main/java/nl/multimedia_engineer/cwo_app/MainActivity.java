@@ -11,12 +11,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -36,94 +40,23 @@ import nl.multimedia_engineer.cwo_app.util.DateUtil;
 
 public class MainActivity extends BaseActivity {
 
+    TextView tv_active_group;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
-        getGroupDataOrMakeGroup();
-
-        testFunctionShowAlarmDialog();
-
-        // todo move this to settings and add time
-//        setNotification();
+        tv_active_group = findViewById(R.id.tv_active_group);
     }
 
-    private void testFunctionShowAlarmDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setMessage("message");
-        dialogBuilder.setTitle("alert");
-        dialogBuilder.setNeutralButton("btn ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        dialogBuilder.setNegativeButton("btn nee ", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-
-        AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
+    @Override
+    public void onStart() {
+        super.onStart();
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String activeGroup = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_name), "");
+        tv_active_group.setText(getResources().getString(R.string.text_active_group) + " " + activeGroup);
     }
-
-    /**
-     * Gets group data for this user, if no group data
-     */
-    private void getGroupDataOrMakeGroup() {
-        // Check if we already have the required group data.
-        final SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        if(sharedPreferences.contains(getResources().getString(R.string.pref_current_group_id)) &&
-           sharedPreferences.contains(getResources().getString(R.string.pref_current_group_name))) {
-            // all group settings are available.
-            return;
-        }
-        showLoading(true);
-
-        DatabaseReference myRef = DatabaseRefUtil.getUserGroupsRef(mAuth);
-        final Context context = this;
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                    Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
-                if(map.isEmpty()) {
-                    // User does not have a group
-                    Intent intent = new Intent(context, CreateOrJoinGroupActivity.class);
-                    startActivity(intent);
-                } else {
-                    // User does have a group but data was removed from device, adding again.
-                    for(Map.Entry<String, String> entry : map.entrySet()) {
-                        // Only need 1, to set as current group.
-                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), entry.getValue()).commit();
-                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), entry.getKey()).commit();
-                        break;
-                    }
-                }
-
-                showLoading(false);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-                ConnectionIssuesUtil.unableToConnect(context);
-                showLoading(false);
-            }
-        });
-    }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -158,10 +91,10 @@ public class MainActivity extends BaseActivity {
 
 
     public void onClickCursistenLijst(View view) {
-//        Context context = this;
-//        Class destinationClass = CursistListActivity.class;
-//        Intent intent = new Intent(context, destinationClass);
-//        startActivity(intent);
+        Context context = this;
+        Class destinationClass = CursistListActivity.class;
+        Intent intent = new Intent(context, destinationClass);
+        startActivity(intent);
     }
 
     public void onClickNieuweTraining(View view) {
@@ -183,6 +116,14 @@ public class MainActivity extends BaseActivity {
 //        Class destinationClass = DiplomaUitgevenActivity.class;
 //        Intent intent = new Intent(context, destinationClass);
 //        startActivity(intent);
+    }
+
+    public void onClickShowDisciplines(View view) {
+        Context context = this;
+        Class destinationClass = DemandsPerDisciplineActivity.class;
+        Intent intent = new Intent(context, destinationClass);
+        startActivity(intent);
+
     }
 
     private void setNotification() {

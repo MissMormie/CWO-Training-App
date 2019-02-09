@@ -10,23 +10,23 @@ import java.util.List;
  * Diploma information
  */
 public class Diploma implements Parcelable {
-    private Long id;
+    private String id;
     private String titel;
     private List<DiplomaEis> diplomaEis;
     private int nivo;
 
-    public Diploma(Long id, String titel, int nivo, List<DiplomaEis> diplomaEis) {
+    public Diploma(String id, String titel, int nivo, List<DiplomaEis> diplomaEis) {
         this.id = id;
         this.titel = titel;
         this.diplomaEis = diplomaEis;
         this.nivo = nivo;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -79,7 +79,7 @@ public class Diploma implements Parcelable {
     };
 
     public Diploma(Parcel parcel) {
-        id = parcel.readLong();
+        id = parcel.readString();
         titel = parcel.readString();
         nivo = parcel.readInt();
         //parcel.readTypedList(diplomaEis, DiplomaEis.CREATOR);
@@ -92,7 +92,7 @@ public class Diploma implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeLong(id);
+        parcel.writeString(id);
         parcel.writeString(titel);
         parcel.writeInt(nivo);
         //parcel.writeTypedList(diplomaEis);

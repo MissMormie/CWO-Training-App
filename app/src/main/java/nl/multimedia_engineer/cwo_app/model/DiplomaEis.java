@@ -7,10 +7,10 @@ import java.util.Set;
 
 public class DiplomaEis implements Parcelable {
 
-    private Long id;
+    private String id;
     private Diploma diploma;
     private String titel;
-    private String omschrijving;
+    private String tekst;
     private Set<CursistBehaaldEis> cursistBehaaldEis;
 
 
@@ -19,18 +19,19 @@ public class DiplomaEis implements Parcelable {
     // since it doesn't fit in the model well.
     private boolean checked;
 
+    public DiplomaEis() {}
 
-    public DiplomaEis(Long id, String titel, String omschrijving) {
+    public DiplomaEis(String id, String titel, String omschrijving) {
         this.id = id;
         this.titel = titel;
-        this.omschrijving = omschrijving;
+        this.tekst = omschrijving;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -50,12 +51,12 @@ public class DiplomaEis implements Parcelable {
         this.titel = titel;
     }
 
-    public String getOmschrijving() {
-        return omschrijving;
+    public String getTekst() {
+        return tekst;
     }
 
-    public void setOmschrijving(String omschrijving) {
-        this.omschrijving = omschrijving;
+    public void setTekst(String tekst) {
+        this.tekst = tekst;
     }
 
     public Set<CursistBehaaldEis> getCursistBehaaldEis() {
@@ -98,18 +99,18 @@ public class DiplomaEis implements Parcelable {
     };
 
     private DiplomaEis(Parcel parcel) {
-        id = parcel.readLong();
+        id = parcel.readString();
         titel = parcel.readString();
-        omschrijving = parcel.readString();
+        tekst = parcel.readString();
         diploma = parcel.readParcelable(Diploma.class.getClassLoader());
 
     }
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeLong(id);
+        parcel.writeString(id);
         parcel.writeString(titel);
-        parcel.writeString(omschrijving);
+        parcel.writeString(tekst);
         // not great solution because now every diplomaEis will have it's own diploma object..
         parcel.writeParcelable(diploma, flags);
     }

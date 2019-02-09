@@ -10,7 +10,7 @@
         android:id="@+id/action_diploma"
         android:orderInCategory="2"
         app:showAsAction="never"
-        android:title="@string/diploma_uitgeven" />
+        android:title="@string/btn_diploma_uitgeven" />
 
     <item
         android:id="@+id/action_verbergen"

@@ -1,6 +1,7 @@
 package nl.multimedia_engineer.cwo_app.dto;
 
 import android.support.annotation.NonNull;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +11,15 @@ import nl.multimedia_engineer.cwo_app.model.GroupPartial;
 
 public class UserGroupPartialList {
     Map<String, String> groepen;
+    private List<GroupPartial> groupList = null;
 
     @NonNull
     public List<GroupPartial> getGroepen() {
+        if(groupList != null) {
+            return groupList;
+        }
 
-        List<GroupPartial> groupList = new ArrayList<GroupPartial>();
+        groupList = new ArrayList<GroupPartial>();
         if(groepen == null || groepen.isEmpty()) {
             return groupList;
         }

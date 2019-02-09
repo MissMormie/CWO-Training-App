@@ -2,6 +2,7 @@ package nl.multimedia_engineer.cwo_app.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +14,7 @@ import java.util.List;
 import nl.multimedia_engineer.cwo_app.util.DateUtil;
 
 public class Cursist {
-    public Long id;
+    public String id;
     public String voornaam;
     public String tussenvoegsel;
     public String achternaam;
@@ -32,7 +33,72 @@ public class Cursist {
     public Cursist() {
     }
 
-    public Cursist(Long id, String voornaam, String tussenvoegsel, String achternaam, Date paspoort, String opmerking, List<CursistBehaaldEis> cursistBehaaldEis, List<CursistHeeftDiploma> cursistHeeftDiplomas, CursistFoto cursistFoto, boolean verborgen) {
+    public String getId() {
+        if(id.equals("null")) {
+            return "";
+        }
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getVoornaam() {
+        if(voornaam.equals("null")) {
+            return "";
+        }
+        return voornaam;
+    }
+
+    public void setVoornaam(String voornaam) {
+        this.voornaam = voornaam;
+    }
+
+    public String getTussenvoegsel() {
+        if(tussenvoegsel.equals("null")) {
+            return "";
+        }
+        return tussenvoegsel;
+    }
+
+    public void setTussenvoegsel(String tussenvoegsel) {
+        this.tussenvoegsel = tussenvoegsel;
+    }
+
+    public String getAchternaam() {
+        if(achternaam.equals("null")){
+            return "";
+        }
+        return achternaam;
+    }
+
+    public void setAchternaam(String achternaam) {
+        this.achternaam = achternaam;
+    }
+
+    @Nullable
+    public Date getPaspoort() {
+        return paspoort;
+    }
+
+    public void setPaspoort(Date paspoort) {
+        this.paspoort = paspoort;
+    }
+
+    public String getOpmerking() {
+        if(opmerking.equals("null")) {
+            return "";
+        }
+
+        return opmerking;
+    }
+
+    public void setOpmerking(String opmerking) {
+        this.opmerking = opmerking;
+    }
+
+    public Cursist(String id, String voornaam, String tussenvoegsel, String achternaam, Date paspoort, String opmerking, List<CursistBehaaldEis> cursistBehaaldEis, List<CursistHeeftDiploma> cursistHeeftDiplomas, CursistFoto cursistFoto, boolean verborgen) {
         this.id = id;
         this.voornaam = voornaam;
         this.tussenvoegsel = tussenvoegsel;
@@ -45,7 +111,7 @@ public class Cursist {
         this.verborgen = verborgen;
     }
 
-    public Cursist(long id, String voornaam) {
+    public Cursist(String id, String voornaam) {
         this.opmerking = "opmerking iets over koud water en wind en zon.";
         this.paspoort = null;
         this.id = id;
@@ -182,7 +248,7 @@ public class Cursist {
         return true;
     }
 
-    public boolean hasDiploma(Long diplomaId) {
+    public boolean hasDiploma(String diplomaId) {
         if (cursistHeeftDiplomas == null)
             return false;
         for (CursistHeeftDiploma cursistHeeftDiploma : cursistHeeftDiplomas) {
@@ -202,7 +268,7 @@ public class Cursist {
 
 //    @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeLong(id);
+        parcel.writeString(id);
         parcel.writeString(voornaam);
         parcel.writeString(tussenvoegsel);
         parcel.writeString(achternaam);
@@ -232,7 +298,7 @@ public class Cursist {
 
     // Note, the order IS important, if it's not the same as when parceling it doesn't work.
     private Cursist(Parcel parcel) {
-        id = parcel.readLong();
+        id = parcel.readString();
         voornaam = parcel.readString();
         tussenvoegsel = parcel.readString();
         achternaam = parcel.readString();

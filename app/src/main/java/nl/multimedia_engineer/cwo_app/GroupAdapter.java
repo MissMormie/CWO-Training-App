@@ -3,6 +3,7 @@ package nl.multimedia_engineer.cwo_app;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -20,17 +21,23 @@ import nl.multimedia_engineer.cwo_app.dto.UserGroupPartialList;
 import nl.multimedia_engineer.cwo_app.model.GroupPartial;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapterViewHolder>  {
-    private List<GroupPartial> groupList;
-    private ItemClickListener listener;
 
+    public interface GroupItemClickListener {
+        void onItemClicked(int position);
+        void onItemEditClicked(int position);
+        void onItemDeleteClicked(int position);
+    }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public GroupAdapter(UserGroupPartialList userGroupPartialList, ItemClickListener listener) {
+    private final List<GroupPartial> groupList;
+    private final GroupItemClickListener listener;
+    private String currentActiveGroup;
+
+    public GroupAdapter(UserGroupPartialList userGroupPartialList, GroupItemClickListener listener, String groupId) {
+        this.currentActiveGroup = groupId;
         this.listener = listener;
         groupList = userGroupPartialList.getGroepen();
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public GroupAdapter.GroupAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutIdForListItem = R.layout.group_list_item;
@@ -44,15 +51,20 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
     public void onBindViewHolder(@NonNull GroupAdapterViewHolder holder, int position) {
         holder.bind(position);
 
-
         // alternate row colors
         if(position %2 == 1) {
             holder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
         } else {
             holder.itemView.setBackgroundColor(Color.parseColor("#FFFAF8FD"));
         }
+
         // Todo if active group turn different color.
 
+    }
+
+
+    public void setCurrentActiveGroupId(String id) {
+        currentActiveGroup = id;
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -68,61 +80,45 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
         final TextView tv_groupListName;
         final ImageView iv_edit;
         final ImageView iv_delete;
-        private WeakReference<ItemClickListener> listenerRef;
+        final ImageView iv_check;
+        private WeakReference<GroupItemClickListener> listenerRef;
 
-        GroupAdapterViewHolder(View itemView, ItemClickListener listener) {
+        GroupAdapterViewHolder(View itemView, GroupItemClickListener listener) {
             super(itemView);
             tv_groupListName = itemView.findViewById(R.id.tv_group_list_item_name);
             iv_edit = itemView.findViewById(R.id.iv_group_list_item_edit);
             iv_delete = itemView.findViewById(R.id.iv_group_list_item_delete);
+            iv_check = itemView.findViewById(R.id.iv_group_list_item_check);
 
             listenerRef = new WeakReference(listener);
 
             itemView.setOnClickListener(this);
             iv_delete.setOnClickListener(this);
             iv_edit.setOnClickListener(this);
-
         }
 
         void bind(int position) {
             GroupPartial group = groupList.get(position);
             tv_groupListName.setText(group.getName());
+            if(currentActiveGroup.equals(groupList.get(position).getId())) {
+                iv_check.setVisibility(View.VISIBLE);
+            } else {
+                iv_check.setVisibility(View.INVISIBLE);
+            }
         }
-
 
         @Override
         public void onClick(View v) {
-            listenerRef.get().onPositionClicked(getAdapterPosition());
             if(v.getId() == iv_delete.getId()) {
-                deleteItem(v);
+                listener.onItemDeleteClicked(getAdapterPosition());
             } else if(v.getId() == iv_edit.getId()) {
-
+                listener.onItemEditClicked(getAdapterPosition());
             } else {
+                listener.onItemClicked(getAdapterPosition());
                 // click on row. Make this active group.
             }
             Toast.makeText(v.getContext(), "clicked "  + getAdapterPosition(), Toast.LENGTH_LONG);
         }
     }
 
-    private void deleteItem(View v) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(v.getContext());
-        dialogBuilder.setMessage("message");
-        dialogBuilder.setTitle("alert");
-        dialogBuilder.setNeutralButton("btn ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        dialogBuilder.setNegativeButton("btn nee ", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
-    }
 }
