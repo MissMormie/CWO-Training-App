@@ -111,7 +111,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
 
                 List<Cursist> cursistList = new ArrayList<>();
                 for(Map.Entry<String, Cursist> entry : result.entrySet()) {
-                    entry.getValue().id = entry.getKey();
+                    entry.getValue().setId(entry.getKey());
                     cursistList.add(entry.getValue());
                 }
 
@@ -135,20 +135,18 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
         });
 
         // todo
-//        new FetchCursistListTask().execute();
     }
 
     @Override
     public void onClick(Cursist cursist) {
         Context context = this;
 
-        // Todo uncomment and create follow up classes.
-//        Class destinationClass = CursistDetailActivity.class;
-//        Intent intent = new Intent(context, destinationClass);
-//        intent.putExtra("cursistId", cursist.id);
-//        intent.putExtra("cursist", cursist);
-//        startActivityForResult(intent, CURSIST_DETAIL);
-//        startActivity(intent);
+        Class destinationClass = CursistDetailActivity.class;
+        Intent intent = new Intent(context, destinationClass);
+        intent.putExtra("cursistId", cursist.getId());
+        intent.putExtra("cursist", cursist);
+        startActivityForResult(intent, CURSIST_DETAIL);
+        startActivity(intent);
     }
 
     @Override
@@ -167,42 +165,6 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
 
     }
 
-
-
-    /*
-    private class FetchCursistListTask extends AsyncTask<String, Void, List<Cursist>> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected List<Cursist> doInBackground(String... params) {
-            URL diplomaListUrl = NetworkUtils.buildUrl("cursist", "lijst");
-
-            try {
-                String jsonCursistLijstResponse = NetworkUtils.getResponseFromHttpUrl(diplomaListUrl);
-                return OpenJsonUtils.getCursistLijst(jsonCursistLijstResponse);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(List<Cursist> cursistList) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (cursistList != null) {
-                cursistListAdapater.setCursistListData(cursistList);
-            } else {
-                showErrorMessage();
-            }
-        }
-    }
-    */
 
     private void showErrorMessage() {
         /* First, hide the currently visible data */

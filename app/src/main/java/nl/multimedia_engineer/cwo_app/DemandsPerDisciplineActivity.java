@@ -13,15 +13,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import nl.multimedia_engineer.cwo_app.dto.DisciplinesList;
 import nl.multimedia_engineer.cwo_app.dto.SubDisciplinesWithDemandsList;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
-import nl.multimedia_engineer.cwo_app.model.Discipline;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
 public class DemandsPerDisciplineActivity extends AppCompatActivity {
@@ -49,7 +45,7 @@ public class DemandsPerDisciplineActivity extends AppCompatActivity {
     private void prepareListData() {
         final Context context = this;
         // todo when there is support for multiple disciplines this needs to be not hardcoded.
-        final DatabaseReference examDemands = DatabaseRefUtil.getDisciplineExamDemands("windsurfen");
+        final DatabaseReference examDemands = DatabaseRefUtil.getExamenEisen("windsurfen");
         examDemands.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

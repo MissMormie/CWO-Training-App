@@ -6,16 +6,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import nl.multimedia_engineer.cwo_app.CursistListActivity;
-import nl.multimedia_engineer.cwo_app.model.Group;
-
 public class DatabaseRefUtil {
     private static final String TAG = DatabaseRefUtil.class.getSimpleName();
     private static String USERS = "users";
     private static String DISCIPLINES = "disciplines";
     private static String GROUPS = "groepen";
-    private static String EXAMDEMANDS = "exameneisen";
+    private static String EXAMENEISEN = "exameneisen";
     private static String CURSISTEN = "cursisten";
+    private static String CURSISTEN_PER_GROUP = "cursistenPerGroep";
 
     public static DatabaseReference getParentRef() {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -58,15 +56,45 @@ public class DatabaseRefUtil {
         return database.getReference().child(GROUPS).child(groupId).child("discipline");
     }
 
-    public static DatabaseReference getDisciplineExamDemands(String discipline) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        return database.getReference().child(EXAMDEMANDS).child(discipline);
-    }
-
     public static DatabaseReference getSpecificExamDemands(String discipline, String exam) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        return database.getReference().child(EXAMDEMANDS).child(discipline).child(exam);
+        return database.getReference().child(EXAMENEISEN).child(discipline).child(exam);
     }
+
+    // ----------------------------------- Cursisten ---------------------------------------- //
+    public static DatabaseReference getGroepenCursisten(String groupId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        return database.getReference().child(GROUPS).child(groupId).child(CURSISTEN);
+    }
+
+    public static DatabaseReference getCursistenPerGroepCursist(String groupId, String cursistId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        return database.getReference().child(CURSISTEN_PER_GROUP).child(groupId).child(cursistId);
+    }
+
+    /**
+     *
+     * @param groupId
+     * @param verborgen, is false doesn't return cursisten that are hidden (cursist verborgen = true);
+     * @return
+     */
+    public static DatabaseReference getCursistenPerGroep(String groupId, boolean verborgen) {
+        // todo is verborgen is false, filter results.
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        return database.getReference().child(CURSISTEN_PER_GROUP).child(groupId);
+    }
+
+    // ---------------------------------  Diploma eisen -------------------------------------- //
+//    public static DatabaseReference getDiplomaEisen(String groupId) {
+//
+//    }
+
+
+    public static DatabaseReference getExamenEisen(String discipline) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        return database.getReference().child(EXAMENEISEN).child(discipline);
+    }
+
 
 
 }

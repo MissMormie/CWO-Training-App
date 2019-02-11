@@ -1,18 +1,17 @@
 package nl.multimedia_engineer.cwo_app;
 
-import android.content.Context;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+// import android.support.v7.preference.PreferenceFragmentCompat;
 
+
+import android.support.v4.app.Fragment;
 
 public class SettingsFragment extends Fragment {
+//public class SettingsFragment extends PreferenceFragmentCompat  {
+
+    // todo
 //    @Override
 //    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-//        addPreferencesFromResource(R.xml.pref_cwo_app);
+////        addPreferencesFromResource(R.xml.pref_cwo_app);
 //
 //    }
 }

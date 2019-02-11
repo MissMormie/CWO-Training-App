@@ -4,86 +4,37 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nl.multimedia_engineer.cwo_app.util.DateUtil;
-
-public class Cursist {
-    public String id;
-    public String voornaam;
-    public String tussenvoegsel;
-    public String achternaam;
-    private CursistFoto cursistFoto;
-    private boolean verborgen = false;
+public class Cursist extends CursistPartial implements Parcelable{
 
     // TODO: change this holder variable to the CursistFoto class.
     private String fotoFileBase64;
 
-    public Date paspoort;
+    public Date paspoortDate;
+    public Long paspoort;
     public String opmerking;
     private List<CursistBehaaldEis> cursistBehaaldEis;
 
+    // todo remove this.
     private List<CursistHeeftDiploma> cursistHeeftDiplomas;
+    private List<Diploma> diplomaList;
 
     public Cursist() {
+
     }
 
-    public String getId() {
-        if(id.equals("null")) {
-            return "";
-        }
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getVoornaam() {
-        if(voornaam.equals("null")) {
-            return "";
-        }
-        return voornaam;
-    }
-
-    public void setVoornaam(String voornaam) {
-        this.voornaam = voornaam;
-    }
-
-    public String getTussenvoegsel() {
-        if(tussenvoegsel.equals("null")) {
-            return "";
-        }
-        return tussenvoegsel;
-    }
-
-    public void setTussenvoegsel(String tussenvoegsel) {
-        this.tussenvoegsel = tussenvoegsel;
-    }
-
-    public String getAchternaam() {
-        if(achternaam.equals("null")){
-            return "";
-        }
-        return achternaam;
-    }
-
-    public void setAchternaam(String achternaam) {
-        this.achternaam = achternaam;
-    }
 
     @Nullable
-    public Date getPaspoort() {
-        return paspoort;
+    public Date getPaspoortDate() {
+        return paspoortDate;
     }
 
-    public void setPaspoort(Date paspoort) {
-        this.paspoort = paspoort;
+    public void setPaspoortDate(Date paspoortDate) {
+        this.paspoortDate = paspoortDate;
     }
 
     public String getOpmerking() {
@@ -98,12 +49,21 @@ public class Cursist {
         this.opmerking = opmerking;
     }
 
-    public Cursist(String id, String voornaam, String tussenvoegsel, String achternaam, Date paspoort, String opmerking, List<CursistBehaaldEis> cursistBehaaldEis, List<CursistHeeftDiploma> cursistHeeftDiplomas, CursistFoto cursistFoto, boolean verborgen) {
+    public Cursist(CursistPartial cursist) {
+        this.setId(cursist.getId());
+        this.setVoornaam(cursist.getVoornaam());
+        this.setTussenvoegsel(cursist.getTussenvoegsel());
+        this.setAchternaam(cursist.getAchternaam());
+        this.setCursistFoto(cursist.getCursistFoto());
+        this.setVerborgen(cursist.isVerborgen());
+    }
+
+    public Cursist(String id, String voornaam, String tussenvoegsel, String achternaam, Date paspoortDate, String opmerking, List<CursistBehaaldEis> cursistBehaaldEis, List<CursistHeeftDiploma> cursistHeeftDiplomas, CursistFoto cursistFoto, boolean verborgen) {
         this.id = id;
         this.voornaam = voornaam;
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
-        this.paspoort = paspoort;
+        this.paspoortDate = paspoortDate;
         this.opmerking = opmerking;
         this.cursistBehaaldEis = cursistBehaaldEis;
         this.cursistHeeftDiplomas = cursistHeeftDiplomas;
@@ -113,23 +73,32 @@ public class Cursist {
 
     public Cursist(String id, String voornaam) {
         this.opmerking = "opmerking iets over koud water en wind en zon.";
-        this.paspoort = null;
+        this.paspoortDate = null;
         this.id = id;
         this.voornaam = voornaam;
         this.tussenvoegsel = "";
         this.achternaam = "Duijvesteijn";
     }
 
-    public boolean isVerborgen() {
-        return verborgen;
+    public List<Diploma> getDiplomaList() {
+        return diplomaList;
     }
 
-    public void setVerborgen(boolean verborgen) {
-        this.verborgen = verborgen;
+    public void setDiplomaList(List<Diploma> diplomaList) {
+        this.diplomaList = diplomaList;
     }
 
-    public void toggleVerborgen() {
-        verborgen = !verborgen;
+    public void addDiploma(Diploma diploma) {
+        if(diplomaList == null) {
+            diplomaList = new ArrayList<>();
+        }
+        // todo add check diploma didn't already exist
+
+        diplomaList.add(diploma);
+    }
+
+    public void removeDiploma(Diploma diploma) {
+
     }
 
     public List<CursistBehaaldEis> getCursistBehaaldEis() {
@@ -141,16 +110,16 @@ public class Cursist {
     }
 
     /**
-     * Keeps current paspoort date if there is one already.
+     * Keeps current paspoortDate date if there is one already.
      */
     public void heeftPaspoort(boolean heeftPaspoort) {
         if(!heeftPaspoort) {
-            paspoort = null;
+            paspoortDate = null;
             return;
         }
-        if(paspoort != null)
+        if(paspoortDate != null)
             return;
-        paspoort = new Date();
+        paspoortDate = new Date();
 
     }
 
@@ -170,15 +139,6 @@ public class Cursist {
         this.cursistHeeftDiplomas = cursistHeeftDiplomas;
     }
 
-
-    public CursistFoto getCursistFoto() {
-        return cursistFoto;
-    }
-
-    public void setCursistFoto(CursistFoto cursistFoto) {
-        this.cursistFoto = cursistFoto;
-    }
-
     public String nameToString() {
         String tussenstuk = "";
         if (tussenvoegsel != null && !tussenvoegsel.equals(""))
@@ -187,29 +147,6 @@ public class Cursist {
         return voornaam + " " + tussenstuk + achternaam;
     }
 
-//    public String simpleCursistToJson() {
-//        JSONObject jsonObject = new JSONObject();
-//        try {
-//            jsonObject.put("id", id);
-//            jsonObject.put("voornaam", voornaam);
-//            jsonObject.put("tussenvoegsel", tussenvoegsel);
-//            jsonObject.put("achternaam", achternaam);
-//            jsonObject.put("opmerkingen", opmerking);
-//            jsonObject.put("verborgen", verborgen);
-//            if (paspoort != null) {
-//                jsonObject.put("paspoort", DateUtil.dateToYYYYMMDDString(paspoort));
-//            } else {
-//                jsonObject.put("paspoort", null);
-//            }
-//            if (fotoFileBase64 != null && !fotoFileBase64.equals(""))
-//                jsonObject.put("fotoFileBase64", fotoFileBase64);
-//
-//
-//            return jsonObject.toString();
-//        } catch (JSONException e) {
-//            return "";
-//        }
-//    }
 
     // Make this smarter with a map so i don't have to run through everything every time. Only the first time. (together with isAlleEisenBehaald)
     // Low prio, low numbers make this not very slow.
@@ -274,8 +211,8 @@ public class Cursist {
         parcel.writeString(achternaam);
         parcel.writeString(opmerking);
         parcel.writeValue(verborgen);
-        if (paspoort != null) {
-            parcel.writeLong(paspoort.getTime());
+        if (paspoortDate != null) {
+            parcel.writeLong(paspoortDate.getTime());
         } else {
             parcel.writeLong(0L);
         }
@@ -305,13 +242,13 @@ public class Cursist {
         opmerking = parcel.readString();
         verborgen = (Boolean) parcel.readValue(null);
 
-        // Get around paspoort sometimes being null.
+        // Get around paspoortDate sometimes being null.
         Long paspoortTemp = parcel.readLong();
 
         if (paspoortTemp == 0L) {
-            paspoort = null;
+            paspoortDate = null;
         } else {
-            paspoort = new Date(paspoortTemp);
+            paspoortDate = new Date(paspoortTemp);
         }
 
         cursistFoto = parcel.readParcelable(CursistFoto.class.getClassLoader());
@@ -366,6 +303,7 @@ public class Cursist {
                 if(cbe.getDiplomaEis().getId().equals(newCursistBehaaldEis.getDiplomaEis().getId()))
                     cursistBehaaldEis.remove(cbe);
             }
-
     }
+
+
 }

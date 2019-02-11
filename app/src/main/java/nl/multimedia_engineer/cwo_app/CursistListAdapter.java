@@ -49,7 +49,7 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
 
         int deleteThis = -1;
         for (int i = 0; i < cursistList.size(); i++) {
-            if (cursist.id.equals(cursistList.get(i).id)) {
+            if (cursist.getId().equals(cursistList.get(i).getId())) {
                 deleteThis = i;
                 break;
             }
@@ -65,7 +65,7 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
         // Since the object is recreated I have to check every ID.
         int updateThis = -1;
         for (int i = 0; i < cursistList.size(); i++) {
-            if (cursist.id.equals(cursistList.get(i).id)) {
+            if (cursist.getId().equals(cursistList.get(i).getId())) {
                 updateThis = i;
                 break;
             }

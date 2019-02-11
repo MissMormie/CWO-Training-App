@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#03a9f4</color>
+<!--    <color name="colorPrimary">#03a9f4</color>
     <color name="colorPrimaryDark">#007ac1</color>
     <color name="colorAccent">#67DAFF</color>
     <color name="colorSecondaryPrimary">#5e35b1</color>
@@ -12,6 +12,14 @@
     <color name="colorAccentFont">#000000</color>
     <color name="colorSecondaryPrimaryFont">#ffffff</color>
     <color name="colorSecondaryPrimaryDarkFont">#ffffff</color>
-    <color name="colorSecondaryAccentFont">#000000</color>
+    <color name="colorSecondaryAccentFont">#000000</color>-->
+
+        <color name="colorPrimary">#3F51B5</color>
+        <color name="colorPrimaryDark">#303F9F</color>
+        <color name="colorAccent">#ff0000</color>
+        <color name="colorWhite">#ffffff</color>
+        <color name="colorGray">#f0f0f0</color>
+        <color name="colorDarkGray">#858585</color>
+        <color name="transparent">#00000000</color>
 
 </resources>

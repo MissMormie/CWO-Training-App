@@ -1,41 +1,25 @@
 package nl.multimedia_engineer.cwo_app;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.Calendar;
-import java.util.Map;
 
 import nl.multimedia_engineer.cwo_app.notification.AlarmReceiver;
 import nl.multimedia_engineer.cwo_app.notification.NotificationService;
-import nl.multimedia_engineer.cwo_app.util.ConnectionIssuesUtil;
-import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 import nl.multimedia_engineer.cwo_app.util.DateUtil;
 
 public class MainActivity extends BaseActivity {
@@ -98,24 +82,24 @@ public class MainActivity extends BaseActivity {
     }
 
     public void onClickNieuweTraining(View view) {
-//        Context context = this;
-//        Class destinationClass = TrainingActivity.class;
-//        Intent intent = new Intent(context, destinationClass);
-//        startActivity(intent);
+        Context context = this;
+        Class destinationClass = TrainingActivity.class;
+        Intent intent = new Intent(context, destinationClass);
+        startActivity(intent);
     }
 
     public void onClickNieuweCursist(View view) {
-//        Context context = this;
-//        Class destinationClass = CreateCursistActivity.class;
-//        Intent intent = new Intent(context, destinationClass);
-//        startActivity(intent);
+        Context context = this;
+        Class destinationClass = CreateCursistActivity.class;
+        Intent intent = new Intent(context, destinationClass);
+        startActivity(intent);
     }
 
     public void onClickUitgevenDiploma(View view) {
-//        Context context = this;
-//        Class destinationClass = DiplomaUitgevenActivity.class;
-//        Intent intent = new Intent(context, destinationClass);
-//        startActivity(intent);
+        Context context = this;
+        Class destinationClass = DiplomaUitgevenActivity.class;
+        Intent intent = new Intent(context, destinationClass);
+        startActivity(intent);
     }
 
     public void onClickShowDisciplines(View view) {

@@ -22,6 +22,10 @@
     <string name="pref_current_group_id" translatable="false">CurrentGroupID</string>
     <string name="pref_discipline" translatable="false">Discipline</string>
 
+    <!-- Activity titles actionbar -->
+    <string name="actionbar_title_groupActivity">Groepen Beheren</string>
+    <string name="actionbar_title_new_group_activity">Nieuwe groep</string>
+
     <!-- Knoppen -->
     <string name="nee">Nee</string>
     <string name="ja">Ja</string>
@@ -64,7 +68,7 @@
     <string name="title_activity_cursisten_behalen_diploma">CursistenBehalenDiplomaActivity</string>
 
     <!-- titel labels -->
-    <string name="app_name">CWO_app</string>
+    <string name="app_name">CWO app</string>
     <string name="login">Login</string>
     <string name="hint_email_adres">E-mail adres</string>
     <string name="hint_password">Paswoord</string>

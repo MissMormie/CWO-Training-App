@@ -15,6 +15,10 @@ public class Diploma implements Parcelable {
     private List<DiplomaEis> diplomaEis;
     private int nivo;
 
+    public Diploma() {
+
+    }
+
     public Diploma(String id, String titel, int nivo, List<DiplomaEis> diplomaEis) {
         this.id = id;
         this.titel = titel;
@@ -47,6 +51,15 @@ public class Diploma implements Parcelable {
     }
 
     public int getNivo() {
+        if(nivo ==0 && !id.isEmpty()) {
+            try {
+                int num = Integer.valueOf(id.substring(id.length()-1));
+                nivo = num;
+            } catch (Exception e) {
+                // not a number, that's fine, we'll keep 0.
+            }
+        }
+
         return nivo;
     }
 

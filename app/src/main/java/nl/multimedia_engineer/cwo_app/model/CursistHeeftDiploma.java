@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class CursistHeeftDiploma {
 
-    private final Long cursist;
+    private final String cursist;
 
     private Diploma diploma;
 
@@ -19,13 +19,13 @@ public class CursistHeeftDiploma {
 
     private boolean isBehaald; // Holder variable.
 
-    public CursistHeeftDiploma(Long id, Long cursist, Diploma diploma) {
-        Long id1 = id;
+    public CursistHeeftDiploma(String id, String cursist, Diploma diploma) {
+
         this.cursist = cursist;
         this.diploma = diploma;
     }
 
-    public CursistHeeftDiploma(Long cursist, Diploma diploma, boolean isBehaald) {
+    public CursistHeeftDiploma(String cursist, Diploma diploma, boolean isBehaald) {
         this.cursist = cursist;
         this.diploma = diploma;
         this.isBehaald = isBehaald;
@@ -48,17 +48,4 @@ public class CursistHeeftDiploma {
         isBehaald = behaald;
     }
 
-    public String toJson() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("diplomaId", diploma.getId());
-            jsonObject.put("cursistId", cursist);
-            return jsonObject.toString();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return "";
-
-    }
 }
