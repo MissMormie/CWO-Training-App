@@ -38,8 +38,7 @@ public class EditCursistActivity extends BaseActivity implements CursistFormFrag
             // For some reason the api returns a different date, it's saved correctly
             cursist.paspoortDate = this.cursist.paspoortDate;
         } else {
-            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.error_message), Toast.LENGTH_SHORT);
-            toast.show();
+            showErrorDialog();
         }
 
         Intent intent = new Intent();

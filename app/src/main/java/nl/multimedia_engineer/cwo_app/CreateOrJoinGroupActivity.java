@@ -53,7 +53,7 @@ public class CreateOrJoinGroupActivity extends BaseActivity {
         String groupId = pushedRef.getKey();
 
         if(groupId == null) {
-            Toast.makeText(this, getResources().getString(R.string.error_message), Toast.LENGTH_SHORT).show();
+            showErrorDialog();
             return;
         }
 
@@ -85,6 +85,7 @@ public class CreateOrJoinGroupActivity extends BaseActivity {
 
 
         final Context context = this;
+        // todo move this to a persistence class.
         groepRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -103,7 +104,7 @@ public class CreateOrJoinGroupActivity extends BaseActivity {
             public void onCancelled(DatabaseError error) {
                 // anything but permissions denied. Probably connection errors
                 // todo make generic handle firebase db error
-                Toast.makeText(context, getResources().getText(R.string.error_message), Toast.LENGTH_SHORT).show();
+                showErrorDialog();
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });

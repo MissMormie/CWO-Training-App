@@ -244,15 +244,9 @@ public class CursistDetailActivity extends BaseActivity {
             Toast toast = Toast.makeText(getApplicationContext(), tekst, Toast.LENGTH_SHORT);
             toast.show();
         } else {
-            showErrorMessage();
+            showErrorDialog();
         }
     }
-
-    private void showErrorMessage() {
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.error_message), Toast.LENGTH_LONG);
-        toast.show();
-    }
-
 
     private class DeleteCursistTask extends AsyncTask<Long, Void, Integer> {
 
@@ -282,7 +276,7 @@ public class CursistDetailActivity extends BaseActivity {
             if (resultCode == HttpURLConnection.HTTP_OK) {
                 cursistDeleted();
             } else {
-                showErrorMessage();
+                showErrorDialog();
             }
         }
     }
@@ -321,40 +315,40 @@ public class CursistDetailActivity extends BaseActivity {
 
                 displayDiplomaEisInfo(diplomaEisenLijst);
             } else {
-                showErrorMessage();
+                showErrorDialog();
             }
         }
     }
-
-    class FetchCursistTask extends AsyncTask<Long, Void, Cursist> {
-
-        @Override
-        protected void onPreExecute() {
-            toggleLoading(true);
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Cursist doInBackground(Long... id) {
-//            URL curistUrl = NetworkUtils.buildUrl("cursist", id[0].toString());
 //
-//            try {
-//                String jsonCursistResponse = NetworkUtils.getResponseFromHttpUrl(curistUrl);
-//                Cursist cursist = OpenJsonUtils.getCursist(jsonCursistResponse);
-//                return cursist;
+//    class FetchCursistTask extends AsyncTask<Long, Void, Cursist> {
 //
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return null;
-//            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Cursist cursistObject) {
-            toggleLoading(false);
-            cursist = cursistObject;
-            displayCursistInfo();
-        }
-    }
+//        @Override
+//        protected void onPreExecute() {
+//            toggleLoading(true);
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected Cursist doInBackground(Long... id) {
+////            URL curistUrl = NetworkUtils.buildUrl("cursist", id[0].toString());
+////
+////            try {
+////                String jsonCursistResponse = NetworkUtils.getResponseFromHttpUrl(curistUrl);
+////                Cursist cursist = OpenJsonUtils.getCursist(jsonCursistResponse);
+////                return cursist;
+////
+////            } catch (Exception e) {
+////                e.printStackTrace();
+////                return null;
+////            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Cursist cursistObject) {
+//            toggleLoading(false);
+//            cursist = cursistObject;
+//            displayCursistInfo();
+//        }
+//    }
 }

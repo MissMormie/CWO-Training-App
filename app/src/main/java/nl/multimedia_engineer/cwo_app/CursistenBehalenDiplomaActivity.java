@@ -115,7 +115,7 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
 //    @Override
     public void setCursistList(List<Cursist> cursistList) {
         if (cursistList == null) {
-            showErrorMessage();
+            showErrorDialog();
             return;
         }
 
@@ -166,9 +166,6 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    private void showErrorMessage() {
-        Toast.makeText(this, getString(R.string.error_message), Toast.LENGTH_SHORT).show();
-    }
 
     public void onClickShowVolgendeCursist(View view) {
         showNextCursist();
@@ -176,13 +173,14 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
 
 //    @Override
     public void diplomaSaved(boolean success) {
-        if(!success)
-            showErrorMessage();
+        if(!success) {
+            showErrorDialog();
+        }
     }
 
 //    @Override
     public void cursistSaved(Cursist cursist) {
         if(cursist == null)
-            showErrorMessage();
+            showErrorDialog();
     }
 }

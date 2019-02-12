@@ -55,8 +55,7 @@ public class CreateCursistActivity extends BaseActivity implements CursistFormFr
     }
 
     private void saveFailed() {
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.error_message), Toast.LENGTH_SHORT);
-        toast.show();
+        showErrorDialog();
     }
 
     // Used when cursist is saved to call setDiplomaBehaald.
