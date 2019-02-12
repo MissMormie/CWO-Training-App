@@ -61,7 +61,7 @@ public class Diploma implements Parcelable {
     }
 
     public int getNivo() {
-        if(nivo ==0 && !id.isEmpty()) {
+        if(nivo == 0 && !id.isEmpty()) {
             try {
                 int num = Integer.valueOf(id.substring(id.length()-1));
                 nivo = num;
@@ -85,6 +85,8 @@ public class Diploma implements Parcelable {
     public boolean equals(Diploma diploma) {
         return (id.equals(diploma.id));
     }
+
+
 
 
     // ---------------------------- Support for Parcelable --------------------------------------- //

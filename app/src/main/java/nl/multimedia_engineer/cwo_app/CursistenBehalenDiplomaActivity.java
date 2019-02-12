@@ -18,11 +18,11 @@ import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.CursistHeeftDiploma;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 
-public class CursistenBehalenDiplomaActivity extends BaseActivity {
+public class CursistenBehalenDiplomaActivity extends BaseActivity implements PersistCursist.ReceiveCursistList {
 
     // UI elements:
-    private ProgressBar loadingIndicator;
     private CheckBox diplomaCheckbox;
     private CheckBox paspoortCheckBox;
 
@@ -52,7 +52,6 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
 
         // Get UI elements
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview_training_lijst);
-        loadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         diplomaCheckbox = (CheckBox) findViewById(R.id.diplomaCheckbox);
         paspoortCheckBox = (CheckBox) findViewById(R.id.paspoortCheckbox);
 
@@ -88,9 +87,9 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!saveData)
                     return;
+                // todo not hardcoded
+                PersistCursist.saveCursistDiploma("groepsnummer1", currentCursist.getId(), diploma.getId(), !isChecked);
 
-                CursistHeeftDiploma cursistHeeftDiploma = new CursistHeeftDiploma(currentCursist.getId(), diploma, isChecked);
-//                new SaveDiplomaBehaaldAsyncTask(outerClass).execute(cursistHeeftDiploma);
             }
         });
 
@@ -102,6 +101,7 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
                     return;
 
                 currentCursist.heeftPaspoort(isChecked);
+                // todo
 //                new SaveCursistAsyncTask(outerClass).execute(currentCursist);
 
             }
@@ -109,20 +109,13 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
     }
 
     private void loadCursistListData() {
+        showProgressDialog();
+        // todo not hardcoded groupId.
+        String groupId = "groepsnummer1";
+        PersistCursist.getCursistList(groupId, this);
 //        new FetchCursistListAsyncTask(this).execute(false);
     }
 
-//    @Override
-    public void setCursistList(List<Cursist> cursistList) {
-        if (cursistList == null) {
-            showErrorDialog();
-            return;
-        }
-
-        loadingIndicator.setVisibility(View.GONE);
-        this.cursistList = cursistList;
-        showNextCursist();
-    }
 
     private void showNextCursist() {
         if (cursistList.size() == 0) {
@@ -142,7 +135,7 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
     private void setCursistData(Cursist cursist) {
         saveData = false;
         // Set checkbox
-        if(cursist.paspoortDate != null) {
+        if(cursist.paspoort != null) {
             paspoortCheckBox.setChecked(true);
         } else {
             paspoortCheckBox.setChecked(false);
@@ -182,5 +175,23 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity {
     public void cursistSaved(Cursist cursist) {
         if(cursist == null)
             showErrorDialog();
+    }
+
+    @Override
+    public void receiveCursistList(List<Cursist> cursistList) {
+        hideProgressDialog();
+        if (cursistList == null) {
+            receiveCursistListFailed();
+            return;
+        }
+
+        this.cursistList = cursistList;
+        showNextCursist();
+    }
+
+    @Override
+    public void receiveCursistListFailed() {
+        hideProgressDialog();
+        showErrorDialog();
     }
 }

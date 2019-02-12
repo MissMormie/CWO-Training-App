@@ -244,7 +244,7 @@ public class CursistFormFragment extends Fragment {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                        "cwoapp.nl.cwoapp.fileprovider",
+                        "nl.multimedia_engineer.cwo_app.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);

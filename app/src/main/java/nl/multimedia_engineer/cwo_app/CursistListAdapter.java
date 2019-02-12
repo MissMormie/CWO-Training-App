@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
+import nl.multimedia_engineer.cwo_app.model.CursistPartial;
 
 /**
  * Created by Sonja on 3/9/2017.
@@ -26,7 +27,7 @@ import nl.multimedia_engineer.cwo_app.model.Cursist;
 class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.CursistListAdapterViewHolder> {
     // For logging:
     private static final String TAG = CursistListAdapater.class.getSimpleName();
-    private List<Cursist> cursistList;
+    private List<CursistPartial> cursistList;
     private final CursistListAdapterOnClickHandler clickHandler;
     private final Context context;
 
@@ -39,7 +40,7 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
     // ---------------------------------------- Modify data -------------------------------------------
 
 
-    void setCursistListData(List<Cursist> cursistList) {
+    void setCursistListData(List<CursistPartial> cursistList) {
         this.cursistList = cursistList;
         notifyDataSetChanged();
     }
@@ -120,7 +121,7 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
         }
 
         void bind(int position) {
-            Cursist cursist = cursistList.get(position);
+            CursistPartial cursist = cursistList.get(position);
             cursistItemTextView.setText(cursist.nameToString());
             diplomaTextView.setText(cursist.getHoogsteDiploma());
 
@@ -148,7 +149,7 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
         public void onClick(View v) {
             System.out.println("onClick " + TAG);
             int adapterPosition = getAdapterPosition();
-            Cursist cursist = cursistList.get(adapterPosition);
+            CursistPartial cursist = cursistList.get(adapterPosition);
             clickHandler.onClick(cursist);
         }
     }
@@ -156,7 +157,7 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
     // ----------------------------- Interface --------------------------------------------------
 
     interface CursistListAdapterOnClickHandler {
-        void onClick(Cursist cursist);
+        void onClick(CursistPartial cursist);
     }
 
 }

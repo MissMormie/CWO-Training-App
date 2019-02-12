@@ -9,16 +9,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseError;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
+import nl.multimedia_engineer.cwo_app.persistence.PersistDiploma;
 
 /**
  * Shows list of available diploma's from database. Can pick one as radio button.
  */
-public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUitgevenListAdapter.DiplomaListAdapterOnClickHandler {
+public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUitgevenListAdapter.DiplomaListAdapterOnClickHandler, PersistDiploma.ReceiveDiplomas {
     private DiplomaUitgevenListAdapter diplomaListAdapter;
     private Diploma selectedDiploma;
     private final ArrayList<Diploma> selectedDiplomaList = new ArrayList<>();
@@ -47,17 +50,9 @@ public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUit
 // ---------------------------- Load data ----------------------------------------------------------
 
     private void loadCwoEisData() {
-//        new FetchDiplomaAsyncTask(this).execute();
-    }
-
-//    @Override
-    public void setDiploma(List<Diploma> diplomaList) {
-        hideProgressDialog();
-        if (diplomaList == null) {
-            showErrorDialog( );
-        } else {
-            diplomaListAdapter.setDiplomaList(diplomaList);
-        }
+        showProgressDialog();
+        // todo make this not hardcoded.
+        PersistDiploma.getDiplomaEisen("windsurfen", this);
     }
 
 // ---------------------------- Click ----------------------------------------------------------
@@ -110,5 +105,23 @@ public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUit
         } else {
             volgendeButton.setEnabled(false);
         }
+    }
+
+    // ------------------------------ PersistDiploma.ReceiveDiplomas methods -------------------------------//
+
+    @Override
+    public void onReceiveDiplomas(List<Diploma> diplomaList) {
+        hideProgressDialog();
+        if (diplomaList == null) {
+            showErrorDialog( );
+        } else {
+            diplomaListAdapter.setDiplomaList(diplomaList);
+        }
+    }
+
+    @Override
+    public void onFailedReceivingDiplomas(DatabaseError databaseError) {
+        hideProgressDialog();
+        showErrorDialog();
     }
 }

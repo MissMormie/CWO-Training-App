@@ -16,9 +16,10 @@ import java.util.List;
 import nl.multimedia_engineer.cwo_app.databinding.ActivityCursistChecklistBinding;
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 
 
-public class CursistBehaaldDiplomaActivity extends BaseActivity  {
+public class CursistBehaaldDiplomaActivity extends BaseActivity implements PersistCursist.ReceiveCursistList {
     private List<Diploma> diplomaList;
     private List<Cursist> cursistList;
     private CursistBehaaldDiplomaAdapter cursistBehaaldDiplomaAdapter;
@@ -62,7 +63,9 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity  {
     private void loadCursistListData() {
         showProgressDialog();
         // Check if info needs to be loaded, if not go straight to showing it.
+        String groupId = "groepsnummer1";
         if (cursistList == null) {
+            PersistCursist.getCursistList(groupId, this);
 //            new FetchCursistListAsyncTask(this).execute(showAlreadyCompleted);
         } else {
             hideProgressDialog();
@@ -119,8 +122,9 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity  {
         showNextCursist();
     }
 
-//    @Override
-    public void setCursistList(List<Cursist> cursistList) {
+
+    @Override
+    public void receiveCursistList(List<Cursist> cursistList) {
         if (cursistList == null) {
             showErrorDialog();
             return;
@@ -131,4 +135,8 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity  {
         showNextCursist();
     }
 
+    @Override
+    public void receiveCursistListFailed() {
+
+    }
 }

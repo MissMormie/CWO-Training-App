@@ -2,5 +2,5 @@
 <paths>
     <external-path
         name="my_images"
-        path="Android/data/cwoapp.nl.cwoapp/files/Pictures" />
+        path="Android/data/nl.multimedia_engineer.cwo_app/files/Pictures" />
 </paths>

@@ -162,13 +162,6 @@ public class Cursist extends CursistPartial implements Parcelable{
         this.cursistHeeftDiplomas = cursistHeeftDiplomas;
     }
 
-    public String nameToString() {
-        String tussenstuk = "";
-        if (tussenvoegsel != null && !tussenvoegsel.equals(""))
-            tussenstuk = tussenvoegsel + " ";
-
-        return voornaam + " " + tussenstuk + achternaam;
-    }
 
 
     // Make this smarter with a map so i don't have to run through everything every time. Only the first time. (together with isAlleEisenBehaald)
@@ -209,12 +202,16 @@ public class Cursist extends CursistPartial implements Parcelable{
     }
 
     public boolean hasDiploma(String diplomaId) {
-        if (cursistHeeftDiplomas == null)
+        if(diplomaSet == null || diplomaSet.isEmpty()) {
             return false;
-        for (CursistHeeftDiploma cursistHeeftDiploma : cursistHeeftDiplomas) {
-            if (cursistHeeftDiploma.getDiploma().getId().equals(diplomaId))
-                return true;
         }
+
+        for(Diploma diploma : diplomaSet) {
+            if(diploma.getId().equals(diplomaId)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -279,24 +276,6 @@ public class Cursist extends CursistPartial implements Parcelable{
     }
 
     // ---------------------------------------------------------------------------------------------
-    public String getHoogsteDiploma() {
-
-        if (cursistHeeftDiplomas == null)
-            return "";
-
-        CursistHeeftDiploma chdHolder = null;
-        for (CursistHeeftDiploma cursistHeeftDiploma : cursistHeeftDiplomas) {
-            if (chdHolder == null) {
-                chdHolder = cursistHeeftDiploma;
-            } else if (cursistHeeftDiploma.getDiploma().getNivo() > chdHolder.getDiploma().getNivo()) {
-                chdHolder = cursistHeeftDiploma;
-            }
-        }
-
-        if (chdHolder == null)
-            return "";
-        return chdHolder.getDiploma().toString();
-    }
 
     /**
      * Checks cursistHeeftDiploma isBehaald, if it is it makes sure it's on the list on behaalde diploma's, otherwise it removes it.

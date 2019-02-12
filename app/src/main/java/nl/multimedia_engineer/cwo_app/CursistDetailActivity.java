@@ -24,10 +24,12 @@ import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.databinding.ActivityCursistDetailBinding;
 import nl.multimedia_engineer.cwo_app.model.Cursist;
+import nl.multimedia_engineer.cwo_app.model.CursistPartial;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 
-public class CursistDetailActivity extends BaseActivity {
+public class CursistDetailActivity extends BaseActivity implements PersistCursist.ReceiveCursist{
 
     private ActivityCursistDetailBinding activityCursistDetailBinding;
     private Cursist cursist;
@@ -51,11 +53,15 @@ public class CursistDetailActivity extends BaseActivity {
         cursistBehaaldEisAdapter = new CursistBehaaldEisAdapter();
         recyclerView.setAdapter(cursistBehaaldEisAdapter);
 
-        cursist = getIntent().getExtras().getParcelable("cursist");
+        // Get info from parcel to fill part of cursist.
+        CursistPartial cursistPartial = getIntent().getExtras().getParcelable("cursist");
+        cursist = new Cursist(cursistPartial);
+
         // TODO Fix parcelable. Atm it doesn't pass eisen info, so reloading the cursist Info.
-        //displayCursistInfo();
-//        new FetchCursistTask().execute(cursist.id);
-//        loadDiplomaData();
+        displayCursistInfo();
+        // todo fix hardcoded group
+        showProgressDialog();
+        PersistCursist.getCursist("groepsnummer1", cursist.getId(), this);
     }
 
 
@@ -248,11 +254,24 @@ public class CursistDetailActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void receiveCursist(Cursist cursist) {
+        hideProgressDialog();
+        this.cursist = cursist;
+        displayCursistInfo();
+    }
+
+    @Override
+    public void receiveCursistFailed() {
+        showErrorDialog();
+    }
+
     private class DeleteCursistTask extends AsyncTask<Long, Void, Integer> {
 
         @Override
         protected void onPreExecute() {
-            toggleLoading(true);
+            showProgressDialog();
+
             super.onPreExecute();
         }
 
@@ -272,6 +291,7 @@ public class CursistDetailActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(Integer resultCode) {
+            hideProgressDialog();
             toggleLoading(false);
             if (resultCode == HttpURLConnection.HTTP_OK) {
                 cursistDeleted();

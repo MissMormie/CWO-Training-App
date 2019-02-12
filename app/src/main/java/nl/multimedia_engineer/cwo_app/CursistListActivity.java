@@ -28,13 +28,14 @@ import java.util.List;
 import java.util.Map;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
+import nl.multimedia_engineer.cwo_app.model.CursistPartial;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
-public class CursistListActivity extends BaseActivity implements CursistListAdapater.CursistListAdapterOnClickHandler {
+public class CursistListActivity extends BaseActivity implements CursistListAdapater.CursistListAdapterOnClickHandler, PersistCursist.ReceiveCursistPartialList {
     private static final String TAG = CursistListActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
-//    private TextView mErrorMessageDisplay;
     private CursistListAdapater cursistListAdapater;
     private MenuItem searchItem;
     private static final int CURSIST_DETAIL = 1;
@@ -94,48 +95,13 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
         showProgressDialog();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String groupId = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_id), "");
-        DatabaseReference cursistenInGroup = DatabaseRefUtil.getCursistenInGroup(groupId);
-        Log.d(TAG, mAuth.getUid());
 
-        // Todo info gets updated, but i'm not doing anything with that yet. Figure out how to update from updated dataset.
-        cursistenInGroup.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                GenericTypeIndicator<HashMap<String, Cursist>> type = new GenericTypeIndicator<HashMap<String, Cursist>>() {};
-                HashMap<String, Cursist> result = dataSnapshot.getValue(type);
+        PersistCursist.getCursistPartialList(groupId, this);
 
-                List<Cursist> cursistList = new ArrayList<>();
-                for(Map.Entry<String, Cursist> entry : result.entrySet()) {
-                    entry.getValue().setId(entry.getKey());
-                    cursistList.add(entry.getValue());
-                }
-
-                Log.d(TAG, "Value is: " + dataSnapshot);
-                hideProgressDialog();
-                if (cursistList != null) {
-                    cursistListAdapater.setCursistListData(cursistList);
-                } else {
-                    showErrorMessage();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                showErrorMessage();
-                Log.w(TAG, "Failed to read value.", error.toException());
-                hideProgressDialog();
-
-            }
-        });
-
-        // todo
     }
 
     @Override
-    public void onClick(Cursist cursist) {
+    public void onClick(CursistPartial cursist) {
         Context context = this;
 
         Class destinationClass = CursistDetailActivity.class;
@@ -172,4 +138,14 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void receiveCursistPartialList(List<CursistPartial> cursistPartialList) {
+        hideProgressDialog();
+        cursistListAdapater.setCursistListData(cursistPartialList);
+    }
+
+    @Override
+    public void receiveCursistPartialListFailed() {
+        hideProgressDialog();
+    }
 }

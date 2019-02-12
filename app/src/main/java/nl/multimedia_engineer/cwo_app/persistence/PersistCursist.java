@@ -7,14 +7,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nl.multimedia_engineer.cwo_app.dto.CursistDTO;
 import nl.multimedia_engineer.cwo_app.dto.CursistPartialDTO;
 import nl.multimedia_engineer.cwo_app.model.Cursist;
+import nl.multimedia_engineer.cwo_app.model.CursistPartial;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
@@ -24,6 +28,17 @@ public class PersistCursist {
         void receiveCursistList(List<Cursist> cursistList);
         void receiveCursistListFailed();
     }
+
+    public interface ReceiveCursistPartialList {
+        void receiveCursistPartialList(List<CursistPartial> cursistPartialList);
+        void receiveCursistPartialListFailed();
+    }
+
+    public interface ReceiveCursist{
+        void receiveCursist(Cursist cursist);
+        void receiveCursistFailed();
+    }
+
 
     private static final String TAG = PersistCursist.class.getSimpleName();
 
@@ -60,18 +75,10 @@ public class PersistCursist {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Cursist> cursistList = new ArrayList<>();
                 for(DataSnapshot cursistSnapshot : dataSnapshot.getChildren()) {
-                    Cursist cursist = cursistSnapshot.getValue(Cursist.class);
-                    for(DataSnapshot diplomaSnapShot : cursistSnapshot.child("diplomas").getChildren()) {
-                        Diploma diploma = diplomaSnapShot.getValue(Diploma.class);
-                        cursist.addDiploma(diploma);
+                    Cursist cursist = getCursist(cursistSnapshot);
+                    if(cursist != null) {
+                        cursistList.add(cursist);
                     }
-
-                    for(DataSnapshot behaaldeEisenSnapShot : cursistSnapshot.child("behaalde eisen").getChildren()) {
-                        DiplomaEis diplomaEis = new DiplomaEis();
-                        diplomaEis.setId((String) behaaldeEisenSnapShot.getValue());
-                        cursist.addDiplomeEis(diplomaEis);
-                    }
-                    cursistList.add(cursist);
                 }
 
 
@@ -85,6 +92,62 @@ public class PersistCursist {
         });
     }
 
+    public static void getCursistPartialList(String groupId, final ReceiveCursistPartialList receiver) {
+        DatabaseReference groepenCursistenRef = DatabaseRefUtil.getGroepenCursisten(groupId);
+        groepenCursistenRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<HashMap<String, CursistPartial>> type = new GenericTypeIndicator<HashMap<String, CursistPartial>>() {};
+                HashMap<String, CursistPartial> result = dataSnapshot.getValue(type);
+                List<CursistPartial> cursistList = new ArrayList<>();
+                for(Map.Entry<String, CursistPartial> entry : result.entrySet()) {
+                    entry.getValue().setId(entry.getKey());
+                    cursistList.add(entry.getValue());
+                }
+
+                receiver.receiveCursistPartialList(cursistList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                receiver.receiveCursistPartialListFailed();
+            }
+        });
+
+    }
+
+    public static void getCursist(String groupId, String cursistId, final ReceiveCursist receiver) {
+        DatabaseReference cursistRef = DatabaseRefUtil.getCursistPartial(groupId, cursistId);
+        cursistRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                receiver.receiveCursist(getCursist(dataSnapshot));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                receiver.receiveCursistFailed();
+            }
+        });
+    }
+
+    private static Cursist  getCursist(DataSnapshot cursistSnapshot) {
+        Cursist cursist = cursistSnapshot.getValue(Cursist.class);
+        for(DataSnapshot diplomaSnapShot : cursistSnapshot.child("diplomas").getChildren()) {
+            Diploma diploma = new Diploma();
+            diploma.setId(diplomaSnapShot.getValue(String.class));
+            cursist.addDiploma(diploma);
+        }
+
+        for(DataSnapshot behaaldeEisenSnapShot : cursistSnapshot.child("behaalde eisen").getChildren()) {
+            DiplomaEis diplomaEis = new DiplomaEis();
+            diplomaEis.setId((String) behaaldeEisenSnapShot.getValue());
+            cursist.addDiplomeEis(diplomaEis);
+        }
+
+        return cursist;
+    }
+
     /**
      *
      * @param groupId
@@ -94,10 +157,26 @@ public class PersistCursist {
      */
     public static void updateCursistBehaaldExamenEis(String groupId, String cursistID, String examenEisId, boolean delete) {
         DatabaseReference databaseReference = DatabaseRefUtil.getBehaaldeEisCursist(groupId, cursistID, examenEisId);
-        if(delete == false) {
-            databaseReference.setValue(examenEisId);
-        } else {
+        if(delete) {
             databaseReference.removeValue();
+        } else {
+            databaseReference.setValue(examenEisId);
+        }
+    }
+
+    /**
+     * Adds the diploma to cursist info, or removes it if delete is true
+     * @param groupId
+     * @param curistId
+     * @param diplomaId
+     * @param delete
+     */
+    public static void saveCursistDiploma(String groupId, String curistId, String diplomaId, boolean delete) {
+        DatabaseReference databaseReference = DatabaseRefUtil.getDiplomaCursist(groupId, curistId, diplomaId);
+        if(delete) {
+            databaseReference.removeValue();
+        } else {
+            databaseReference.setValue(diplomaId);
         }
     }
 }
