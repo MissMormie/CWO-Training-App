@@ -57,9 +57,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
         } else {
             holder.itemView.setBackgroundColor(Color.parseColor("#FFFAF8FD"));
         }
-
-        // Todo if active group turn different color.
-
     }
 
 

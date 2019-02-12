@@ -95,7 +95,6 @@ class CursistBehaaldEisAdapter extends RecyclerView.Adapter<CursistBehaaldEisAda
 
                     PersistCursist.updateCursistBehaaldExamenEis("groepsnummer1", cursist.getId(), cursistBehaaldEis.getDiplomaEis().getId(), !isChecked);
 
-//                    new SaveEisBehaaldTask().execute(cursistBehaaldEis);
                 }
             });
 
@@ -155,55 +154,5 @@ class CursistBehaaldEisAdapter extends RecyclerView.Adapter<CursistBehaaldEisAda
 
         }
     }
-
-    private class SaveEisBehaaldTask extends AsyncTask<CursistBehaaldEis, Void, Boolean> {
-
-        /**
-         * params: Long cursist Id, Long cwoEis id, Boolean behaald.
-         */
-        @Override
-        protected Boolean doInBackground(CursistBehaaldEis... params) {
-            CursistBehaaldEis cursistBehaaldEis = params[0];
-            if (cursistBehaaldEis.isBehaald())
-                return saveCursistBehaaldEis(cursistBehaaldEis, "POST");
-            else
-                return saveCursistBehaaldEis(cursistBehaaldEis, "DELETE");
-
-        }
-
-        private boolean saveCursistBehaaldEis(CursistBehaaldEis cursistBehaaldEis, String action) {
-            boolean delete = false;
-            if(action == "DELETE") {
-                delete = true;
-            }
-            // todo remove hardcoded group
-            PersistCursist.updateCursistBehaaldExamenEis("groepsnummer1", cursist.getId(), cursistBehaaldEis.getDiplomaEis().getId(), delete);
-
-
-//            URL url = NetworkUtils.buildUrl("cursistBehaaldEisen");
-//            //String json = "{\"eisId\": 1, \"cursistId\": 1}";
-//            String json = cursistBehaaldEis.toJson();
-//            try {
-//                int resultCode = NetworkUtils.uploadToServer(url, json, action);
-//                if (resultCode == 200)
-//                    return true;
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-            return false;
-
-        }
-
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (!success) {
-                String error = context.getString(R.string.opslaan_mislukt);
-                Toast.makeText(context, "" + error, Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    }
-
 
 }

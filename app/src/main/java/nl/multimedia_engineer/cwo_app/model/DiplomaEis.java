@@ -3,6 +3,7 @@ package nl.multimedia_engineer.cwo_app.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class DiplomaEis implements Parcelable {
@@ -79,6 +80,18 @@ public class DiplomaEis implements Parcelable {
         checked = !checked;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DiplomaEis that = (DiplomaEis) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     // ---------------------------- Support for Parcelable --------------------------------------- //
     @Override

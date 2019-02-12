@@ -6,7 +6,11 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 
 public class Cursist extends CursistPartial implements Parcelable{
 
@@ -16,11 +20,13 @@ public class Cursist extends CursistPartial implements Parcelable{
     public Date paspoortDate;
     public Long paspoort;
     public String opmerking;
-    private List<CursistBehaaldEis> cursistBehaaldEis;
+
+    private Set<Diploma> diplomaSet;
+    private Set<DiplomaEis> diplomaEisSet;
 
     // todo remove this.
     private List<CursistHeeftDiploma> cursistHeeftDiplomas;
-    private List<Diploma> diplomaList;
+    private List<CursistBehaaldEis> cursistBehaaldEis;
 
     public Cursist() {
 
@@ -80,25 +86,42 @@ public class Cursist extends CursistPartial implements Parcelable{
         this.achternaam = "Duijvesteijn";
     }
 
-    public List<Diploma> getDiplomaList() {
-        return diplomaList;
+    public Set<Diploma> getDiplomaList() {
+        return diplomaSet;
     }
 
-    public void setDiplomaList(List<Diploma> diplomaList) {
-        this.diplomaList = diplomaList;
+    public void setDiplomaList(Set<Diploma> diplomaList) {
+        this.diplomaSet = diplomaList;
     }
 
     public void addDiploma(Diploma diploma) {
-        if(diplomaList == null) {
-            diplomaList = new ArrayList<>();
+        if(diplomaSet == null) {
+            diplomaSet = new HashSet<>();
         }
-        // todo add check diploma didn't already exist
 
-        diplomaList.add(diploma);
+        diplomaSet.add(diploma);
+    }
+
+    public void addDiplomeEis(DiplomaEis diplomaEis) {
+        if(diplomaEisSet == null) {
+            diplomaEisSet = new HashSet<>();
+        }
+
+        diplomaEisSet.add(diplomaEis);
+    }
+
+    public void removeDiplomaEis(DiplomaEis diplomaEis) {
+        if(diplomaEisSet == null) {
+            return;
+        }
+        diplomaEisSet.remove(diplomaEis);
     }
 
     public void removeDiploma(Diploma diploma) {
-
+        if(diplomaSet == null) {
+            return;
+        }
+        diplomaSet.remove(diploma);
     }
 
     public List<CursistBehaaldEis> getCursistBehaaldEis() {
@@ -151,12 +174,8 @@ public class Cursist extends CursistPartial implements Parcelable{
     // Make this smarter with a map so i don't have to run through everything every time. Only the first time. (together with isAlleEisenBehaald)
     // Low prio, low numbers make this not very slow.
     public boolean isEisBehaald(DiplomaEis diplomaEis) {
-        if (cursistBehaaldEis == null)
-            return false;
-        for (CursistBehaaldEis cbe : cursistBehaaldEis) {
-            if (cbe.getDiplomaEis() != null && cbe.getDiplomaEis().getId().equals(diplomaEis.getId())) {
-                return true;
-            }
+        if(diplomaEisSet != null) {
+            return diplomaEisSet.contains(diplomaEis);
         }
         return false;
     }
@@ -165,10 +184,14 @@ public class Cursist extends CursistPartial implements Parcelable{
      * Checks if all diplomaEisen in the list are attained by the cursist.
      */
     public boolean isAlleEisenBehaald(List<DiplomaEis> diplomaEisList) {
+        if(diplomaEisSet == null) {
+            return false;
+        }
         for (DiplomaEis diplomaEis : diplomaEisList) {
             // Als 1 eis niet is behaald, is niet alles behaald, dus return false.
-            if (!hasDiploma(diplomaEis.getDiploma().getId()) && !isEisBehaald(diplomaEis))
+            if(!diplomaEisSet.contains(diplomaEis)) {
                 return false;
+            }
         }
         return true;
     }

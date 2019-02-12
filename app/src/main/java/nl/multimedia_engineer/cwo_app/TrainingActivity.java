@@ -20,7 +20,7 @@ public class TrainingActivity extends BaseActivity
         implements
         TrainingsListAdapter.TrainingListAdapterOnClickHandler,
         PersistExamenEisen.ReceivedDiplomaEisen {
-    private ProgressBar mLoadingIndicator;
+//    private ProgressBar mLoadingIndicator;
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
     private Button volgendeButton;
@@ -33,7 +33,7 @@ public class TrainingActivity extends BaseActivity
         setContentView(R.layout.activity_training);
 
         // Link the variables to the view items.
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+//        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_training_lijst);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         volgendeButton = (Button) findViewById(R.id.buttonVolgende);
@@ -71,7 +71,8 @@ public class TrainingActivity extends BaseActivity
     }
 
     private void loadCwoEisData() {
-        mLoadingIndicator.setVisibility(View.GONE);
+//        mLoadingIndicator.setVisibility(View.GONE);
+        showProgressDialog("loading..");
         // todo make this not hardcoded.
         PersistExamenEisen.requestDiplomaEisen("windsurfen", this);
     }
@@ -101,6 +102,7 @@ public class TrainingActivity extends BaseActivity
 
     @Override
     public void receiveDiplomaEisen(List<DiplomaEis> diplomaEisList) {
+        hideProgressDialog();
         if(diplomaEisList == null || diplomaEisList.size() == 0) {
             showErrorMessage();
         } else {

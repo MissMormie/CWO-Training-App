@@ -22,6 +22,7 @@ import nl.multimedia_engineer.cwo_app.util.ConnectionIssuesUtil;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
 public class CreateOrJoinGroupActivity extends BaseActivity {
+    private static final String TAG = CreateOrJoinGroupActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

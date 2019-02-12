@@ -1,10 +1,12 @@
 package nl.multimedia_engineer.cwo_app;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,7 +30,7 @@ import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
  */
 public abstract class BaseActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
-    final String TAG = "BaseActivity";
+    private static final String TAG = BaseActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +66,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         FirebaseApp.getInstance();
         mAuth = FirebaseAuth.getInstance();
     }
-
-    protected void showLoading(boolean show) {
-        if(show) {
-            Toast.makeText(this, "Loading data, please wait", Toast.LENGTH_SHORT).show();
-        }
-        // TODO
-    }
+//
+//    protected void showLoading(boolean show) {
+//        if(show) {
+//            Toast.makeText(this, "Loading data, please wait", Toast.LENGTH_SHORT).show();
+//        }
+//        // TODO
+//    }
 
     /**
      * Gets group data for this user, if no group data
@@ -86,7 +88,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if(this instanceof  CreateOrJoinGroupActivity) {
             return;
         }
-        showLoading(true);
+        showProgressDialog("");
 
         DatabaseReference myRef = DatabaseRefUtil.getUserGroupsRef(mAuth);
         final Context context = this;
@@ -111,7 +113,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                 }
 
-                showLoading(false);
+                hideProgressDialog();
             }
 
             @Override
@@ -119,9 +121,36 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
                 ConnectionIssuesUtil.unableToConnect(context);
-                showLoading(false);
+                hideProgressDialog();
             }
         });
+    }
+
+
+    @VisibleForTesting
+    public ProgressDialog mProgressDialog;
+
+    public void showProgressDialog(String text) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(text);
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressDialog();
     }
 
 }

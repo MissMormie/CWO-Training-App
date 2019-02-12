@@ -69,6 +69,7 @@ public class PersistCursist {
                     for(DataSnapshot behaaldeEisenSnapShot : cursistSnapshot.child("behaalde eisen").getChildren()) {
                         DiplomaEis diplomaEis = new DiplomaEis();
                         diplomaEis.setId((String) behaaldeEisenSnapShot.getValue());
+                        cursist.addDiplomeEis(diplomaEis);
                     }
                     cursistList.add(cursist);
                 }

@@ -66,6 +66,7 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
 
     private void showFirstCursist() {
         cursistBehaaldEisAdapter.setCwoListData(diplomaEisList);
+        // effectively first
         showNextCursist();
     }
 
@@ -123,6 +124,7 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
             return;
         }
 
+        // todo remove this use loading from baseactivity
         dataBinding.pbLoadingIndicator.setVisibility(View.GONE);
         this.cursistList = cursistList;
         showFirstCursist();
