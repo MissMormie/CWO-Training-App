@@ -5,6 +5,7 @@
     <string name="btn_cursisten_lijst">Overzicht cursisten</string>
     <string name="btn_nieuwe_training">Training</string>
     <string name="btn_diploma_uitgeven">Diploma uitgeven</string>
+    <string name="btn_bekijk_diploma_eisen">Bekijk diploma eisen</string>
     <string name="error_message">Er is iets fout gegaan, probeer het later opnieuw.</string>
 
     <!-- Preferences -->
@@ -103,8 +104,5 @@
     <string name="alert_dialog_text_ok">OK</string>
     <string name="alert_dialog_text_no">Nee</string>
     <string name="alert_dialog_text_yes">Ja</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

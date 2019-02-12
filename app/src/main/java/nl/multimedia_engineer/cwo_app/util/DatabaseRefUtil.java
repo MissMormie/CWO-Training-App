@@ -14,6 +14,7 @@ public class DatabaseRefUtil {
     private static String EXAMENEISEN = "exameneisen";
     private static String CURSISTEN = "cursisten";
     private static String CURSISTEN_PER_GROUP = "cursistenPerGroep";
+    private static String BEHAALDE_EISEN = "behaalde eisen";
 
     public static DatabaseReference getParentRef() {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -70,6 +71,17 @@ public class DatabaseRefUtil {
     public static DatabaseReference getCursistenPerGroepCursist(String groupId, String cursistId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         return database.getReference().child(CURSISTEN_PER_GROUP).child(groupId).child(cursistId);
+    }
+
+    public static DatabaseReference getCursistenPerGroepCursistBehaaldeEisen(String groupId, String cursistId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        return database.getReference().child(CURSISTEN_PER_GROUP).child(groupId).child(cursistId).child(BEHAALDE_EISEN);
+    }
+
+
+    public static DatabaseReference getBehaaldeEisCursist(String groupId, String cursistId, String eisId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        return database.getReference().child(CURSISTEN_PER_GROUP).child(groupId).child(cursistId).child(BEHAALDE_EISEN).child(eisId);
     }
 
     /**

@@ -15,7 +15,6 @@ import java.util.List;
 import nl.multimedia_engineer.cwo_app.dto.CursistDTO;
 import nl.multimedia_engineer.cwo_app.dto.CursistPartialDTO;
 import nl.multimedia_engineer.cwo_app.model.Cursist;
-import nl.multimedia_engineer.cwo_app.model.CursistPartial;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
@@ -23,6 +22,7 @@ import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 public class PersistCursist {
     public interface ReceiveCursistList {
         void receiveCursistList(List<Cursist> cursistList);
+        void receiveCursistListFailed();
     }
 
     private static final String TAG = PersistCursist.class.getSimpleName();
@@ -70,6 +70,7 @@ public class PersistCursist {
                         DiplomaEis diplomaEis = new DiplomaEis();
                         diplomaEis.setId((String) behaaldeEisenSnapShot.getValue());
                     }
+                    cursistList.add(cursist);
                 }
 
 
@@ -78,9 +79,24 @@ public class PersistCursist {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                receiver.receiveCursistListFailed();
             }
         });
+    }
 
+    /**
+     *
+     * @param groupId
+     * @param cursistID
+     * @param examenEisId
+     * @param delete, indicates if the value needs to be added or deleted.
+     */
+    public static void updateCursistBehaaldExamenEis(String groupId, String cursistID, String examenEisId, boolean delete) {
+        DatabaseReference databaseReference = DatabaseRefUtil.getBehaaldeEisCursist(groupId, cursistID, examenEisId);
+        if(delete == false) {
+            databaseReference.setValue(examenEisId);
+        } else {
+            databaseReference.removeValue();
+        }
     }
 }

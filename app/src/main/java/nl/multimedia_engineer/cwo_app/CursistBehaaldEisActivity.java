@@ -128,6 +128,11 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
         showFirstCursist();
     }
 
+    @Override
+    public void receiveCursistListFailed() {
+        showErrorMessage();
+    }
+
 
     private void showErrorMessage() {
         Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.error_message), Toast.LENGTH_LONG);

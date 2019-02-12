@@ -18,6 +18,7 @@ import java.util.List;
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.CursistBehaaldEis;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 
 /**
  * Created by sonja on 3/15/2017.
@@ -92,9 +93,13 @@ class CursistBehaaldEisAdapter extends RecyclerView.Adapter<CursistBehaaldEisAda
                     CursistBehaaldEis cursistBehaaldEis = new CursistBehaaldEis(cursist, de, isChecked);
                     cursist.addOrRemoveDiplomaEis(cursistBehaaldEis);
 
-                    new SaveEisBehaaldTask().execute(cursistBehaaldEis);
+                    PersistCursist.updateCursistBehaaldExamenEis("groepsnummer1", cursist.getId(), cursistBehaaldEis.getDiplomaEis().getId(), !isChecked);
+
+//                    new SaveEisBehaaldTask().execute(cursistBehaaldEis);
                 }
             });
+
+
 
             imgButtonInfo.setOnClickListener(new ImageButton.OnClickListener() {
 
@@ -167,6 +172,13 @@ class CursistBehaaldEisAdapter extends RecyclerView.Adapter<CursistBehaaldEisAda
         }
 
         private boolean saveCursistBehaaldEis(CursistBehaaldEis cursistBehaaldEis, String action) {
+            boolean delete = false;
+            if(action == "DELETE") {
+                delete = true;
+            }
+            // todo remove hardcoded group
+            PersistCursist.updateCursistBehaaldExamenEis("groepsnummer1", cursist.getId(), cursistBehaaldEis.getDiplomaEis().getId(), delete);
+
 
 //            URL url = NetworkUtils.buildUrl("cursistBehaaldEisen");
 //            //String json = "{\"eisId\": 1, \"cursistId\": 1}";
