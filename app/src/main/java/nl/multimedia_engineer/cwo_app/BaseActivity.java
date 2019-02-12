@@ -1,7 +1,9 @@
 package nl.multimedia_engineer.cwo_app;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -10,6 +12,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
@@ -47,18 +50,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         getGroupDataOrMakeGroup();
     }
 
-    public boolean showingLoginIfNotLoggedIn(Context context) {
+    public void showingLoginIfNotLoggedIn(Context context) {
         if(context.getClass() == LoginActivity.class) {
-            return true;
+            return;
         }
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null || currentUser.isAnonymous()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
-            return true;
         }
-        return false;
     }
 
     public void initializeFireBaseAuth() {
@@ -66,13 +67,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         FirebaseApp.getInstance();
         mAuth = FirebaseAuth.getInstance();
     }
-//
-//    protected void showLoading(boolean show) {
-//        if(show) {
-//            Toast.makeText(this, "Loading data, please wait", Toast.LENGTH_SHORT).show();
-//        }
-//        // TODO
-//    }
 
     /**
      * Gets group data for this user, if no group data
@@ -88,7 +82,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         if(this instanceof  CreateOrJoinGroupActivity) {
             return;
         }
-        showProgressDialog("");
+
+        showProgressDialog();
 
         DatabaseReference myRef = DatabaseRefUtil.getUserGroupsRef(mAuth);
         final Context context = this;
@@ -130,9 +125,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
 
-    public void showProgressDialog(String text) {
+    public void showProgressDialog(String title, String text) {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setTitle(title);
             mProgressDialog.setMessage(text);
             mProgressDialog.setIndeterminate(true);
         }
@@ -140,11 +136,38 @@ public abstract class BaseActivity extends AppCompatActivity {
         mProgressDialog.show();
     }
 
+    /**
+     * Shows a progress dialog with a generic loading text. User showProgressDialog(String title, String text) if you want to set a specific message.
+     */
+    public void showProgressDialog() {
+        showProgressDialog(getString(R.string.alert_dialog_title_loading), getString(R.string.alert_dialog_text_loading));
+    }
 
     public void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
+    }
+
+    /**
+     * Shows a alert dialog with a generic error text. User showErrorDialog(String title, String text) if you want to set a specific message.
+     */
+    public void showErrorDialog() {
+        showErrorDialog(getString(R.string.alert_dialog_error_title), getString(R.string.alert_dialog_error_tekst));
+    }
+
+    public void showErrorDialog(String title, String text) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(text);
+        builder.setTitle(title);
+        builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
     }
 
     @Override

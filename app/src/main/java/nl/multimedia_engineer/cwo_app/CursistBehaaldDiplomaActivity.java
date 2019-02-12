@@ -9,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,21 +56,24 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity  {
 
 
         loadCursistListData();
+
     }
 
     private void loadCursistListData() {
+        showProgressDialog();
         // Check if info needs to be loaded, if not go straight to showing it.
         if (cursistList == null) {
 //            new FetchCursistListAsyncTask(this).execute(showAlreadyCompleted);
         } else {
-            dataBinding.pbLoadingIndicator.setVisibility(View.GONE);
+            hideProgressDialog();
             showNextCursist();
         }
     }
 
 
     private void showNextCursist() {
-        if (cursistList.size() == 0) {
+        if (cursistList.isEmpty()) {
+            // todo show page that all cursisten are shown.
             backToMainActivity();
         } else {
             currentCursist = cursistList.remove(0);
@@ -88,11 +90,14 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity  {
         cursistBehaaldDiplomaAdapter.setCursist(currentCursist);
         dataBinding.textViewNaam.setText(currentCursist.nameToString());
         dataBinding.textViewOpmerking.setText(currentCursist.opmerking);
-        if (currentCursist.paspoortDate == null)
-            dataBinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.nee));
-        else
-            dataBinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.ja));
+        String paspoortText;
+        if (currentCursist.paspoortDate == null) {
+            paspoortText = getString(R.string.paspoort) +": " + getString(R.string.nee);
+        } else {
+            paspoortText = getString(R.string.paspoort) + ": " + getString(R.string.ja);
+        }
 
+        dataBinding.textViewPaspoort.setText(paspoortText);
         // Set photo if available, else set user mockup.
         if (currentCursist.getCursistFoto() != null) {
 //            URL fotoUrl = NetworkUtils.buildUrl("foto", currentCursist.getCursistFoto().getId().toString());
@@ -117,17 +122,13 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity  {
 //    @Override
     public void setCursistList(List<Cursist> cursistList) {
         if (cursistList == null) {
-            showErrorMessage();
+            showErrorDialog();
             return;
         }
 
-        dataBinding.pbLoadingIndicator.setVisibility(View.GONE);
+        hideProgressDialog();
         this.cursistList = cursistList;
         showNextCursist();
     }
 
-    private void showErrorMessage() {
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.error_message), Toast.LENGTH_LONG);
-        toast.show();
-    }
 }

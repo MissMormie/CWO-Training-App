@@ -316,7 +316,7 @@ public class CursistDetailActivity extends BaseActivity {
             if (diplomaListResult != null) {
                 List<DiplomaEis> diplomaEisenLijst = new ArrayList<>();
                 for (int i = 0; i < diplomaListResult.size(); i++) {
-                    diplomaEisenLijst.addAll(diplomaListResult.get(i).getDiplomaEis());
+                    diplomaEisenLijst.addAll(diplomaListResult.get(i).getDiplomaEisList());
                 }
 
                 displayDiplomaEisInfo(diplomaEisenLijst);

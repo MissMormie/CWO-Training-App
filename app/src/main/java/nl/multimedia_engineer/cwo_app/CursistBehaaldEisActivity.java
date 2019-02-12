@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -58,10 +57,9 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     }
 
     private void loadCursistListData() {
+        showProgressDialog();
         // todo remove hardcoded group
         PersistCursist.getCursistList("groepsnummer1", this);
-
-        // new FetchCursistListAsyncTask(this).execute(false);
     }
 
     private void showFirstCursist() {
@@ -84,7 +82,6 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
             }
         }
     }
-
 
     private void setCursistData() {
         cursistBehaaldEisAdapter.setCursist(currentCursist);
@@ -120,25 +117,21 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     @Override
     public void receiveCursistList(List<Cursist> cursistList) {
         if (cursistList == null) {
-            showErrorMessage();
+            showErrorDialog();
             return;
         }
 
         // todo remove this use loading from baseactivity
-        dataBinding.pbLoadingIndicator.setVisibility(View.GONE);
+        hideProgressDialog();
         this.cursistList = cursistList;
         showFirstCursist();
     }
 
     @Override
     public void receiveCursistListFailed() {
-        showErrorMessage();
+        showErrorDialog();
     }
 
 
-    private void showErrorMessage() {
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.error_message), Toast.LENGTH_LONG);
-        toast.show();
-    }
 
 }

@@ -13,24 +13,6 @@
         android:text="@string/wat_geoefend"
         android:textSize="@dimen/text_size_large" />
 
-    <!-- Error message -->
-    <TextView
-        android:id="@+id/tv_error_message_display"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/error_message"
-        android:textSize="@dimen/text_size"
-        android:visibility="gone" />
-
-    <!-- Loading circle -->
-    <!--<ProgressBar-->
-        <!--android:id="@+id/pb_loading_indicator"-->
-        <!--android:layout_height="42dp"-->
-        <!--android:layout_width="42dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:visibility="visible" />-->
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_training_lijst"
         android:layout_width="match_parent"

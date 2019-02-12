@@ -3,6 +3,7 @@ package nl.multimedia_engineer.cwo_app.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,17 +13,17 @@ import java.util.List;
 public class Diploma implements Parcelable {
     private String id;
     private String titel;
-    private List<DiplomaEis> diplomaEis;
+    private List<DiplomaEis> diplomaEisList;
     private int nivo;
 
     public Diploma() {
 
     }
 
-    public Diploma(String id, String titel, int nivo, List<DiplomaEis> diplomaEis) {
+    public Diploma(String id, String titel, int nivo, List<DiplomaEis> diplomaEisList) {
         this.id = id;
         this.titel = titel;
-        this.diplomaEis = diplomaEis;
+        this.diplomaEisList = diplomaEisList;
         this.nivo = nivo;
     }
 
@@ -42,12 +43,21 @@ public class Diploma implements Parcelable {
         this.titel = titel;
     }
 
-    public List<DiplomaEis> getDiplomaEis() {
-        return diplomaEis;
+    public List<DiplomaEis> getDiplomaEisList() {
+        return diplomaEisList;
     }
 
-    public void setDiplomaEis(List<DiplomaEis> diplomaEis) {
-        this.diplomaEis = diplomaEis;
+    public void addDiplomaEis(DiplomaEis diplomaEis) {
+        if(diplomaEis == null)
+            return;
+        if(diplomaEisList == null) {
+            diplomaEisList = new ArrayList<>();
+        }
+        diplomaEisList.add(diplomaEis);
+    }
+
+    public void setDiplomaEisList(List<DiplomaEis> diplomaEisList) {
+        this.diplomaEisList = diplomaEisList;
     }
 
     public int getNivo() {
@@ -95,7 +105,7 @@ public class Diploma implements Parcelable {
         id = parcel.readString();
         titel = parcel.readString();
         nivo = parcel.readInt();
-        //parcel.readTypedList(diplomaEis, DiplomaEis.CREATOR);
+        //parcel.readTypedList(diplomaEisList, DiplomaEis.CREATOR);
     }
 
     @Override
@@ -108,6 +118,6 @@ public class Diploma implements Parcelable {
         parcel.writeString(id);
         parcel.writeString(titel);
         parcel.writeInt(nivo);
-        //parcel.writeTypedList(diplomaEis);
+        //parcel.writeTypedList(diplomaEisList);
     }
 }

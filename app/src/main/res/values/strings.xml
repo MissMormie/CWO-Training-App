@@ -6,7 +6,6 @@
     <string name="btn_nieuwe_training">Training</string>
     <string name="btn_diploma_uitgeven">Diploma uitgeven</string>
     <string name="btn_bekijk_diploma_eisen">Bekijk diploma eisen</string>
-    <string name="error_message">Er is iets fout gegaan, probeer het later opnieuw.</string>
 
     <!-- Preferences -->
     <string name="pref_show_already_completed_label">Laat al gehaald zien.</string>
@@ -101,8 +100,16 @@
     <string name="alert_dialog_title_update">Wijzigen</string>
     <string name="alert_dialog_text_update_group">Vul hier een nieuwe naam in voor je groep. Deze nieuwe naam is enkel voor jou zichtbaar, voor andere beheerders van de groep veranderd er niets.</string>
 
+    <string name="alert_dialog_title_loading">Laden</string>
+    <string name="alert_dialog_text_loading">Een moment geduld, de gegevens worden geladen.</string>
+
+    <string name="alert_dialog_error_title">Oops</string>
+    <string name="alert_dialog_error_tekst">Er is iets fout gegaan, probeer het later opnieuw.</string>
+
+
     <string name="alert_dialog_text_ok">OK</string>
     <string name="alert_dialog_text_no">Nee</string>
     <string name="alert_dialog_text_yes">Ja</string>
+
 
 </resources>

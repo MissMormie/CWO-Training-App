@@ -24,7 +24,7 @@ public class DisciplinesExpandableListAdapter extends BaseExpandableListAdapter 
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        return diplomaList.get(groupPosition).getDiplomaEis().get(childPosititon);
+        return diplomaList.get(groupPosition).getDiplomaEisList().get(childPosititon);
     }
 
     @Override
@@ -65,10 +65,10 @@ public class DisciplinesExpandableListAdapter extends BaseExpandableListAdapter 
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        if(diplomaList.get(groupPosition).getDiplomaEis() == null) {
+        if(diplomaList.get(groupPosition).getDiplomaEisList() == null) {
             return 0;
         }
-        return diplomaList.get(groupPosition).getDiplomaEis().size();
+        return diplomaList.get(groupPosition).getDiplomaEisList().size();
     }
 
     @Override

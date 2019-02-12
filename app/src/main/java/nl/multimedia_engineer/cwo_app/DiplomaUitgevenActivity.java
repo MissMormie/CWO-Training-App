@@ -7,9 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +19,10 @@ import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
  * Shows list of available diploma's from database. Can pick one as radio button.
  */
 public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUitgevenListAdapter.DiplomaListAdapterOnClickHandler {
-    private ProgressBar mLoadingIndicator;
     private DiplomaUitgevenListAdapter diplomaListAdapter;
     private Diploma selectedDiploma;
     private final ArrayList<Diploma> selectedDiplomaList = new ArrayList<>();
     private Button volgendeButton;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +30,7 @@ public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUit
         setContentView(R.layout.activity_diploma_uitgeven);
 
         // Link the variables to the view items.
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_diploma_lijst);
-        TextView mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         volgendeButton = (Button) findViewById(R.id.buttonVolgende);
 
         // Set up of the recycler view and adapter.
@@ -58,17 +52,12 @@ public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUit
 
 //    @Override
     public void setDiploma(List<Diploma> diplomaList) {
-        mLoadingIndicator.setVisibility(View.GONE);
+        hideProgressDialog();
         if (diplomaList == null) {
-            showError();
+            showErrorDialog( );
         } else {
             diplomaListAdapter.setDiplomaList(diplomaList);
         }
-    }
-
-    private void showError() {
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.error_message), Toast.LENGTH_LONG);
-        toast.show();
     }
 
 // ---------------------------- Click ----------------------------------------------------------
@@ -88,13 +77,13 @@ public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUit
         Class destinationClass = CursistenBehalenDiplomaActivity.class;
         Intent intent = new Intent(context, destinationClass);
         intent.putExtra("diploma", selectedDiplomaList.get(0));
-        if(selectedDiplomaList.get(0).getDiplomaEis() instanceof ArrayList) {
-            ArrayList<DiplomaEis> diplomaEisArrayList = (ArrayList) selectedDiplomaList.get(0).getDiplomaEis();
+        if(selectedDiplomaList.get(0).getDiplomaEisList() instanceof ArrayList) {
+            ArrayList<DiplomaEis> diplomaEisArrayList = (ArrayList) selectedDiplomaList.get(0).getDiplomaEisList();
             intent.putExtra("selectedDiplomaEisList", diplomaEisArrayList);
             startActivity(intent);
         }
 
-        showError();
+        showErrorDialog();
     }
 
 

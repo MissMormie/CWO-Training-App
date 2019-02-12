@@ -33,9 +33,8 @@ import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 public class CursistListActivity extends BaseActivity implements CursistListAdapater.CursistListAdapterOnClickHandler {
     private static final String TAG = CursistListActivity.class.getSimpleName();
 
-    private ProgressBar mLoadingIndicator;
     private RecyclerView mRecyclerView;
-    private TextView mErrorMessageDisplay;
+//    private TextView mErrorMessageDisplay;
     private CursistListAdapater cursistListAdapater;
     private MenuItem searchItem;
     private static final int CURSIST_DETAIL = 1;
@@ -50,9 +49,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
         /*
          * Get references to the elements in the layout we need.
          * */
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_cursist_lijst);
-        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -94,7 +91,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
     }
 
     private void loadCursistListData() {
-        mLoadingIndicator.setVisibility(View.VISIBLE);
+        showProgressDialog();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String groupId = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_id), "");
         DatabaseReference cursistenInGroup = DatabaseRefUtil.getCursistenInGroup(groupId);
@@ -116,7 +113,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
                 }
 
                 Log.d(TAG, "Value is: " + dataSnapshot);
-                mLoadingIndicator.setVisibility(View.GONE);
+                hideProgressDialog();
                 if (cursistList != null) {
                     cursistListAdapater.setCursistListData(cursistList);
                 } else {
@@ -129,7 +126,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
             public void onCancelled(DatabaseError error) {
                 showErrorMessage();
                 Log.w(TAG, "Failed to read value.", error.toException());
-                mLoadingIndicator.setVisibility(View.GONE);
+                hideProgressDialog();
 
             }
         });
@@ -167,17 +164,12 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
 
 
     private void showErrorMessage() {
-        /* First, hide the currently visible data */
         mRecyclerView.setVisibility(View.INVISIBLE);
-        /* Then, show the error */
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        showErrorDialog();
     }
 
     public void showCursistListData() {
-        /* First, show the cursisten data */
         mRecyclerView.setVisibility(View.VISIBLE);
-        /* Then, hide the error */
-        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
     }
 
 }

@@ -20,9 +20,8 @@ public class TrainingActivity extends BaseActivity
         implements
         TrainingsListAdapter.TrainingListAdapterOnClickHandler,
         PersistExamenEisen.ReceivedDiplomaEisen {
-//    private ProgressBar mLoadingIndicator;
+
     private RecyclerView mRecyclerView;
-    private TextView mErrorMessageDisplay;
     private Button volgendeButton;
     private TrainingsListAdapter trainingsListAdapter;
     private final ArrayList<DiplomaEis> selectedDiplomaEisList = new ArrayList<>();
@@ -33,10 +32,8 @@ public class TrainingActivity extends BaseActivity
         setContentView(R.layout.activity_training);
 
         // Link the variables to the view items.
-//        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_training_lijst);
-        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
-        volgendeButton = (Button) findViewById(R.id.buttonVolgende);
+        mRecyclerView = findViewById(R.id.recyclerview_training_lijst);
+        volgendeButton = findViewById(R.id.buttonVolgende);
 
         // Set up of the recycler view and adapter.
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -56,7 +53,7 @@ public class TrainingActivity extends BaseActivity
      *
      */
     public void onClickShowVolgende(View view) {
-        if (selectedDiplomaEisList.size() > 0) {
+        if (!selectedDiplomaEisList.isEmpty()) {
             showCursistBehaaldEisenActivity();
         }
     }
@@ -71,8 +68,7 @@ public class TrainingActivity extends BaseActivity
     }
 
     private void loadCwoEisData() {
-//        mLoadingIndicator.setVisibility(View.GONE);
-        showProgressDialog("loading..");
+        showProgressDialog();
         // todo make this not hardcoded.
         PersistExamenEisen.requestDiplomaEisen("windsurfen", this);
     }
@@ -93,25 +89,16 @@ public class TrainingActivity extends BaseActivity
     }
 
     private void toggleVolgendeButton() {
-        if(selectedDiplomaEisList.size() > 0 ) {
-            volgendeButton.setEnabled(true);
-        } else if(selectedDiplomaEisList.size() == 0){
-            volgendeButton.setEnabled(false);
-        }
+        volgendeButton.setEnabled(!selectedDiplomaEisList.isEmpty());
     }
 
     @Override
     public void receiveDiplomaEisen(List<DiplomaEis> diplomaEisList) {
         hideProgressDialog();
-        if(diplomaEisList == null || diplomaEisList.size() == 0) {
-            showErrorMessage();
+        if(diplomaEisList == null || diplomaEisList.isEmpty()) {
+            showErrorDialog();
         } else {
             trainingsListAdapter.setCwoData(diplomaEisList);
         }
-    }
-
-    private void showErrorMessage() {
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 }
