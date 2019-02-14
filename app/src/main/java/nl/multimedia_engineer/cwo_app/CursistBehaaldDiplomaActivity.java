@@ -57,7 +57,6 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
 
 
         loadCursistListData();
-
     }
 
     private void loadCursistListData() {
@@ -68,6 +67,7 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
             PersistCursist.getCursistList(groupId, this);
 //            new FetchCursistListAsyncTask(this).execute(showAlreadyCompleted);
         } else {
+            // Got cursist through extras
             hideProgressDialog();
             showNextCursist();
         }
@@ -81,11 +81,8 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
         } else {
             currentCursist = cursistList.remove(0);
             // Als deze cursist alle eisen behaald heeft en deze preference is aangegeven, sla deze cursist dan over.
-            if (currentCursist.isAlleDiplomasBehaald(diplomaList)) {
-                showNextCursist();
-            } else {
-                displayCursistInfo();
-            }
+
+            displayCursistInfo();
         }
     }
 
@@ -130,8 +127,18 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
             return;
         }
 
+        if(this.cursistList == null) {
+            this.cursistList = new ArrayList<>();
+        }
+        // todo add check that the trainer does not want to see students who already have all diplomas.
+        for(Cursist cursist : cursistList) {
+            if(!cursist.isAlleDiplomasBehaald(diplomaList)) {
+                this.cursistList.add(cursist);
+            }
+        }
+
         hideProgressDialog();
-        this.cursistList = cursistList;
+//        this.cursistList = cursistList;
         showNextCursist();
     }
 

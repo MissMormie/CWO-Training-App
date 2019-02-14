@@ -10,12 +10,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import java.net.URL;
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.CursistHeeftDiploma;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 /**
  * Created by sonja on 4/3/2017.
@@ -79,17 +80,15 @@ class CursistBehaaldDiplomaAdapter extends RecyclerView.Adapter<CursistBehaaldDi
                     if (!saveData)
                         return;
 
-                    int adapterPosition = getAdapterPosition();
-                    Diploma diploma = diplomaList.get(adapterPosition);
+                    Diploma diploma = diplomaList.get(getAdapterPosition());
 
-                    CursistHeeftDiploma cursistHeeftDiploma = new CursistHeeftDiploma(cursist.getId(), diploma, isChecked);
-                    cursist.addOrRemoveDiploma(cursistHeeftDiploma);
+                    cursist.toggleDiploma(diploma);
 
-                    new SaveDiplomaBehaaldTask().execute(cursistHeeftDiploma);
+                    String activeGroup = PreferenceUtil.getPreferenceString(context, context.getString(R.string.pref_current_group_id), "");
+
+                    PersistCursist.saveCursistDiploma(activeGroup, cursist.getId(), diploma.getId(), !isChecked);
                 }
             });
-
-
         }
 
         void bind(int position) {

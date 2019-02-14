@@ -87,13 +87,10 @@ class CursistBehaaldEisAdapter extends RecyclerView.Adapter<CursistBehaaldEisAda
                     if (!saveData)
                         return;
 
-                    int adapterPosition = getAdapterPosition();
-                    DiplomaEis de = diplomaEisList.get(adapterPosition);
+                    DiplomaEis de = diplomaEisList.get(getAdapterPosition());
+                    cursist.toggleDiplomaEis(de);
 
-                    CursistBehaaldEis cursistBehaaldEis = new CursistBehaaldEis(cursist, de, isChecked);
-                    cursist.addOrRemoveDiplomaEis(cursistBehaaldEis);
-
-                    PersistCursist.updateCursistBehaaldExamenEis("groepsnummer1", cursist.getId(), cursistBehaaldEis.getDiplomaEis().getId(), !isChecked);
+                    PersistCursist.updateCursistBehaaldExamenEis("groepsnummer1", cursist.getId(), de.getId(), !isChecked);
 
                 }
             });

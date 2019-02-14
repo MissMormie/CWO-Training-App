@@ -44,7 +44,7 @@ public class PersistDiploma {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                receiver.onFailedReceivingDiplomas(databaseError);
             }
         });
 
