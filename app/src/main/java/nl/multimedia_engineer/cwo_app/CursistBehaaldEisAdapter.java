@@ -19,6 +19,7 @@ import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.CursistBehaaldEis;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 /**
  * Created by sonja on 3/15/2017.
@@ -89,9 +90,9 @@ class CursistBehaaldEisAdapter extends RecyclerView.Adapter<CursistBehaaldEisAda
 
                     DiplomaEis de = diplomaEisList.get(getAdapterPosition());
                     cursist.toggleDiplomaEis(de);
+                    String groupId = PreferenceUtil.getPreferenceString(buttonView.getContext(), buttonView.getContext().getString(R.string.pref_current_group_id), "");
 
-                    PersistCursist.updateCursistBehaaldExamenEis("groepsnummer1", cursist.getId(), de.getId(), !isChecked);
-
+                    PersistCursist.updateCursistBehaaldExamenEis(groupId, cursist.getId(), de.getId(), !isChecked);
                 }
             });
 

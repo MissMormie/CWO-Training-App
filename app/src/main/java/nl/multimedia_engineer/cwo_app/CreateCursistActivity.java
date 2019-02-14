@@ -15,6 +15,7 @@ import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 public class CreateCursistActivity extends BaseActivity implements CursistFormFragment.OnFragmentInteractionListener {
     private CursistFormFragment cursistFormFragment;
@@ -32,7 +33,9 @@ public class CreateCursistActivity extends BaseActivity implements CursistFormFr
 
     @Override
     public void saveCursist(Cursist cursist) {
-        PersistCursist.saveCursist("groepsnummer1", cursist);
+        String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+
+        PersistCursist.saveCursist(groupId, cursist);
         cursistSaved(cursist);
     }
 

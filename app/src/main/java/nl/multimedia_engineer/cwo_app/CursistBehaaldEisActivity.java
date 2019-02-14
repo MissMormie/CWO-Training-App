@@ -17,6 +17,7 @@ import nl.multimedia_engineer.cwo_app.databinding.ActivityCursistChecklistBindin
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 public class CursistBehaaldEisActivity extends BaseActivity implements  PersistCursist.ReceiveCursistList{
 
@@ -58,8 +59,8 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
 
     private void loadCursistListData() {
         showProgressDialog();
-        // todo remove hardcoded group
-        PersistCursist.getCursistList("groepsnummer1", this);
+        String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+        PersistCursist.getCursistList(groupId, this);
     }
 
     private void showFirstCursist() {

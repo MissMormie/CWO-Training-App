@@ -17,6 +17,7 @@ import nl.multimedia_engineer.cwo_app.databinding.ActivityCursistChecklistBindin
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 
 public class CursistBehaaldDiplomaActivity extends BaseActivity implements PersistCursist.ReceiveCursistList {
@@ -61,11 +62,10 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
 
     private void loadCursistListData() {
         showProgressDialog();
-        // Check if info needs to be loaded, if not go straight to showing it.
-        String groupId = "groepsnummer1";
+
         if (cursistList == null) {
+            String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
             PersistCursist.getCursistList(groupId, this);
-//            new FetchCursistListAsyncTask(this).execute(showAlreadyCompleted);
         } else {
             // Got cursist through extras
             hideProgressDialog();

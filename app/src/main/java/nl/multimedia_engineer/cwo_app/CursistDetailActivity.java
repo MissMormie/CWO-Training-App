@@ -27,6 +27,7 @@ import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 import nl.multimedia_engineer.cwo_app.persistence.PersistDiploma;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 public class CursistDetailActivity
         extends BaseActivity
@@ -65,7 +66,9 @@ public class CursistDetailActivity
         displayCursistInfo();
         // todo fix hardcoded group
         showProgressDialog();
-        PersistCursist.getCursist("groepsnummer1", cursist.getId(), this);
+        String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+
+        PersistCursist.getCursist(groupId, cursist.getId(), this);
     }
 
 

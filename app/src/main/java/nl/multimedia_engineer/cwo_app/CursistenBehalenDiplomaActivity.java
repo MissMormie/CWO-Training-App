@@ -19,6 +19,7 @@ import nl.multimedia_engineer.cwo_app.model.CursistHeeftDiploma;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 public class CursistenBehalenDiplomaActivity extends BaseActivity implements PersistCursist.ReceiveCursistList {
 
@@ -87,8 +88,8 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity implements Per
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!saveData)
                     return;
-                // todo not hardcoded
-                PersistCursist.saveCursistDiploma("groepsnummer1", currentCursist.getId(), diploma.getId(), !isChecked);
+                String groupId = PreferenceUtil.getPreferenceString(outerClass, getString(R.string.pref_current_group_id), "");
+                PersistCursist.saveCursistDiploma(groupId, currentCursist.getId(), diploma.getId(), !isChecked);
 
             }
         });
@@ -110,8 +111,7 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity implements Per
 
     private void loadCursistListData() {
         showProgressDialog();
-        // todo not hardcoded groupId.
-        String groupId = "groepsnummer1";
+        String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
         PersistCursist.getCursistList(groupId, this);
 //        new FetchCursistListAsyncTask(this).execute(false);
     }
