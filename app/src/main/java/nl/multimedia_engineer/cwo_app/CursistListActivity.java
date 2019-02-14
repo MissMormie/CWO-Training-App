@@ -120,7 +120,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
                 cursistListAdapater.updateCursistInList((Cursist) data.getExtras().getParcelable("cursist"));
                 // update cursist
             else if (resultCode == RESULT_CANCELED) {
-                if (data.hasExtra("cursist")) {
+                if (data != null && data.hasExtra("cursist")) {
                     Cursist cursist = data.getExtras().getParcelable("cursist");
                     cursistListAdapater.deleteCursistFromList(cursist);
                 }

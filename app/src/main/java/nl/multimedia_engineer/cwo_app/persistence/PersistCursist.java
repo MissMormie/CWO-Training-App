@@ -80,8 +80,6 @@ public class PersistCursist {
                         cursistList.add(cursist);
                     }
                 }
-
-
                 receiver.receiveCursistList(cursistList);
             }
 
@@ -117,7 +115,7 @@ public class PersistCursist {
     }
 
     public static void getCursist(String groupId, String cursistId, final ReceiveCursist receiver) {
-        DatabaseReference cursistRef = DatabaseRefUtil.getCursistPartial(groupId, cursistId);
+        DatabaseReference cursistRef = DatabaseRefUtil.getCursist(groupId, cursistId);
         cursistRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

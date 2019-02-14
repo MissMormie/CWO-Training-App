@@ -84,6 +84,11 @@ public class DatabaseRefUtil {
         return database.getReference().child(GROUPS).child(groupId).child(CURSISTEN).child(cursistId);
     }
 
+    public static DatabaseReference getCursist(String groupId, String cursistId) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        return database.getReference().child(CURSISTEN_PER_GROUP).child(groupId).child(cursistId);
+    }
+
     /**
      * @param groupId
      * @param verborgen, is false doesn't return cursisten that are hidden (cursist verborgen = true);
