@@ -91,10 +91,9 @@ public class DatabaseRefUtil {
 
     /**
      * @param groupId
-     * @param verborgen, is false doesn't return cursisten that are hidden (cursist verborgen = true);
      * @return
      */
-    public static DatabaseReference getCursistenPerGroep(String groupId, boolean verborgen) {
+    public static DatabaseReference getCursistenPerGroep(String groupId) {
         // todo is verborgen is false, filter results.
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         return database.getReference().child(CURSISTEN_PER_GROUP).child(groupId);

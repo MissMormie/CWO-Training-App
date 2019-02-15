@@ -98,7 +98,8 @@
 
     <!-- Alert Dialog -->
     <string name="alert_dialog_title_delete">Verwijderen</string>
-    <string name="alert_dialog_text_delete_group">Wil je deze groep verwijderen? Indien andere mensen deze groep ook beheren blijft de groep voor hun wel bestaan. Zo niet wordt de groep definitief verwijderd.</string>
+    <string name="alert_dialog_text_delete_group">Wil je deze groep verwijderen? Je kunt de groep enkel voor jou verwijderen, of voor alle trainers/beheerders van de groep.</string>
+    <string name="alert_dialog_verify_delete_all">Weet je zeker dat je deze groep voor alle gebruikers wilt verwijderen?</string>
 
     <string name="alert_dialog_title_update">Wijzigen</string>
     <string name="alert_dialog_text_update_group">Vul hier een nieuwe naam in voor je groep. Deze nieuwe naam is enkel voor jou zichtbaar, voor andere beheerders van de groep veranderd er niets.</string>
@@ -109,8 +110,12 @@
     <string name="alert_dialog_error_title">Oops</string>
     <string name="alert_dialog_error_tekst">Er is iets fout gegaan, probeer het later opnieuw.</string>
 
+    <string name="alert_dialog_delete_all">Alles verwijderen</string>
+    <string name="alert_dialog_delete_for_me">Alleen voor mij</string>
+
 
     <string name="alert_dialog_text_ok">OK</string>
+    <string name="alert_dialog_text_cancel">Annuleren</string>
     <string name="alert_dialog_text_no">Nee</string>
     <string name="alert_dialog_text_yes">Ja</string>
 

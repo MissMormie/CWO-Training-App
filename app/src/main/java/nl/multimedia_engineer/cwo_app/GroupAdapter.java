@@ -59,7 +59,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
         }
     }
 
-
     public void setCurrentActiveGroupId(String id) {
         currentActiveGroup = id;
     }
@@ -112,7 +111,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
                 listener.onItemEditClicked(getAdapterPosition());
             } else {
                 listener.onItemClicked(getAdapterPosition());
-                // click on row. Make this active group.
             }
             Toast.makeText(v.getContext(), "clicked "  + getAdapterPosition(), Toast.LENGTH_LONG);
         }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import nl.multimedia_engineer.cwo_app.R;
+
 public class PreferenceUtil {
 
 

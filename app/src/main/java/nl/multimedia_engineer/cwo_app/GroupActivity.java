@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import nl.multimedia_engineer.cwo_app.dto.UserGroupPartialList;
 import nl.multimedia_engineer.cwo_app.model.GroupPartial;
+import nl.multimedia_engineer.cwo_app.persistence.PersistGroepen;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
 public class GroupActivity extends BaseActivity implements GroupAdapter.GroupItemClickListener {
@@ -141,7 +142,6 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
     private void saveGroupNameToDb(GroupPartial group) {
         DatabaseReference groupRef = DatabaseRefUtil.getUserGroupsRef(mAuth).child(group.getId());
         groupRef.setValue(group.getName());
-
     }
 
     @Override
@@ -149,11 +149,19 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage(R.string.alert_dialog_text_delete_group);
         dialogBuilder.setTitle(R.string.alert_dialog_title_delete);
-        dialogBuilder.setPositiveButton(R.string.alert_dialog_text_yes, new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton(R.string.alert_dialog_delete_all, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                deleteUserGroupFromDB(userGroupPartialList.getGroepen().get(position));
-                // todo delete from db and recyclerview.
+                verifyDeleteAll(userGroupPartialList.getGroepen().get(position).getId());
+                dialog.cancel();
+            }
+        });
+
+        dialogBuilder.setNeutralButton(R.string.alert_dialog_delete_for_me, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                PersistGroepen.removeGroupForUser(mAuth, userGroupPartialList.getGroepen().get(position).getId());
+                setNewActiveGroup();
                 dialog.cancel();
             }
         });
@@ -169,9 +177,39 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
         alertDialog.show();
     }
 
-    private void deleteUserGroupFromDB(GroupPartial group) {
-        DatabaseReference groupRef = DatabaseRefUtil.getUserGroupsRef(mAuth).child(group.getId());
-        groupRef.removeValue();
+    private void setNewActiveGroup() {
+        if(!userGroupPartialList.getGroepen().isEmpty()) {
+            onItemClicked(0);
+        } else {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            sharedPreferences.edit().remove(getResources().getString(R.string.pref_current_group_id)).apply();
+            sharedPreferences.edit().remove(getResources().getString(R.string.pref_current_group_name)).apply();
+        }
+
+    }
+
+    private void verifyDeleteAll(final String groupId) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setMessage(R.string.alert_dialog_verify_delete_all);
+        dialogBuilder.setTitle(R.string.alert_dialog_title_delete);
+        dialogBuilder.setPositiveButton(R.string.alert_dialog_delete_all, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                PersistGroepen.removeGroupForAllUsers(mAuth, groupId);
+                setNewActiveGroup();
+                dialog.cancel();
+            }
+        });
+
+        dialogBuilder.setNegativeButton(R.string.alert_dialog_text_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
 
     }
 }

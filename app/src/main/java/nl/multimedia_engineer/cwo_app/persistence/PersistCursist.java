@@ -68,7 +68,7 @@ public class PersistCursist {
 
     // todo remove hardcoded values.
     public static void getCursistList(String groupId, final ReceiveCursistList receiver) {
-        DatabaseReference databaseReference = DatabaseRefUtil.getCursistenPerGroep(groupId, false);
+        DatabaseReference databaseReference = DatabaseRefUtil.getCursistenPerGroep(groupId);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
