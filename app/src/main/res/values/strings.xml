@@ -48,6 +48,9 @@
     <string name="cursist_niet_verborgen">Cursist niet meer verborgen</string>
     <string name="minimum_form_demand">Vul op z\'n minst de voornaam van de cursist in.</string>
 
+    <!-- cursist list -->
+    <string name="empty_cursist_list">Er zijn nog geen cursisten in deze groep, voeg eerst cursisten toe.</string>
+
     <!-- Training list -->
     <string name="volgende">Volgende</string>
     <string name="ok">OK</string>

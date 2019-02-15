@@ -6,6 +6,15 @@
 
     tools:context="nl.multimedia_engineer.cwo_app.CursistListActivity">
 
+    <TextView
+        android:id="@+id/tv_empty_cursist_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/empty_cursist_list"
+        android:padding="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:visibility="gone" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_cursist_lijst"
         android:layout_width="match_parent"

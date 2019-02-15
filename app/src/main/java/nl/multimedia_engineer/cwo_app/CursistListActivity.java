@@ -35,9 +35,7 @@ import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 public class CursistListActivity extends BaseActivity implements CursistListAdapater.CursistListAdapterOnClickHandler, PersistCursist.ReceiveCursistPartialList {
     private static final String TAG = CursistListActivity.class.getSimpleName();
 
-    private RecyclerView mRecyclerView;
     private CursistListAdapater cursistListAdapater;
-    private MenuItem searchItem;
     private static final int CURSIST_DETAIL = 1;
 
 
@@ -50,7 +48,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
         /*
          * Get references to the elements in the layout we need.
          * */
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_cursist_lijst);
+        RecyclerView mRecyclerView = findViewById(R.id.recyclerview_cursist_lijst);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -65,30 +63,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.cursist_lijst_menu, menu);
-        //searchItem = menu.findItem(R.id.action_search);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //int itemThatWasClickedId = item.getItemId();
-        /*if (itemThatWasClickedId == R.id.action_search) {
-            // TODO do something searchy ;)
-            return true;
-        }*/
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        /*
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        if (!searchView.isIconified()) {
-            searchView.setIconified(true);
-        } else {
-            super.onBackPressed();
-        }*/
     }
 
     private void loadCursistListData() {
@@ -97,7 +72,6 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
         String groupId = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_id), "");
 
         PersistCursist.getCursistPartialList(groupId, this);
-
     }
 
     @Override
@@ -114,38 +88,31 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CURSIST_DETAIL)
+        if (requestCode == CURSIST_DETAIL) {
 
             if (resultCode == RESULT_OK)
                 cursistListAdapater.updateCursistInList((Cursist) data.getExtras().getParcelable("cursist"));
                 // update cursist
-            else if (resultCode == RESULT_CANCELED) {
-                if (data != null && data.hasExtra("cursist")) {
-                    Cursist cursist = data.getExtras().getParcelable("cursist");
-                    cursistListAdapater.deleteCursistFromList(cursist);
-                }
+            else if (resultCode == RESULT_CANCELED && data != null && data.hasExtra("cursist")) {
+                Cursist cursist = data.getExtras().getParcelable("cursist");
+                cursistListAdapater.deleteCursistFromList(cursist);
             }
-
-    }
-
-
-    private void showErrorMessage() {
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        showErrorDialog();
-    }
-
-    public void showCursistListData() {
-        mRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void receiveCursistPartialList(List<CursistPartial> cursistPartialList) {
         hideProgressDialog();
+        if(cursistPartialList == null || cursistPartialList.isEmpty()) {
+            findViewById(R.id.tv_empty_cursist_list).setVisibility(View.VISIBLE);
+            return;
+        }
         cursistListAdapater.setCursistListData(cursistPartialList);
     }
 
     @Override
     public void receiveCursistPartialListFailed() {
         hideProgressDialog();
+        showErrorDialog();
     }
 }
