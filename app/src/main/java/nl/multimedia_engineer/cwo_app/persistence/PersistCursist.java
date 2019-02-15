@@ -6,7 +6,6 @@ import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
@@ -98,6 +97,10 @@ public class PersistCursist {
                 GenericTypeIndicator<HashMap<String, CursistPartial>> type = new GenericTypeIndicator<HashMap<String, CursistPartial>>() {};
                 HashMap<String, CursistPartial> result = dataSnapshot.getValue(type);
                 List<CursistPartial> cursistList = new ArrayList<>();
+                if(result == null) { // Er zijn nog geen cursisten in deze groep
+                    receiver.receiveCursistPartialList(null);
+                    return;
+                }
                 for(Map.Entry<String, CursistPartial> entry : result.entrySet()) {
                     entry.getValue().setId(entry.getKey());
                     cursistList.add(entry.getValue());

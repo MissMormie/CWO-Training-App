@@ -27,6 +27,7 @@
         <activity
             android:name=".TrainingActivity"
             android:label="@string/btn_nieuwe_training"
+            android:launchMode="singleInstance"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

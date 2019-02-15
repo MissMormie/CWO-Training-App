@@ -77,7 +77,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             // all group settings are available.
             return;
         }
-        if(this instanceof  CreateOrJoinGroupActivity) {
+        if(this instanceof CreateOrJoinGroupActivity) {
             return;
         }
 
