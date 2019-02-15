@@ -32,10 +32,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
     private final GroupItemClickListener listener;
     private String currentActiveGroup;
 
-    public GroupAdapter(UserGroupPartialList userGroupPartialList, GroupItemClickListener listener, String groupId) {
+    public GroupAdapter(List<GroupPartial> userGroupPartialList, GroupItemClickListener listener, String groupId) {
         this.currentActiveGroup = groupId;
         this.listener = listener;
-        groupList = userGroupPartialList.getGroepen();
+        groupList = userGroupPartialList;
     }
 
     @Override

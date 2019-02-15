@@ -21,22 +21,27 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 import nl.multimedia_engineer.cwo_app.dto.UserGroupPartialList;
 import nl.multimedia_engineer.cwo_app.model.GroupPartial;
 import nl.multimedia_engineer.cwo_app.persistence.PersistGroepen;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
-public class GroupActivity extends BaseActivity implements GroupAdapter.GroupItemClickListener {
+public class GroupActivity extends BaseActivity
+        implements GroupAdapter.GroupItemClickListener,
+                    PersistGroepen.ReceiveUserGroepen {
+
     final static String TAG = "GroupActivity";
     private RecyclerView mRecyclerView;
     private GroupAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private UserGroupPartialList userGroupPartialList;
+    private List<GroupPartial> userGroupPartialList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
-
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_groups);
 
@@ -53,34 +58,18 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
     public void onStart() {
         super.onStart();
         final GroupAdapter.GroupItemClickListener listener = this;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final String groupId = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_id), "");
 
-        // get groups from user.
-        // Read from the database
-        DatabaseReference groupRef = DatabaseRefUtil.getUserRef(mAuth);
+        PersistGroepen.getUserGroepen(mAuth, this);
+    }
 
-        groupRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                userGroupPartialList = dataSnapshot.getValue(UserGroupPartialList.class);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mAdapter != null) {
+            String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+            mAdapter.setCurrentActiveGroupId(groupId);
+        }
 
-                // todo check not null.
-
-
-                mAdapter = new GroupAdapter(userGroupPartialList, listener, groupId);
-                mRecyclerView.setAdapter(mAdapter);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 
     public void onClickAddGroup(View view) {
@@ -91,7 +80,7 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
 
     @Override
     public void onItemClicked(int position) {
-        GroupPartial group = userGroupPartialList.getGroepen().get(position);
+        GroupPartial group = userGroupPartialList.get(position);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), group.getId()).apply();
         sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), group.getName()).apply();
@@ -102,7 +91,7 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
 
     @Override
     public void onItemEditClicked(final int position) {
-        final GroupPartial groupPartial = userGroupPartialList.getGroepen().get(position);
+        final GroupPartial groupPartial = userGroupPartialList.get(position);
         String name = groupPartial.getName();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.alert_dialog_title_update));
@@ -122,7 +111,7 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String newName = input.getText().toString();
-                userGroupPartialList.getGroepen().get(position).setName(newName);
+                userGroupPartialList.get(position).setName(newName);
                 mAdapter.notifyItemChanged(position);
                 // Save name to db.
                 saveGroupNameToDb(groupPartial);
@@ -152,7 +141,7 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
         dialogBuilder.setPositiveButton(R.string.alert_dialog_delete_all, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                verifyDeleteAll(userGroupPartialList.getGroepen().get(position).getId());
+                verifyDeleteAll(userGroupPartialList.get(position).getId(), position);
                 dialog.cancel();
             }
         });
@@ -160,7 +149,9 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
         dialogBuilder.setNeutralButton(R.string.alert_dialog_delete_for_me, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                PersistGroepen.removeGroupForUser(mAuth, userGroupPartialList.getGroepen().get(position).getId());
+                PersistGroepen.removeGroupForUser(mAuth, userGroupPartialList.get(position).getId());
+                userGroupPartialList.remove(position);
+                mAdapter.notifyDataSetChanged();
                 setNewActiveGroup();
                 dialog.cancel();
             }
@@ -178,17 +169,16 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
     }
 
     private void setNewActiveGroup() {
-        if(!userGroupPartialList.getGroepen().isEmpty()) {
+        if(!userGroupPartialList.isEmpty()) {
             onItemClicked(0);
         } else {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             sharedPreferences.edit().remove(getResources().getString(R.string.pref_current_group_id)).apply();
             sharedPreferences.edit().remove(getResources().getString(R.string.pref_current_group_name)).apply();
         }
-
     }
 
-    private void verifyDeleteAll(final String groupId) {
+    private void verifyDeleteAll(final String groupId, final int position) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage(R.string.alert_dialog_verify_delete_all);
         dialogBuilder.setTitle(R.string.alert_dialog_title_delete);
@@ -197,6 +187,8 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
             public void onClick(DialogInterface dialog, int which) {
                 PersistGroepen.removeGroupForAllUsers(mAuth, groupId);
                 setNewActiveGroup();
+                userGroupPartialList.remove(position);
+                mAdapter.notifyDataSetChanged();
                 dialog.cancel();
             }
         });
@@ -210,6 +202,25 @@ public class GroupActivity extends BaseActivity implements GroupAdapter.GroupIte
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
+
+    }
+
+    // ----------------------------------- Implementation ReceivedGroepen --------------------------
+
+    @Override
+    public void onReceiveUserGroepen(List<GroupPartial> groupPartialList) {
+        userGroupPartialList = groupPartialList;
+
+        // todo check not null.
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final String groupId = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_id), "");
+
+        mAdapter = new GroupAdapter(userGroupPartialList, this, groupId);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onReceiveUserGroepenFailed() {
 
     }
 }

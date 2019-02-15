@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -18,10 +19,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Map;
 
 import nl.multimedia_engineer.cwo_app.model.Group;
+import nl.multimedia_engineer.cwo_app.persistence.PersistGroepen;
 import nl.multimedia_engineer.cwo_app.util.ConnectionIssuesUtil;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
-public class CreateOrJoinGroupActivity extends BaseActivity {
+public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGroepen.SavedUserGroepen {
     private static final String TAG = CreateOrJoinGroupActivity.class.getName();
 
     @Override
@@ -42,30 +44,16 @@ public class CreateOrJoinGroupActivity extends BaseActivity {
             Toast.makeText(this, getResources().getString(R.string.text_fields_filled_wrong), Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // Todo, make transaction to make this one db query.
-        // Add group to user
-        DatabaseReference pushedRef = DatabaseRefUtil.getUserGroupsRef(mAuth).push();
-        pushedRef.setValue(groupName);
-
-
-        // Add to groups
-        String groupId = pushedRef.getKey();
-
-        if(groupId == null) {
-            showErrorDialog();
-            return;
-        }
-
-        Group group = new Group("windsurfen", groupName);
-        DatabaseRefUtil.getGroepenRef().child(groupId).setValue(group);
-
-        addGroupToSharedPreferences(groupId, groupName);
+        PersistGroepen.createGroup(mAuth, groupName, this);
+        showProgressDialog();
     }
 
     public void onClickJoinGroup(View view) {
         final String accessCode = ((EditText) findViewById(R.id.editText_accessCode)).getText().toString();
         final String groupName = ((EditText) findViewById(R.id.editText_joinGroupName)).getText().toString();
+
+        final Group group = new Group("windsurfen", "groupName");
+        group.setId(accessCode);
 
         if(accessCode.isEmpty() || groupName.isEmpty() ) {
             Toast.makeText(this, getResources().getString(R.string.text_fields_filled_wrong), Toast.LENGTH_SHORT).show();
@@ -92,18 +80,18 @@ public class CreateOrJoinGroupActivity extends BaseActivity {
                 // If there is a value all is fine, otherwise get rid of the previously made group.
                 if(dataSnapshot.exists()) {
                     addGroupToSharedPreferences(accessCode, groupName);
+                    onSuccesSavedUserGroup(group);
                     return;
                 }
 
                 // removing group from the person.
                 userGroupRef.removeValue();
-
+                showErrorDialog(getString(R.string.alert_dialog_error_title), getString(R.string.alert_dialog_error_tekst));
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // anything but permissions denied. Probably connection errors
-                // todo make generic handle firebase db error
                 showErrorDialog();
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
@@ -112,11 +100,17 @@ public class CreateOrJoinGroupActivity extends BaseActivity {
 
 
     private void addGroupToSharedPreferences(String groupId, String groupName) {
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), groupId).apply();
+        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), groupName).apply();
+    }
 
-         // Using commit because we'll need these values on the next screen.
-        sp.edit().putString(getResources().getString(R.string.pref_current_group_name), groupName).commit();
-        sp.edit().putString(getResources().getString(R.string.pref_current_group_id), groupId).commit();
+    // ------------------ implements PersistGroepen.SavedUserGroepen -------------------------------
 
+    @Override
+    public void onSuccesSavedUserGroup(Group group) {
+        hideProgressDialog();
+        addGroupToSharedPreferences(group.getId(), group.getName());
+        finish();
     }
 }

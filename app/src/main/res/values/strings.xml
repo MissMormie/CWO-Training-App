@@ -119,5 +119,7 @@
     <string name="alert_dialog_text_no">Nee</string>
     <string name="alert_dialog_text_yes">Ja</string>
 
+    <string name="alert_dialog_text_no_such_access_code">De toegangscode die je hebt ingevuld is onbekend. Controleer of deze juist is ingevuld.</string>
+
 
 </resources>
