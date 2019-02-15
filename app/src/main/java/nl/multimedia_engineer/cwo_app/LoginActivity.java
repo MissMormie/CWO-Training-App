@@ -72,7 +72,6 @@ public class LoginActivity extends BaseActivity {
             // different disciplines are available this needs to become an option in the app,
             // probably per group.
         }
-
     }
 
     private void doAction() {

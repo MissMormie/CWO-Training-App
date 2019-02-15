@@ -26,105 +26,49 @@
 
         <activity
             android:name=".TrainingActivity"
-            android:label="@string/btn_nieuwe_training"
-            android:launchMode="singleInstance"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:label="@string/btn_nieuwe_training"/>
 
         <activity
             android:name=".EditCursistActivity"
-            android:parentActivityName=".CursistDetailActivity"
-            android:label="@string/cursist_wijzigen">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CursistDetailActivity" />
-        </activity>
+            android:label="@string/cursist_wijzigen"/>
 
         <activity
             android:name=".DiplomaUitgevenActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/btn_diploma_uitgeven">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:label="@string/btn_diploma_uitgeven"/>
 
         <activity
             android:name=".CursistenBehalenDiplomaActivity"
-            android:label="@string/btn_diploma_uitgeven"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:label="@string/btn_diploma_uitgeven"/>
 
 
         <activity
             android:name=".CursistDetailActivity"
-            android:label="@string/cursist"
-            android:parentActivityName=".CursistListActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CursistListActivity" />
-        </activity>
+            android:label="@string/cursist"/>
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:label="@string/action_settings"/>
 
         <activity android:name=".CursistBehaaldEisActivity"
             android:label="">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TrainingActivity" />
         </activity>
 
         <activity android:name=".CursistBehaaldDiplomaActivity" />
 
         <activity
             android:name=".CreateCursistActivity"
-            android:label="@string/btn_nieuwe_cursist"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:label="@string/btn_nieuwe_cursist"/>
 
         <activity android:name=".DemandsPerDisciplineActivity" />
+
         <activity android:name=".CursistListActivity"
-            android:label="@string/btn_cursisten_lijst"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTask">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:label="@string/btn_cursisten_lijst"/>
 
         <activity android:name=".GroupActivity"
-            android:label="@string/actionbar_title_groupActivity"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTask">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity" />
-        </activity>
+            android:label="@string/actionbar_title_groupActivity"/>
 
         <activity android:name=".CreateOrJoinGroupActivity"
-            android:label="@string/actionbar_title_new_group_activity"
-            android:parentActivityName=".GroupActivity"
-            android:launchMode="singleTask">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".GroupActivity" />
-        </activity>
+            android:label="@string/actionbar_title_new_group_activity" />
 
         <activity
             android:name=".LoginActivity"
@@ -133,9 +77,9 @@
 
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTask"
-            android:label="@string/app_name"
-            android:noHistory="true">
+            android:label="@string/app_name" >
+            <!--android:launchMode="singleTask"-->
+            <!--android:noHistory="true">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
