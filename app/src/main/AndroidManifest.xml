@@ -47,7 +47,13 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings"/>
+            android:label="@string/action_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="nl.multimedia_engineer.cwo_app.MainActivity">
+            </meta-data>
+        </activity>
 
         <activity android:name=".CursistBehaaldEisActivity"
             android:label="">
