@@ -8,7 +8,8 @@ public class CursistPartial implements Parcelable {
     protected String voornaam;
     protected String tussenvoegsel;
     protected String achternaam;
-    protected CursistFoto cursistFoto;
+
+//    protected CursistFoto cursistFoto;
     protected boolean verborgen = false;
 
     public CursistPartial() {
@@ -20,7 +21,7 @@ public class CursistPartial implements Parcelable {
         voornaam = in.readString();
         tussenvoegsel = in.readString();
         achternaam = in.readString();
-        cursistFoto = in.readParcelable(CursistFoto.class.getClassLoader());
+//        cursistFoto = in.readParcelable(CursistFoto.class.getClassLoader());
         verborgen = in.readByte() != 0;
     }
 
@@ -82,13 +83,13 @@ public class CursistPartial implements Parcelable {
         verborgen = !verborgen;
     }
 
-    public CursistFoto getCursistFoto() {
-        return cursistFoto;
-    }
-
-    public void setCursistFoto(CursistFoto cursistFoto) {
-        this.cursistFoto = cursistFoto;
-    }
+//    public CursistFoto getCursistFoto() {
+//        return cursistFoto;
+//    }
+//
+//    public void setCursistFoto(CursistFoto cursistFoto) {
+//        this.cursistFoto = cursistFoto;
+//    }
 
     public String nameToString() {
         String tussenstuk = "";
@@ -146,5 +147,6 @@ public class CursistPartial implements Parcelable {
         dest.writeString(achternaam);
 //        dest.writeParcelable(cursistFoto, flags);
         dest.writeByte((byte) (verborgen ? 1 : 0));
+
     }
 }

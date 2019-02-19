@@ -1,19 +1,19 @@
 package nl.multimedia_engineer.cwo_app.dto;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
-import nl.multimedia_engineer.cwo_app.model.CursistBehaaldEis;
-import nl.multimedia_engineer.cwo_app.model.CursistHeeftDiploma;
+import nl.multimedia_engineer.cwo_app.model.Diploma;
+import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 
 public class CursistDTO extends CursistPartialDTO {
     protected String fotoFileBase64;
 
     protected final Long paspoort;
     protected final String opmerking;
-    protected List<CursistBehaaldEis> cursistBehaaldEis;
-
-    protected List<CursistHeeftDiploma> cursistHeeftDiplomas;
+    protected final Map<String, String> behaaldeEisen;
+    protected final Map<String, String> diplomas;
 
 
     public CursistDTO(Cursist cursist) {
@@ -25,8 +25,21 @@ public class CursistDTO extends CursistPartialDTO {
         }
         opmerking = cursist.getOpmerking();
 
-        // todo save eisen & diplomas
+        fotoFileBase64 = cursist.getFotoFileBase64();
 
+        behaaldeEisen = new HashMap<>();
+        if(cursist.getDiplomaEisSet() != null && !cursist.getDiplomaEisSet().isEmpty()) {
+            for(DiplomaEis diplomaEis : cursist.getDiplomaEisSet())
+            behaaldeEisen.put(diplomaEis.getId(), diplomaEis.getId());
+
+        }
+
+        diplomas = new HashMap<>();
+        if(cursist.getDiplomaSet() != null && !cursist.getDiplomaSet().isEmpty()) {
+            for(Diploma diploma : cursist.getDiplomaSet()) {
+                diplomas.put(diploma.getId(), diploma.getId());
+            }
+        }
     }
 
 }

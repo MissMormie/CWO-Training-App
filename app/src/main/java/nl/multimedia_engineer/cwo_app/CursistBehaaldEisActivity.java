@@ -94,7 +94,8 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
             dataBinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.ja));
 
         // Set photo if available, else set user mockup.
-        if (currentCursist.getCursistFoto() != null) {
+        if (currentCursist.getFotoFileBase64()!= null) {
+            // todo foto
 //            URL fotoUrl = NetworkUtils.buildUrl("foto", currentCursist.getCursistFoto().getId().toString());
 //            new DownloadAndSetImageTask(dataBinding.imageViewFoto, getApplicationContext())
 //                    .execute(fotoUrl.toString());

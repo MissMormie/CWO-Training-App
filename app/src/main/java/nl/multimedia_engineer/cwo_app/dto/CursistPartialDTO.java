@@ -15,6 +15,5 @@ public class CursistPartialDTO {
         tussenvoegsel = cursistPartial.getTussenvoegsel();
         achternaam = cursistPartial.getAchternaam();
         verborgen = cursistPartial.isVerborgen();
-
     }
 }

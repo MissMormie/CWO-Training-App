@@ -14,10 +14,12 @@ import java.util.List;
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
-import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
-public class CreateCursistActivity extends BaseActivity implements CursistFormFragment.OnFragmentInteractionListener {
+public class CreateCursistActivity
+        extends BaseActivity
+        implements CursistFormFragment.OnFragmentInteractionListener,
+                   PersistCursist.SavedCursist {
     private CursistFormFragment cursistFormFragment;
     private Cursist cursist;
 
@@ -35,7 +37,7 @@ public class CreateCursistActivity extends BaseActivity implements CursistFormFr
     public void saveCursist(Cursist cursist) {
         String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
 
-        PersistCursist.saveCursist(groupId, cursist);
+        PersistCursist.saveCursist(groupId, cursist, this);
         cursistSaved(cursist);
     }
 
@@ -50,6 +52,7 @@ public class CreateCursistActivity extends BaseActivity implements CursistFormFr
         Boolean showDiploma = sharedPreferences.getBoolean(getString(R.string.pref_show_diploma_after_create_key),
                 getResources().getBoolean(R.bool.pref_show_diploma_after_create_cursist));
         if (showDiploma) {
+            // todo
 //            new FetchDiplomaAsyncTask(this).execute();
             finish();
         } else {
@@ -76,6 +79,13 @@ public class CreateCursistActivity extends BaseActivity implements CursistFormFr
 
         startActivity(intent);
 
+    }
+
+    // ------------------------------- Implements PersistCursist.SavedCursist ----------------------
+
+    @Override
+    public void onCursistSaved() {
+        // todo
     }
 
     private class SaveCursistAsyncTask extends AsyncTask<Cursist, Void, Cursist> {

@@ -7,7 +7,7 @@
     <string name="btn_diploma_uitgeven">Diploma uitgeven</string>
     <string name="btn_bekijk_diploma_eisen">Bekijk diploma eisen</string>
 
-    <!-- Preferences -->
+    <!-- Preferences  & other constants -->
     <string name="pref_show_already_completed_label">Laat al gehaald zien.</string>
     <string name="pref_show_already_completed_key" translatable="false">show_already_completed</string>
     <string name="pref_show_already_completed_summary_off">Je ziet geen cursisten die al hebben geleerd wat er in de training gedaan is.</string>
@@ -21,6 +21,9 @@
     <string name="pref_current_group_name" translatable="false">CurrentGroupName</string>
     <string name="pref_current_group_id" translatable="false">CurrentGroupID</string>
     <string name="pref_discipline" translatable="false">Discipline</string>
+
+    <string name="file_authority" translatable="false">nl.multimedia_engineer.cwo_app.fileprovider</string>
+
 
     <!-- Activity titles actionbar -->
     <string name="actionbar_title_groupActivity">Groepen Beheren</string>
@@ -120,6 +123,8 @@
     <string name="alert_dialog_text_yes">Ja</string>
 
     <string name="alert_dialog_text_no_such_access_code">De toegangscode die je hebt ingevuld is onbekend. Controleer of deze juist is ingevuld.</string>
+
+
 
 
 </resources>

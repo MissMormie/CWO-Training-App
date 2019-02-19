@@ -6,8 +6,13 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
-public class EditCursistActivity extends BaseActivity implements CursistFormFragment.OnFragmentInteractionListener  {
+public class EditCursistActivity
+        extends BaseActivity
+        implements CursistFormFragment.OnFragmentInteractionListener,
+                   PersistCursist.SavedCursist {
     private Cursist cursist;
     private CursistFormFragment cursistFormFragment;
 
@@ -22,9 +27,8 @@ public class EditCursistActivity extends BaseActivity implements CursistFormFrag
 
     @Override
     public void saveCursist(Cursist cursist) {
-        // todo
         this.cursist = cursist;
-//        new SaveCursistAsyncTask(this).execute(cursist);
+        PersistCursist.saveCursist(PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), ""), cursist, this);
     }
 
 //    @Override
@@ -32,9 +36,9 @@ public class EditCursistActivity extends BaseActivity implements CursistFormFrag
         if (cursist != null) {
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_opgeslagen), Toast.LENGTH_SHORT);
             toast.show();
-            if(cursist.getCursistFoto()!= null)
-                cursist.getCursistFoto().setImage(this.cursist.getFotoFileBase64());
-            // TODO, fix this work around.
+            if(cursist.getFotoFileBase64()!= null && !cursist.getFotoFileBase64().isEmpty())
+//                cursist.getCursistFoto().setImage(this.cursist.getFotoFileBase64());
+//             TODO, fix this work around., check if code is used at all.
             // For some reason the api returns a different date, it's saved correctly
             cursist.paspoortDate = this.cursist.paspoortDate;
         } else {
@@ -62,6 +66,19 @@ public class EditCursistActivity extends BaseActivity implements CursistFormFrag
         Intent intent = new Intent();
         intent.putExtra("cursist", cursist);
         setResult(RESULT_CANCELED, intent);
+        finish();
+    }
+
+    // ------------------------------- Implements PersistCursist.SavedCursist ----------------------
+
+    @Override
+    public void onCursistSaved() {
+        hideProgressDialog();
+        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_opgeslagen), Toast.LENGTH_SHORT);
+        toast.show();
+        Intent intent = new Intent();
+        intent.putExtra("cursist", cursist);
+        setResult(RESULT_OK, intent);
         finish();
     }
 }

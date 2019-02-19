@@ -126,15 +126,16 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
             diplomaTextView.setText(cursist.getHoogsteDiploma());
 
             // Set foto
-            if (cursist.getCursistFoto() != null) {
-                String imgData = cursist.getCursistFoto().getThumbnail();
-                byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
-                fotoImageView.setImageBitmap(bitmap);
-            } else {
-                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_user_image);
-                fotoImageView.setImageDrawable(drawable);
-            }
+            // todo thumbnails
+//            if (cursist != null) {
+//                String imgData = cursist.getCursistFoto().getThumbnail();
+//                byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
+//                fotoImageView.setImageBitmap(bitmap);
+//            } else {
+//                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_user_image);
+//                fotoImageView.setImageDrawable(drawable);
+//            }
 
             // Set background color in case cursist is hidden.
             // TODO get this from colors class. needs getResources().

@@ -65,20 +65,18 @@ public class CursistHeaderFragment extends Fragment {
         else
             databinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.ja));
 
-        if (cursist.getCursistFoto() != null && cursist.getCursistFoto().getThumbnail() != null && !cursist.getCursistFoto().getThumbnail().equals("")) {
+        if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
             // Check if photo is included in cursist object
-            if (cursist.getCursistFoto().getImage() != null && !cursist.getCursistFoto().getImage().equals("")) {
-                String imgData = cursist.getCursistFoto().getThumbnail();
+                String imgData = cursist.getFotoFileBase64();
                 byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
                 databinding.imageViewFoto.setImageBitmap(bitmap);
-            } else {
+        } else {
 
-                // todo
+            // todo
 //                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
 //                new DownloadAndSetImageTask(databinding.imageViewFoto, getContext())
 //                        .execute(fotoUrl.toString());
-            }
         }
     }
 

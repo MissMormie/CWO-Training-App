@@ -14,7 +14,6 @@ import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 
 public class Cursist extends CursistPartial implements Parcelable{
 
-    // TODO: change this holder variable to the CursistFoto class.
     private String fotoFileBase64;
 
     public Date paspoortDate;
@@ -24,15 +23,34 @@ public class Cursist extends CursistPartial implements Parcelable{
     private Set<Diploma> diplomaSet;
     private Set<DiplomaEis> diplomaEisSet;
 
-    // todo remove this.
-//    private List<CursistHeeftDiploma> cursistHeeftDiplomas;
-//    private List<CursistBehaaldEis> cursistBehaaldEis;
 
     public Cursist() {
 
     }
 
+    public Long getPaspoort() {
+        return paspoort;
+    }
 
+    public void setPaspoort(Long paspoort) {
+        this.paspoort = paspoort;
+    }
+
+    public Set<Diploma> getDiplomaSet() {
+        return diplomaSet;
+    }
+
+    public void setDiplomaSet(Set<Diploma> diplomaSet) {
+        this.diplomaSet = diplomaSet;
+    }
+
+    public Set<DiplomaEis> getDiplomaEisSet() {
+        return diplomaEisSet;
+    }
+
+    public void setDiplomaEisSet(Set<DiplomaEis> diplomaEisSet) {
+        this.diplomaEisSet = diplomaEisSet;
+    }
 
     @Nullable
     public Date getPaspoortDate() {
@@ -60,18 +78,16 @@ public class Cursist extends CursistPartial implements Parcelable{
         this.setVoornaam(cursist.getVoornaam());
         this.setTussenvoegsel(cursist.getTussenvoegsel());
         this.setAchternaam(cursist.getAchternaam());
-        this.setCursistFoto(cursist.getCursistFoto());
         this.setVerborgen(cursist.isVerborgen());
     }
 
-    public Cursist(String id, String voornaam, String tussenvoegsel, String achternaam, Date paspoortDate, String opmerking, CursistFoto cursistFoto, boolean verborgen) {
+    public Cursist(String id, String voornaam, String tussenvoegsel, String achternaam, Date paspoortDate, String opmerking, boolean verborgen) {
         this.id = id;
         this.voornaam = voornaam;
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
         this.paspoortDate = paspoortDate;
         this.opmerking = opmerking;
-        this.cursistFoto = cursistFoto;
         this.verborgen = verborgen;
     }
 
@@ -141,7 +157,7 @@ public class Cursist extends CursistPartial implements Parcelable{
     }
 
     /**
-     * Checks if all diplomaEisen in the list are attained by the cursist.
+     * Checks if all behaaldeEisen in the list are attained by the cursist.
      */
     public boolean isAlleEisenBehaald(List<DiplomaEis> diplomaEisList) {
         if(diplomaEisSet == null) {
@@ -203,7 +219,8 @@ public class Cursist extends CursistPartial implements Parcelable{
         } else {
             parcel.writeLong(0L);
         }
-        parcel.writeParcelable(cursistFoto, 0);
+
+        parcel.writeString(fotoFileBase64);
 
         if(diplomaSet == null || diplomaSet.size() == 0) {
             parcel.writeInt(0);
@@ -261,7 +278,7 @@ public class Cursist extends CursistPartial implements Parcelable{
             paspoortDate = new Date(paspoortTemp);
         }
 
-        cursistFoto = parcel.readParcelable(CursistFoto.class.getClassLoader());
+        fotoFileBase64 = parcel.readString();
 
         diplomaSet = new HashSet<>();
         int diplomaSetSize = parcel.readInt();
@@ -286,37 +303,5 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     }
 
-    // ---------------------------------------------------------------------------------------------
-//
-//    /**
-//     * Checks cursistHeeftDiploma isBehaald, if it is it makes sure it's on the list on behaalde diploma's, otherwise it removes it.
-//     */
-//    public void addOrRemoveDiploma(CursistHeeftDiploma cursistHeeftDiploma) {
-//        if(cursistHeeftDiplomas == null)
-//            cursistHeeftDiplomas = new ArrayList<>();
-//        if(cursistHeeftDiploma.isBehaald())
-//            cursistHeeftDiplomas.add(cursistHeeftDiploma);
-//        else
-//            for(CursistHeeftDiploma chd: cursistHeeftDiplomas) {
-//                if(chd.getDiploma().getId().equals(cursistHeeftDiploma.getDiploma().getId()))
-//                    cursistHeeftDiplomas.remove(chd);
-//            }
-//    }
-//
-//    /**
-//     * Checks CursistBehaaldEis isBehaald, if it is it makes sure it's on the list, otherwise it removes it.
-//     */
-//    public void addOrRemoveDiplomaEis(CursistBehaaldEis newCursistBehaaldEis) {
-//        if(cursistBehaaldEis == null)
-//            cursistBehaaldEis = new ArrayList<>();
-//        if(newCursistBehaaldEis.isBehaald())
-//            this.cursistBehaaldEis.add(newCursistBehaaldEis);
-//        else
-//            for(CursistBehaaldEis cbe: cursistBehaaldEis) {
-//                if(cbe.getDiplomaEis().getId().equals(newCursistBehaaldEis.getDiplomaEis().getId()))
-//                    cursistBehaaldEis.remove(cbe);
-//            }
-//    }
-//
 
 }

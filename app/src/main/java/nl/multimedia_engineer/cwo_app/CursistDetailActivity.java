@@ -50,7 +50,7 @@ public class CursistDetailActivity
         activityCursistDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_cursist_detail);
 
         // Set up of the recycler view and adapter.
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview_training_lijst);
+        RecyclerView recyclerView =  findViewById(R.id.recyclerview_training_lijst);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         // Not all items in list have the same size
@@ -62,9 +62,8 @@ public class CursistDetailActivity
         CursistPartial cursistPartial = getIntent().getExtras().getParcelable("cursist");
         cursist = new Cursist(cursistPartial);
 
-        // TODO Fix parcelable. Atm it doesn't pass eisen info, so reloading the cursist Info.
+        // Displaying data we got from the parcel, this does not contain complete cursist data but shows something while the rest is loading.
         displayCursistInfo();
-        // todo fix hardcoded group
         showProgressDialog();
         String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
 
@@ -135,11 +134,13 @@ public class CursistDetailActivity
     private void hideCursist() {
         toggleLoading(true);
         cursist.toggleVerborgen();
+        // todo
 //        new SaveCursistAsyncTask(this).execute(cursist);
         setMenuTitle();
     }
 
     private void deleteCursist() {
+        // todo
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        builder.setMessage(R.string.echt_verwijderen)
 //                .setPositiveButton(R.string.ja, new DialogInterface.OnClickListener() {
@@ -219,19 +220,19 @@ public class CursistDetailActivity
         else
             activityCursistDetailBinding.textViewPaspoort.setText(getString(R.string.paspoort) + ": " + getString(R.string.ja));
 
-        if (cursist.getCursistFoto() != null && cursist.getCursistFoto().getThumbnail() != null && !cursist.getCursistFoto().getThumbnail().equals("")) {
-            // Check if photo is included in cursist object
-            if (cursist.getCursistFoto().getImage() != null && !cursist.getCursistFoto().getImage().equals("")) {
-                String imgData = cursist.getCursistFoto().getThumbnail();
-                byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
-                activityCursistDetailBinding.imageViewFoto.setImageBitmap(bitmap);
-            } else {
+
+        if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
+            String imgData = cursist.getFotoFileBase64();
+            byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
+            activityCursistDetailBinding.imageViewFoto.setImageBitmap(bitmap);
+        } else {
+            // todo?
 
 //                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
 //                new DownloadAndSetImageTask(activityCursistDetailBinding.imageViewFoto, getApplicationContext())
 //                        .execute(fotoUrl.toString());
-            }
+
         }
         loadDiplomaData();
 //            activityCursistDetailBinding.imageViewFoto.setImageBitmap();

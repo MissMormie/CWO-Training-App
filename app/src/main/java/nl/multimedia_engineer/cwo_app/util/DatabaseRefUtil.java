@@ -8,13 +8,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class DatabaseRefUtil {
     private static final String TAG = DatabaseRefUtil.class.getSimpleName();
-    private static String USERS = "users";
-    private static String DISCIPLINES = "disciplines";
-    private static String GROUPS = "groepen";
-    private static String EXAMENEISEN = "exameneisen";
-    private static String CURSISTEN = "cursisten";
-    private static String CURSISTEN_PER_GROUP = "cursistenPerGroep";
-    private static String BEHAALDE_EISEN = "behaalde eisen";
+    public static String USERS = "users";
+    public static String DISCIPLINES = "disciplines";
+    public static String GROUPS = "groepen";
+    public static String EXAMENEISEN = "exameneisen";
+    public static String CURSISTEN = "cursisten";
+    public static String CURSISTEN_PER_GROUP = "cursistenPerGroep";
+    public static String BEHAALDE_EISEN = "behaaldeEisen";
 
     // ------------------------------------- Users ------------------------------------------------0
 

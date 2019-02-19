@@ -56,7 +56,7 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity implements Per
         diplomaCheckbox = (CheckBox) findViewById(R.id.diplomaCheckbox);
         paspoortCheckBox = (CheckBox) findViewById(R.id.paspoortCheckbox);
 
-        // Set Recyclerview adapter for diplomaEisen
+        // Set Recyclerview adapter for behaaldeEisen
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         cursistBehaaldEisAdapter = new CursistBehaaldEisAdapter();

@@ -3,6 +3,7 @@ package nl.multimedia_engineer.cwo_app.persistence;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,22 +39,34 @@ public class PersistCursist {
         void receiveCursistFailed();
     }
 
+    public interface SavedCursist {
+        void onCursistSaved();
+    }
+
 
     private static final String TAG = PersistCursist.class.getSimpleName();
 
-    public static void saveCursist(String groupId, Cursist cursist) {
+    public static void saveCursist(String groupId, Cursist cursist, final SavedCursist receiver) {
         DatabaseReference groepenCursistenRef = DatabaseRefUtil.getGroepenCursisten(groupId);
-        String cursistId = groepenCursistenRef.push().getKey();
-        cursist.setId(cursistId);
+        if(cursist.getId() == null || cursist.getId().isEmpty()) {
+            String cursistId = groepenCursistenRef.push().getKey();
+            cursist.setId(cursistId);
+        }
 
         CursistPartialDTO cursistPartialDTO = new CursistPartialDTO(cursist);
 
-        groepenCursistenRef.child(cursistId).setValue(cursistPartialDTO);
-        Log.d(TAG, "saveCursist: " + cursistId);
+        groepenCursistenRef.child(cursist.getId()).setValue(cursistPartialDTO);
+        Log.d(TAG, "saveCursist: " + cursist.getId());
 
-        DatabaseReference cursistGroepRef = DatabaseRefUtil.getCursistenPerGroepCursist(groupId, cursistId);
+        DatabaseReference cursistGroepRef = DatabaseRefUtil.getCursistenPerGroepCursist(groupId, cursist.getId());
         CursistDTO cursistDTO = new CursistDTO(cursist);
-        cursistGroepRef.setValue(cursistDTO);
+
+        cursistGroepRef.setValue(cursistDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+               receiver.onCursistSaved();
+            }
+        });
 
     }
 
@@ -140,7 +153,7 @@ public class PersistCursist {
             cursist.addDiploma(diploma);
         }
 
-        for(DataSnapshot behaaldeEisenSnapShot : cursistSnapshot.child("behaalde eisen").getChildren()) {
+        for(DataSnapshot behaaldeEisenSnapShot : cursistSnapshot.child(DatabaseRefUtil.BEHAALDE_EISEN).getChildren()) {
             DiplomaEis diplomaEis = new DiplomaEis();
             diplomaEis.setId((String) behaaldeEisenSnapShot.getValue());
             cursist.addDiplomeEis(diplomaEis);
@@ -173,6 +186,7 @@ public class PersistCursist {
      * @param delete
      */
     public static void saveCursistDiploma(String groupId, String curistId, String diplomaId, boolean delete) {
+        // todo maybe make update to not have to send everything.
         DatabaseReference databaseReference = DatabaseRefUtil.getDiplomaCursist(groupId, curistId, diplomaId);
         if(delete) {
             databaseReference.removeValue();
@@ -180,6 +194,5 @@ public class PersistCursist {
             databaseReference.setValue(diplomaId);
         }
     }
-
 
 }
