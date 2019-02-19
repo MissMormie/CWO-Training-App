@@ -16,6 +16,7 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     private String fotoFileBase64;
 
+    @Deprecated
     public Date paspoortDate;
     public Long paspoort;
     public String opmerking;

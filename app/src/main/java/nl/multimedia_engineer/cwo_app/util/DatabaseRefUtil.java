@@ -59,10 +59,6 @@ public class DatabaseRefUtil {
         return database.getReference().child(GROUPS).child(groupId).child(CURSISTEN);
     }
 
-    public static DatabaseReference getCursistenPerGroepCursist(String groupId, String cursistId) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        return database.getReference().child(CURSISTEN_PER_GROUP).child(groupId).child(cursistId);
-    }
 
     public static DatabaseReference getCursistenPerGroepCursistBehaaldeEisen(String groupId, String cursistId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();

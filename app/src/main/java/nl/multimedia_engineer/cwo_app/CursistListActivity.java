@@ -101,7 +101,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
     }
 
     @Override
-    public void receiveCursistPartialList(List<CursistPartial> cursistPartialList) {
+    public void onReceiveCursistPartialList(List<CursistPartial> cursistPartialList) {
         hideProgressDialog();
         if(cursistPartialList == null || cursistPartialList.isEmpty()) {
             findViewById(R.id.tv_empty_cursist_list).setVisibility(View.VISIBLE);
@@ -111,7 +111,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
     }
 
     @Override
-    public void receiveCursistPartialListFailed() {
+    public void onReceiveCursistPartialListFailed() {
         hideProgressDialog();
         showErrorDialog();
     }

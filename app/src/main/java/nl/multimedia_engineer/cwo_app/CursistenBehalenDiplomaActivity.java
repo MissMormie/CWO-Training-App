@@ -9,13 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
-import nl.multimedia_engineer.cwo_app.model.CursistHeeftDiploma;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
@@ -178,10 +175,10 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity implements Per
     }
 
     @Override
-    public void receiveCursistList(List<Cursist> cursistList) {
+    public void onReceiveCursistList(List<Cursist> cursistList) {
         hideProgressDialog();
         if (cursistList == null) {
-            receiveCursistListFailed();
+            onReceiveCursistListFailed();
             return;
         }
 
@@ -190,7 +187,7 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity implements Per
     }
 
     @Override
-    public void receiveCursistListFailed() {
+    public void onReceiveCursistListFailed() {
         hideProgressDialog();
         showErrorDialog();
     }

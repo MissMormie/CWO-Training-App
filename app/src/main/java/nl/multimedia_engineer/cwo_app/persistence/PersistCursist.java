@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -25,18 +26,18 @@ import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
 public class PersistCursist {
     public interface ReceiveCursistList {
-        void receiveCursistList(List<Cursist> cursistList);
-        void receiveCursistListFailed();
+        void onReceiveCursistList(List<Cursist> cursistList);
+        void onReceiveCursistListFailed();
     }
 
     public interface ReceiveCursistPartialList {
-        void receiveCursistPartialList(List<CursistPartial> cursistPartialList);
-        void receiveCursistPartialListFailed();
+        void onReceiveCursistPartialList(List<CursistPartial> cursistPartialList);
+        void onReceiveCursistPartialListFailed();
     }
 
     public interface ReceiveCursist{
-        void receiveCursist(Cursist cursist);
-        void receiveCursistFailed();
+        void onReceiveCursist(Cursist cursist);
+        void onReceiveCursistFailed();
     }
 
     public interface SavedCursist {
@@ -58,7 +59,7 @@ public class PersistCursist {
         groepenCursistenRef.child(cursist.getId()).setValue(cursistPartialDTO);
         Log.d(TAG, "saveCursist: " + cursist.getId());
 
-        DatabaseReference cursistGroepRef = DatabaseRefUtil.getCursistenPerGroepCursist(groupId, cursist.getId());
+        DatabaseReference cursistGroepRef = DatabaseRefUtil.getCursist(groupId, cursist.getId());
         CursistDTO cursistDTO = new CursistDTO(cursist);
 
         cursistGroepRef.setValue(cursistDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -79,10 +80,21 @@ public class PersistCursist {
 
     }
 
-    // todo remove hardcoded values.
+    @Deprecated
     public static void getCursistList(String groupId, final ReceiveCursistList receiver) {
+        getCursistList(groupId, receiver, true);
+    }
+
+
+    // todo remove hardcoded values.
+    public static void getCursistList(String groupId, final ReceiveCursistList receiver, boolean includeVerborgen) {
         DatabaseReference databaseReference = DatabaseRefUtil.getCursistenPerGroep(groupId);
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query query = databaseReference;
+        if(!includeVerborgen) {
+            query = databaseReference.orderByChild("verborgen").equalTo(false);
+        }
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Cursist> cursistList = new ArrayList<>();
@@ -92,12 +104,12 @@ public class PersistCursist {
                         cursistList.add(cursist);
                     }
                 }
-                receiver.receiveCursistList(cursistList);
+                receiver.onReceiveCursistList(cursistList);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                receiver.receiveCursistListFailed();
+                receiver.onReceiveCursistListFailed();
             }
         });
     }
@@ -111,7 +123,7 @@ public class PersistCursist {
                 HashMap<String, CursistPartial> result = dataSnapshot.getValue(type);
                 List<CursistPartial> cursistList = new ArrayList<>();
                 if(result == null) { // Er zijn nog geen cursisten in deze groep
-                    receiver.receiveCursistPartialList(null);
+                    receiver.onReceiveCursistPartialList(null);
                     return;
                 }
                 for(Map.Entry<String, CursistPartial> entry : result.entrySet()) {
@@ -119,12 +131,12 @@ public class PersistCursist {
                     cursistList.add(entry.getValue());
                 }
 
-                receiver.receiveCursistPartialList(cursistList);
+                receiver.onReceiveCursistPartialList(cursistList);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                receiver.receiveCursistPartialListFailed();
+                receiver.onReceiveCursistPartialListFailed();
             }
         });
 
@@ -135,12 +147,12 @@ public class PersistCursist {
         cursistRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                receiver.receiveCursist(getCursist(dataSnapshot));
+                receiver.onReceiveCursist(getCursist(dataSnapshot));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                receiver.receiveCursistFailed();
+                receiver.onReceiveCursistFailed();
             }
         });
     }
@@ -195,4 +207,11 @@ public class PersistCursist {
         }
     }
 
+    public static void updateCursistVerborgen(String groupId, String cursistId, boolean verborgen) {
+        DatabaseReference cursistRef = DatabaseRefUtil.getCursist(groupId, cursistId).child("verborgen");
+        cursistRef.setValue(verborgen);
+
+        DatabaseReference cursistPartialRef = DatabaseRefUtil.getCursistPartial(groupId, cursistId).child("verborgen");
+        cursistPartialRef.setValue(verborgen);
+    }
 }

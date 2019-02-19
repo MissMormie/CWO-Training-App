@@ -122,7 +122,7 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
 
 
     @Override
-    public void receiveCursistList(List<Cursist> cursistList) {
+    public void onReceiveCursistList(List<Cursist> cursistList) {
         if (cursistList == null) {
             showErrorDialog();
             return;
@@ -144,7 +144,7 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
     }
 
     @Override
-    public void receiveCursistListFailed() {
+    public void onReceiveCursistListFailed() {
 
     }
 }

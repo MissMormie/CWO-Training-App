@@ -132,10 +132,8 @@ public class CursistDetailActivity
     }
 
     private void hideCursist() {
-        toggleLoading(true);
         cursist.toggleVerborgen();
-        // todo
-//        new SaveCursistAsyncTask(this).execute(cursist);
+        PersistCursist.updateCursistVerborgen(PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), ""), cursist.getId(), cursist.isVerborgen());
         setMenuTitle();
     }
 
@@ -193,12 +191,10 @@ public class CursistDetailActivity
     // ---------------------------------------------------------------------------------------------
 
     private void toggleLoading(boolean currentlyLoading) {
-        if (activityCursistDetailBinding.loadingProgressBar == null)
-            return;
         if (currentlyLoading)
-            activityCursistDetailBinding.loadingProgressBar.setVisibility(View.VISIBLE);
+            showProgressDialog();
         else
-            activityCursistDetailBinding.loadingProgressBar.setVisibility(View.GONE);
+            hideProgressDialog();
 
     }
 
@@ -265,14 +261,14 @@ public class CursistDetailActivity
 
     // ------------------------------------- Persist cursist implementation ------------------------
     @Override
-    public void receiveCursist(Cursist cursist) {
+    public void onReceiveCursist(Cursist cursist) {
         hideProgressDialog();
         this.cursist = cursist;
         displayCursistInfo();
     }
 
     @Override
-    public void receiveCursistFailed() {
+    public void onReceiveCursistFailed() {
         Log.d(TAG, "failed receiving cursist");
         showErrorDialog();
     }

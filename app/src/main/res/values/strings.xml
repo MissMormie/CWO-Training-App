@@ -32,6 +32,7 @@
     <!-- Knoppen -->
     <string name="nee">Nee</string>
     <string name="ja">Ja</string>
+    <string name="btn_finish">Afronden</string>
 
     <!-- Cursist detail -->
     <string name="cursist">Cursist</string>
