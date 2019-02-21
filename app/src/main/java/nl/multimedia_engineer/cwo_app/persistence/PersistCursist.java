@@ -87,18 +87,8 @@ public class PersistCursist {
         getCursistList(groupId, receiver, true);
     }
 
-
-    public static void getCursistList(String groupId, final ReceiveCursistList receiver, boolean includeVerborgen, @Nullable final String startAtId, @Nullable Integer limit) {
-
-        DatabaseReference databaseReference = DatabaseRefUtil.getCursistenPerGroep(groupId);
-        Query query;
-        if(limit != null) {
-            query = databaseReference.orderByChild("id").startAt(startAtId).limitToFirst(limit);
-        } else {
-            query = databaseReference.orderByChild("id").startAt(startAtId);
-        }
-
-
+    @Deprecated
+    private static void doGetCursistListQuery(Query query, final ReceiveCursistList receiver, final @Nullable String startAtId ) {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -122,9 +112,15 @@ public class PersistCursist {
         });
     }
 
-
     public static void getCursistList(String groupId, final ReceiveCursistList receiver, boolean includeVerborgen) {
-        getCursistList(groupId, receiver, includeVerborgen, null, null);
+        DatabaseReference databaseReference = DatabaseRefUtil.getCursistenPerGroep(groupId);
+        Query query;
+        if(!includeVerborgen) {
+            query = databaseReference.orderByChild("verborgen").equalTo(false);
+        } else {
+            query = databaseReference.orderByChild("voornaam");
+        }
+        doGetCursistListQuery(query, receiver, null);
     }
 
 
@@ -174,7 +170,7 @@ public class PersistCursist {
         });
     }
 
-    private static Cursist  getCursist(DataSnapshot cursistSnapshot) {
+    static Cursist  getCursist(DataSnapshot cursistSnapshot) {
         Cursist cursist = cursistSnapshot.getValue(Cursist.class);
         for(DataSnapshot diplomaSnapShot : cursistSnapshot.child("diplomas").getChildren()) {
             Diploma diploma = new Diploma();
@@ -230,5 +226,14 @@ public class PersistCursist {
 
         DatabaseReference cursistPartialRef = DatabaseRefUtil.getCursistPartial(groupId, cursistId).child("verborgen");
         cursistPartialRef.setValue(verborgen);
+    }
+
+    public static void updateCursistPaspoort(String groupId, String cursistId, Long paspoort) {
+        DatabaseReference cursistRef = DatabaseRefUtil.getCursist(groupId, cursistId).child("paspoort");
+        if(paspoort == null || paspoort == 0L) {
+            cursistRef.removeValue();
+        } else {
+            cursistRef.setValue(paspoort);
+        }
     }
 }

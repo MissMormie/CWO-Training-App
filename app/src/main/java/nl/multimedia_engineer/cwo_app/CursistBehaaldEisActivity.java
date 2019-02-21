@@ -21,6 +21,7 @@ import nl.multimedia_engineer.cwo_app.databinding.ActivityCursistChecklistBindin
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursistList;
 import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 public class CursistBehaaldEisActivity extends BaseActivity implements  PersistCursist.ReceiveCursistList {
@@ -37,10 +38,12 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
 
     // data used for keeping track of loading cursist
     private final int limit = 5;
-    private boolean finishedList = false;
+//    private boolean finishedList = false;
     private final int reloadAt = 3;
-    private boolean currentlyLoading = false;
+//    private boolean currentlyLoading = false;
     private boolean moveToNextCursistAfterLoading = true;
+
+    private PersistCursistList persistCursistList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,10 +96,16 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
             }
         }
 
-        if(!finishedList && !currentlyLoading) {
-            currentlyLoading = true;
-            String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
-            PersistCursist.getCursistList(groupId, this, false, startAt, limit);
+        if(persistCursistList.isEndOfListReached()) {
+            if(persistCursistList == null) {
+                String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+                persistCursistList = new PersistCursistList(this, groupId)
+                        .setLimit(limit)
+                        .startAt(startAt)
+                        .execute();
+            } else {
+                persistCursistList.requestNextCursisten();
+            }
         }
     }
 
@@ -107,16 +116,16 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     }
 
     private void showNextCursist() {
-        if (cursistList.isEmpty() && finishedList) {
+        if (cursistList.isEmpty() && persistCursistList.isEndOfListReached()) {
             backToMainActivity();
-        } else if (cursistList.isEmpty() && !finishedList){
+        } else if (cursistList.isEmpty() && !persistCursistList.isEndOfListReached()){
             showProgressDialog();
         } else {
             currentCursist = cursistList.remove(0);
             setCursistData();
-            if(cursistList.isEmpty() && finishedList) {
+            if(cursistList.isEmpty() && persistCursistList.isEndOfListReached()) {
                 dataBinding.buttonVolgende.setText(R.string.btn_finish);
-            } else if (cursistList.size() <= reloadAt && !finishedList && !currentlyLoading) {
+            } else if (cursistList.size() <= reloadAt && !persistCursistList.isEndOfListReached()) {
                 loadCursistListData();
             }
         }
@@ -155,7 +164,6 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
 
     @Override
     public void onReceiveCursistList(List<Cursist> cursistList) {
-        currentlyLoading = false;
         hideProgressDialog();
 
         if (cursistList == null && this.cursistList == null) {
@@ -164,8 +172,7 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
         }
 
         if(cursistList == null || cursistList.isEmpty()) {
-            finishedList = true;
-            return;
+             return;
         }
 
         if(!showAlreadyCompleted) {

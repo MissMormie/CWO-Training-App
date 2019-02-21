@@ -1,7 +1,6 @@
 package nl.multimedia_engineer.cwo_app;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,13 +9,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
-import java.net.URL;
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
-import nl.multimedia_engineer.cwo_app.model.CursistBehaaldEis;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
@@ -59,6 +55,10 @@ class CursistBehaaldEisAdapter extends RecyclerView.Adapter<CursistBehaaldEisAda
     void setCwoListData(List<DiplomaEis> diplomaEisList) {
         this.diplomaEisList = diplomaEisList;
         //notifyDataSetChanged();
+    }
+
+    public List<DiplomaEis> getCwoListData() {
+        return diplomaEisList;
     }
 
     public void setCursist(Cursist cursist) {

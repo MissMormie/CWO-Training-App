@@ -68,14 +68,13 @@ public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUit
         // TODO make this just pass a diploma as parcelable, not this ugly code ;)
         selectedDiplomaList.add(selectedDiploma);
 
-        Context context = this;
-        Class destinationClass = CursistenBehalenDiplomaActivity.class;
-        Intent intent = new Intent(context, destinationClass);
-        intent.putExtra("diploma", selectedDiplomaList.get(0));
         if(selectedDiplomaList.get(0).getDiplomaEisList() instanceof ArrayList) {
+            Intent intent = new Intent(this, CursistenBehalenDiplomaActivity.class);
+            intent.putExtra("diploma", selectedDiplomaList.get(0));
             ArrayList<DiplomaEis> diplomaEisArrayList = (ArrayList) selectedDiplomaList.get(0).getDiplomaEisList();
             intent.putExtra("selectedDiplomaEisList", diplomaEisArrayList);
             startActivity(intent);
+            return;
         }
 
         showErrorDialog();
