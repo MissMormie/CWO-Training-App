@@ -23,9 +23,9 @@ import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
-public class CursistBehaaldEisActivity extends BaseActivity implements  PersistCursist.ReceiveCursistList{
+public class CursistBehaaldEisActivity extends BaseActivity implements  PersistCursist.ReceiveCursistList {
     // Parcelable
-    final String CURSIST_LIST = "cursistList";
+    final String CURSIST = "cursistList";
 
     // Lijst met diploma eisen die getraind zijn.
     private List<DiplomaEis> diplomaEisList;
@@ -34,6 +34,13 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     private Cursist currentCursist;
     private ActivityCursistChecklistBinding dataBinding;
     private Boolean showAlreadyCompleted = false;
+
+    // data used for keeping track of loading cursist
+    private final int limit = 5;
+    private boolean finishedList = false;
+    private final int reloadAt = 3;
+    private boolean currentlyLoading = false;
+    private boolean moveToNextCursistAfterLoading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,36 +65,39 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
         showAlreadyCompleted = sharedPreferences.getBoolean(getString(R.string.pref_show_already_completed_key),
                 getResources().getBoolean(R.bool.pref_show_already_completed_default));
 
-        if(savedInstanceState != null && savedInstanceState.containsKey(CURSIST_LIST)) {
-            cursistList = savedInstanceState.getParcelableArrayList(CURSIST_LIST);
-            onReceiveCursistList(cursistList);
+        if(savedInstanceState != null && savedInstanceState.containsKey(CURSIST)) {
+            moveToNextCursistAfterLoading = false;
+            Cursist cursist = savedInstanceState.getParcelable(CURSIST);
+            cursistList = new ArrayList<>();
+            cursistList.add(cursist);
+            showFirstCursist();
         } else {
+            showProgressDialog();
             loadCursistListData();
         }
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        cursistList.add(0, currentCursist);
-        if(!(cursistList instanceof ArrayList)) {
-            // should never happen.
-            ArrayList<Cursist> list = new ArrayList<>();
-            for(Cursist cursist : cursistList) {
-                list.add(cursist);
-            }
-            outState.putParcelableArrayList(CURSIST_LIST, list);
-        } else {
-            outState.putParcelableArrayList(CURSIST_LIST, (ArrayList) cursistList);
-        }
+        outState.putParcelable(CURSIST, currentCursist);
     }
 
-
     private void loadCursistListData() {
-        showProgressDialog();
-        String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
-        PersistCursist.getCursistList(groupId, this, false);
+        String startAt = null;
+        if(cursistList != null && !cursistList.isEmpty()) {
+            startAt = cursistList.get(cursistList.size() -1).getId();
+        } else {
+            if(currentCursist != null) {
+                startAt = currentCursist.getId();
+            }
+        }
+
+        if(!finishedList && !currentlyLoading) {
+            currentlyLoading = true;
+            String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+            PersistCursist.getCursistList(groupId, this, false, startAt, limit);
+        }
     }
 
     private void showFirstCursist() {
@@ -97,13 +107,17 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     }
 
     private void showNextCursist() {
-        if (cursistList.isEmpty()) {
+        if (cursistList.isEmpty() && finishedList) {
             backToMainActivity();
+        } else if (cursistList.isEmpty() && !finishedList){
+            showProgressDialog();
         } else {
             currentCursist = cursistList.remove(0);
             setCursistData();
-            if(cursistList.isEmpty()) {
+            if(cursistList.isEmpty() && finishedList) {
                 dataBinding.buttonVolgende.setText(R.string.btn_finish);
+            } else if (cursistList.size() <= reloadAt && !finishedList && !currentlyLoading) {
+                loadCursistListData();
             }
         }
     }
@@ -111,7 +125,7 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     private void setCursistData() {
         cursistBehaaldEisAdapter.setCursist(currentCursist);
         dataBinding.textViewNaam.setText(currentCursist.nameToString());
-        dataBinding.textViewOpmerking.setText(currentCursist.opmerking);
+        dataBinding.textViewOpmerking.setText(currentCursist.getOpmerking());
         if (currentCursist.getPaspoort() == null || currentCursist.getPaspoort() == 0L)
             dataBinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.nee));
         else
@@ -135,42 +149,54 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     }
 
     public void onClickShowVolgendeCursist(View view) {
+        moveToNextCursistAfterLoading = true;
         showNextCursist();
     }
 
-
     @Override
     public void onReceiveCursistList(List<Cursist> cursistList) {
-        if (cursistList == null) {
+        currentlyLoading = false;
+        hideProgressDialog();
+
+        if (cursistList == null && this.cursistList == null) {
             showErrorDialog();
             return;
         }
 
-        hideProgressDialog();
-
-        if(showAlreadyCompleted) {
-            this.cursistList = cursistList;
-        } else {
-            // filter cursistList. Verborgen is filtered out serverside, but can only filter once, so
-            // filtering for already met demands here.
-            this.cursistList = new ArrayList<>();
-
-            for (Cursist cursist : cursistList) {
-                if (!cursist.isAlleEisenBehaald(diplomaEisList)) {
-                    this.cursistList.add(cursist);
-                }
-            }
+        if(cursistList == null || cursistList.isEmpty()) {
+            finishedList = true;
+            return;
         }
 
-        this.cursistList = cursistList;
-        showFirstCursist();
+        if(!showAlreadyCompleted) {
+            // filter cursistList. Verborgen is filtered out serverside, but can only filter once, so
+            // filtering for already met demands here.
+            List<Cursist> tempList = new ArrayList<>();
+            for (Cursist cursist : cursistList) {
+                if (!cursist.isAlleEisenBehaald(diplomaEisList)) {
+                    tempList.add(cursist);
+                }
+            }
+            cursistList = tempList;
+        }
+
+        if(this.cursistList == null || this.cursistList.isEmpty()) {
+            this.cursistList = cursistList;
+
+            // When retreivingSavedInstanceState there is an empty list, but the currently shown cursist should not change.
+            if(!moveToNextCursistAfterLoading) {
+                moveToNextCursistAfterLoading = true;
+            } else {
+                showFirstCursist();
+            }
+        } else {
+            this.cursistList.addAll(cursistList);
+        }
     }
 
     @Override
     public void onReceiveCursistListFailed() {
         showErrorDialog();
     }
-
-
 
 }

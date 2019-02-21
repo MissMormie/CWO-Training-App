@@ -18,8 +18,8 @@ public class CursistDTO extends CursistPartialDTO {
 
     public CursistDTO(Cursist cursist) {
         super(cursist);
-        if(cursist.getPaspoortDate()!= null) {
-            paspoort = cursist.getPaspoortDate().getTime();
+        if(cursist.getPaspoort()!= null) {
+            paspoort = cursist.getPaspoort();
         } else {
             paspoort = 0L;
         }
@@ -31,7 +31,6 @@ public class CursistDTO extends CursistPartialDTO {
         if(cursist.getDiplomaEisSet() != null && !cursist.getDiplomaEisSet().isEmpty()) {
             for(DiplomaEis diplomaEis : cursist.getDiplomaEisSet())
             behaaldeEisen.put(diplomaEis.getId(), diplomaEis.getId());
-
         }
 
         diplomas = new HashMap<>();

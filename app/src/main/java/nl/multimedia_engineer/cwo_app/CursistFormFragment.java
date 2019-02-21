@@ -158,12 +158,12 @@ public class CursistFormFragment extends Fragment {
             setupFields();
         }
         // Check if we're working with an existing cursist or a new empty one.
-        if (cursist.getId() != null && !cursist.getId().isEmpty()) {
+        if (cursist == null || cursist.getId() != null && !cursist.getId().isEmpty()) {
             voornaamEditText.setText(cursist.getVoornaam());
             tussenvoegselEditText.setText(cursist.getTussenvoegsel());
             achternaamEditText.setText(cursist.getAchternaam());
-            opmerkingenEditText.setText(cursist.opmerking);
-            if (cursist.paspoortDate == null) {
+            opmerkingenEditText.setText(cursist.getOpmerking());
+            if (cursist.getPaspoort() == null) {
                 paspoortCheckbox.setChecked(false);
             } else {
                 paspoortCheckbox.setChecked(true);
@@ -187,14 +187,14 @@ public class CursistFormFragment extends Fragment {
         cursist.setVoornaam(voornaamEditText.getText().toString());
         cursist.setTussenvoegsel(tussenvoegselEditText.getText().toString());
         cursist.setAchternaam(achternaamEditText.getText().toString());
-        cursist.opmerking = opmerkingenEditText.getText().toString();
+        cursist.setOpmerking(opmerkingenEditText.getText().toString());
         if (paspoortCheckbox.isChecked()) {
             // check if it was already checked, if not, set date of today.
-            if (cursist.paspoortDate == null) {
-                cursist.paspoortDate = new Date();
+            if (cursist.getPaspoort() == null) {
+                cursist.setPaspoort(System.currentTimeMillis());
             }
         } else {
-            cursist.paspoortDate = null;
+            cursist.setPaspoort(null);
         }
         // Check if picture was taken, if so, path to the photo is not null.
         if (mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty() && takingPhoto == false) {

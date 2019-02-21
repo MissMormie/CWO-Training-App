@@ -1,6 +1,7 @@
 package nl.multimedia_engineer.cwo_app.persistence;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 
 import nl.multimedia_engineer.cwo_app.dto.CursistDTO;
 import nl.multimedia_engineer.cwo_app.dto.CursistPartialDTO;
@@ -86,13 +88,16 @@ public class PersistCursist {
     }
 
 
-    // todo remove hardcoded values.
-    public static void getCursistList(String groupId, final ReceiveCursistList receiver, boolean includeVerborgen) {
+    public static void getCursistList(String groupId, final ReceiveCursistList receiver, boolean includeVerborgen, @Nullable final String startAtId, @Nullable Integer limit) {
+
         DatabaseReference databaseReference = DatabaseRefUtil.getCursistenPerGroep(groupId);
-        Query query = databaseReference;
-        if(!includeVerborgen) {
-            query = databaseReference.orderByChild("verborgen").equalTo(false);
+        Query query;
+        if(limit != null) {
+            query = databaseReference.orderByChild("id").startAt(startAtId).limitToFirst(limit);
+        } else {
+            query = databaseReference.orderByChild("id").startAt(startAtId);
         }
+
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -104,6 +109,9 @@ public class PersistCursist {
                         cursistList.add(cursist);
                     }
                 }
+                if(startAtId != null ) {
+                    cursistList.remove(0);
+                }
                 receiver.onReceiveCursistList(cursistList);
             }
 
@@ -114,9 +122,17 @@ public class PersistCursist {
         });
     }
 
+
+    public static void getCursistList(String groupId, final ReceiveCursistList receiver, boolean includeVerborgen) {
+        getCursistList(groupId, receiver, includeVerborgen, null, null);
+    }
+
+
+
     public static void getCursistPartialList(String groupId, final ReceiveCursistPartialList receiver) {
         DatabaseReference groepenCursistenRef = DatabaseRefUtil.getGroepenCursisten(groupId);
-        groepenCursistenRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query query = groepenCursistenRef.orderByChild("voornaam");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 GenericTypeIndicator<HashMap<String, CursistPartial>> type = new GenericTypeIndicator<HashMap<String, CursistPartial>>() {};
@@ -126,6 +142,7 @@ public class PersistCursist {
                     receiver.onReceiveCursistPartialList(null);
                     return;
                 }
+
                 for(Map.Entry<String, CursistPartial> entry : result.entrySet()) {
                     entry.getValue().setId(entry.getKey());
                     cursistList.add(entry.getValue());

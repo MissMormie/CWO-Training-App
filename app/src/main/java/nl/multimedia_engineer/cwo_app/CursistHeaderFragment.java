@@ -59,8 +59,8 @@ public class CursistHeaderFragment extends Fragment {
         if (cursist == null)
             return;
         databinding.textViewNaam.setText(cursist.nameToString());
-        databinding.textViewOpmerking.setText(cursist.opmerking);
-        if (cursist.paspoortDate == null)
+        databinding.textViewOpmerking.setText(cursist.getOpmerking());
+        if (cursist.getPaspoort() == null)
             databinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.nee));
         else
             databinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.ja));

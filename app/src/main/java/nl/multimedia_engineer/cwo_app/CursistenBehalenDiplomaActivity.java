@@ -124,7 +124,6 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity implements Per
                 showNextCursist();
             } else {
                 setCursistData(currentCursist);
-
             }
         }
     }
@@ -132,7 +131,7 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity implements Per
     private void setCursistData(Cursist cursist) {
         saveData = false;
         // Set checkbox
-        if(cursist.paspoort != null) {
+        if(cursist.getPaspoort() != null) {
             paspoortCheckBox.setChecked(true);
         } else {
             paspoortCheckBox.setChecked(false);

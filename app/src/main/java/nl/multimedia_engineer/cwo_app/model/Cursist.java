@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -16,10 +17,8 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     private String fotoFileBase64;
 
-    @Deprecated
-    public Date paspoortDate;
-    public Long paspoort;
-    public String opmerking;
+    private Long paspoort;
+    private String opmerking;
 
     private Set<Diploma> diplomaSet;
     private Set<DiplomaEis> diplomaEisSet;
@@ -29,7 +28,11 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     }
 
+    @Nullable
     public Long getPaspoort() {
+        if(paspoort == null || paspoort == 0L) {
+            return null;
+        }
         return paspoort;
     }
 
@@ -53,17 +56,8 @@ public class Cursist extends CursistPartial implements Parcelable{
         this.diplomaEisSet = diplomaEisSet;
     }
 
-    @Nullable
-    public Date getPaspoortDate() {
-        return paspoortDate;
-    }
-
-    public void setPaspoortDate(Date paspoortDate) {
-        this.paspoortDate = paspoortDate;
-    }
-
     public String getOpmerking() {
-        if(opmerking.equals("null")) {
+        if(opmerking == null || opmerking.equals("null")) {
             return "";
         }
 
@@ -82,12 +76,12 @@ public class Cursist extends CursistPartial implements Parcelable{
         this.setVerborgen(cursist.isVerborgen());
     }
 
-    public Cursist(String id, String voornaam, String tussenvoegsel, String achternaam, Date paspoortDate, String opmerking, boolean verborgen) {
+    public Cursist(String id, String voornaam, String tussenvoegsel, String achternaam, Long paspoort, String opmerking, boolean verborgen) {
         this.id = id;
         this.voornaam = voornaam;
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
-        this.paspoortDate = paspoortDate;
+        this.paspoort = paspoort;
         this.opmerking = opmerking;
         this.verborgen = verborgen;
     }
@@ -131,12 +125,12 @@ public class Cursist extends CursistPartial implements Parcelable{
      */
     public void heeftPaspoort(boolean heeftPaspoort) {
         if(!heeftPaspoort) {
-            paspoortDate = null;
+            paspoort = null;
             return;
         }
-        if(paspoortDate != null)
+        if(paspoort != null && paspoort != 0L)
             return;
-        paspoortDate = new Date();
+        paspoort = System.currentTimeMillis();
 
     }
 
@@ -161,13 +155,17 @@ public class Cursist extends CursistPartial implements Parcelable{
      * Checks if all behaaldeEisen in the list are attained by the cursist.
      */
     public boolean isAlleEisenBehaald(List<DiplomaEis> diplomaEisList) {
-        if(diplomaEisSet == null) {
-            return false;
+        if(diplomaEisList == null || diplomaEisList.isEmpty()) {
+            return true;
         }
+
         for (DiplomaEis diplomaEis : diplomaEisList) {
             // Als 1 eis niet is behaald, is niet alles behaald, dus return false.
-            if(!diplomaEisSet.contains(diplomaEis)) {
-                return false;
+
+            if(diplomaEisSet == null || diplomaEisSet != null && !diplomaEisSet.contains(diplomaEis)) {
+                if(diplomaSet == null || diplomaSet != null && !diplomaSet.contains(diplomaEis.getDiploma())) {
+                    return false;
+                }
             }
         }
         return true;
@@ -215,8 +213,8 @@ public class Cursist extends CursistPartial implements Parcelable{
         parcel.writeString(achternaam);
         parcel.writeString(opmerking);
         parcel.writeValue(verborgen);
-        if (paspoortDate != null) {
-            parcel.writeLong(paspoortDate.getTime());
+        if (paspoort != null) {
+            parcel.writeLong(paspoort);
         } else {
             parcel.writeLong(0L);
         }
@@ -243,9 +241,6 @@ public class Cursist extends CursistPartial implements Parcelable{
             // save eisen.
         }
 
-//        parcel.writeParcelable(diplomaSet, );
-//        diplomaSet;
-//        diplomaEisSet;
 
     }
 
@@ -274,9 +269,9 @@ public class Cursist extends CursistPartial implements Parcelable{
         Long paspoortTemp = parcel.readLong();
 
         if (paspoortTemp == 0L) {
-            paspoortDate = null;
+            paspoort = null;
         } else {
-            paspoortDate = new Date(paspoortTemp);
+            paspoort = paspoortTemp;
         }
 
         fotoFileBase64 = parcel.readString();

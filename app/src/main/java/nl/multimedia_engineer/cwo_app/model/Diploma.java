@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by sonja on 3/14/2017.
@@ -82,14 +83,20 @@ public class Diploma implements Parcelable {
         return titel + " " + nivo;
     }
 
-    public boolean equals(Diploma diploma) {
-        return (id.equals(diploma.id));
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Diploma diploma = (Diploma) o;
+        return Objects.equals(id, diploma.id);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
-
-
-    // ---------------------------- Support for Parcelable --------------------------------------- //
+// ---------------------------- Support for Parcelable --------------------------------------- //
 
     public static final Parcelable.Creator<Diploma> CREATOR = new Parcelable.Creator<Diploma>() {
         @Override

@@ -89,9 +89,9 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
     private void displayCursistInfo() {
         cursistBehaaldDiplomaAdapter.setCursist(currentCursist);
         dataBinding.textViewNaam.setText(currentCursist.nameToString());
-        dataBinding.textViewOpmerking.setText(currentCursist.opmerking);
+        dataBinding.textViewOpmerking.setText(currentCursist.getOpmerking());
         String paspoortText;
-        if (currentCursist.paspoortDate == null) {
+        if (currentCursist.getPaspoort() == null) {
             paspoortText = getString(R.string.paspoort) +": " + getString(R.string.nee);
         } else {
             paspoortText = getString(R.string.paspoort) + ": " + getString(R.string.ja);

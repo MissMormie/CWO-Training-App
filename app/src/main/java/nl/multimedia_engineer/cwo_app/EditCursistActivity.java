@@ -40,7 +40,7 @@ public class EditCursistActivity
 //                cursist.getCursistFoto().setImage(this.cursist.getFotoFileBase64());
 //             TODO, fix this work around., check if code is used at all.
             // For some reason the api returns a different date, it's saved correctly
-            cursist.paspoortDate = this.cursist.paspoortDate;
+            cursist.setPaspoort(this.cursist.getPaspoort());
         } else {
             showErrorDialog();
         }

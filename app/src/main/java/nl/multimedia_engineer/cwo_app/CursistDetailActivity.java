@@ -210,8 +210,8 @@ public class CursistDetailActivity
             return;
 
         activityCursistDetailBinding.textviewNaam.setText(cursist.nameToString());
-        activityCursistDetailBinding.textViewOpmerking.setText(cursist.opmerking);
-        if (cursist.paspoortDate == null)
+        activityCursistDetailBinding.textViewOpmerking.setText(cursist.getOpmerking());
+        if (cursist.getPaspoort() == null)
             activityCursistDetailBinding.textViewPaspoort.setText(getString(R.string.paspoort) + ": " + getString(R.string.nee));
         else
             activityCursistDetailBinding.textViewPaspoort.setText(getString(R.string.paspoort) + ": " + getString(R.string.ja));
