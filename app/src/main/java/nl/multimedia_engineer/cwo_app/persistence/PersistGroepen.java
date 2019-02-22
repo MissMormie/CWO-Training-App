@@ -2,11 +2,13 @@ package nl.multimedia_engineer.cwo_app.persistence;
 
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Timestamp;
@@ -27,6 +29,7 @@ public class PersistGroepen {
 
     public interface SavedUserGroepen {
         void onSuccesSavedUserGroup(Group group);
+        void onFailedSavedUserGroup();
     }
 
 
@@ -36,21 +39,38 @@ public class PersistGroepen {
     }
 
     public static void removeGroupForAllUsers(FirebaseAuth auth, String groupId) {
-        // todo look into transaction for this
         Map<String, Object> map = new HashMap<>();
         map.put("deleted", true);
-        map.put("timestamp", new Timestamp(System.currentTimeMillis()).toString());
 
-        // remove first from general, otherwise i'm not allowed to remove it from general anymore.
-        DatabaseReference cursistenPerGroepRef = DatabaseRefUtil.getCursistenPerGroep(groupId);
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("cursistenPerGroep/" + groupId, map);
+        childUpdates.put("groepen/" + groupId, map);
+        childUpdates.put("users/" + auth.getUid() + "/groepen/" + groupId, null);
+        rootRef.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
 
-        cursistenPerGroepRef.setValue(map);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-        DatabaseReference groepRef = DatabaseRefUtil.getGroepRef(groupId);
-        groepRef.setValue(map);
+            }
+        });
 
-        removeGroupForUser(auth, groupId);
 
+      // todo look into transaction for this
+//
+//        // remove first from general, otherwise i'm not allowed to remove it from general anymore.
+//        DatabaseReference cursistenPerGroepRef = DatabaseRefUtil.getCursistenPerGroep(groupId);
+//
+//        cursistenPerGroepRef.setValue(map);
+//
+//        DatabaseReference groepRef = DatabaseRefUtil.getGroepRef(groupId);
+//        groepRef.setValue(map);
+//
+//        removeGroupForUser(auth, groupId);
     }
 
     /**
@@ -59,7 +79,7 @@ public class PersistGroepen {
      * @param groupName
      * @return true if succesful
      */
-    public static void createGroup(FirebaseAuth auth, final String groupName, final SavedUserGroepen receiver) {
+    public static void createGroup(FirebaseAuth auth, final String groupName, final String discipline, final SavedUserGroepen receiver) {
         // Add group to user
         final DatabaseReference pushedRef = DatabaseRefUtil.getUserGroupsRef(auth).push();
         GroupPartial group = new GroupPartial(pushedRef.getKey(), groupName);
@@ -70,14 +90,17 @@ public class PersistGroepen {
                 if(groupId == null) {
                     return;
                 }
-                Group group = new Group("windsurfen", groupName);
+                Group group = new Group(discipline, groupName);
                 group.setId(groupId);
                 receiver.onSuccesSavedUserGroup(group);
 
-                // Todo, make transaction to make this one db query.
-                DatabaseRefUtil.getGroepenRef().child(groupId).child("discipline").setValue("windsurfen");
+                DatabaseRefUtil.getGroepenRef().child(groupId).child("discipline").setValue(discipline);
             }
-            // todo deal with failure.
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                receiver.onFailedSavedUserGroup();
+            }
         });
 
     }
@@ -88,7 +111,7 @@ public class PersistGroepen {
 
     }
 
-    public static void getUserGroepen(FirebaseAuth auth, final ReceiveUserGroepen receiver) {
+    public static void getUserGroepenPartial(FirebaseAuth auth, final ReceiveUserGroepen receiver) {
         DatabaseReference userGroupsRef = DatabaseRefUtil.getUserGroupsRef(auth);
         userGroupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

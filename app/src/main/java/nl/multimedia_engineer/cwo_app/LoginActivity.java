@@ -2,6 +2,7 @@ package nl.multimedia_engineer.cwo_app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,9 +21,9 @@ import com.google.firebase.auth.FirebaseUser;
 import nl.multimedia_engineer.cwo_app.util.ValidationUtil;
 
 public class LoginActivity extends BaseActivity {
-    final private String TAG = "LoginActivity";
-    final private String STATE_LOGIN = "Login";
-    final private String STATE_REGISTER = "Register";
+    private final String TAG = "LoginActivity";
+    private final String STATE_LOGIN = "Login";
+    private final String STATE_REGISTER = "Register";
     private String currentState = STATE_LOGIN;
 
     // UI elements
@@ -51,6 +52,7 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         editEmail = findViewById(R.id.edit_email);
         editPassword = findViewById(R.id.edit_password);
         btnAction = findViewById(R.id.btn_login);
@@ -58,20 +60,7 @@ public class LoginActivity extends BaseActivity {
         progressBar = findViewById(R.id.pb_login);
 
         // Set on click listeners.
-        setDiscipline();
         setUserInteraction(true);
-    }
-
-    private void setDiscipline() {
-        String discipline = getResources().getString(R.string.pref_discipline);
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        if(! sharedPreferences.contains(getResources().getString(R.string.pref_discipline))) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(discipline, "windsurfen");
-            // Todo for now discipline is hardcoded windsurfen as that's the only option. Once
-            // different disciplines are available this needs to become an option in the app,
-            // probably per group.
-        }
     }
 
     private void doAction() {
@@ -161,6 +150,15 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void goToMenu(FirebaseUser user) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        // Different user logging in. Removing current preferences.
+        if(!sharedPreferences.getString(getString(R.string.pref_current_user),"").equals(user.getUid())) {
+            sharedPreferences.edit().remove(getString(R.string.pref_current_group_id)).apply();
+            sharedPreferences.edit().remove(getString(R.string.pref_current_group_name)).apply();
+            sharedPreferences.edit().remove(getString(R.string.pref_discipline)).apply();
+            sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_user), user.getUid()).apply();
+        }
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

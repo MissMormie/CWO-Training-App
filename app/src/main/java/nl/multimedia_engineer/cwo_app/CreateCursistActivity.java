@@ -8,18 +8,22 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseError;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.persistence.PersistDiploma;
 import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 public class CreateCursistActivity
         extends BaseActivity
         implements CursistFormFragment.OnFragmentInteractionListener,
-                   PersistCursist.SavedCursist {
+                   PersistCursist.SavedCursist,
+                   PersistDiploma.ReceiveDiplomas {
     private CursistFormFragment cursistFormFragment;
     private Cursist cursist;
 
@@ -38,11 +42,12 @@ public class CreateCursistActivity
         String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
 
         PersistCursist.saveCursist(groupId, cursist, this);
-        cursistSaved(cursist);
     }
 
+    // ------------------------------- Implements PersistCursist.SavedCursist ----------------------
 
-    private void cursistSaved(Cursist cursist) {
+    @Override
+    public void onCursistSaved(Cursist cursist) {
         this.cursist = cursist;
         Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_opgeslagen), Toast.LENGTH_SHORT);
         toast.show();
@@ -51,73 +56,43 @@ public class CreateCursistActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean showDiploma = sharedPreferences.getBoolean(getString(R.string.pref_show_diploma_after_create_key),
                 getResources().getBoolean(R.bool.pref_show_diploma_after_create_cursist));
+
         if (showDiploma) {
-            // todo
-//            new FetchDiplomaAsyncTask(this).execute();
-            finish();
+            String discipline = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_discipline), "");
+            PersistDiploma.getDiplomaEisen(discipline, this);
         } else {
             finish();
         }
     }
 
-    private void saveFailed() {
+    @Override
+    public void onCursistSaveFailed() {
+        hideProgressDialog();
         showErrorDialog();
     }
 
-    // Used when cursist is saved to call setDiplomaBehaald.
-//    @Override
-    public void setDiploma(List<Diploma> diplomaList) {
-        ArrayList<Diploma> diplomaArrayList = (ArrayList<Diploma>) diplomaList;
-        Context context = this;
-        Class destinationClass = CursistBehaaldDiplomaActivity.class;
-        Intent intent = new Intent(context, destinationClass);
 
+    // ------------------------------- Implements PersistDiploma.ReceiveDiplomas ------------------------
+    @Override
+    public void onReceiveDiplomas(List<Diploma> diplomas) {
+        ArrayList<Diploma> diplomaArrayList;
+        if(diplomas instanceof ArrayList) {
+            diplomaArrayList = (ArrayList<Diploma>) diplomas;
+        } else {
+            diplomaArrayList = new ArrayList<>();
+            diplomaArrayList.addAll(diplomas);
+        }
+
+        Intent intent = new Intent(this, CursistBehaaldDiplomaActivity.class);
 
         intent.putParcelableArrayListExtra("selectedDiplomaList", diplomaArrayList);
-
         intent.putExtra("cursist", cursist);
 
         startActivity(intent);
-
     }
-
-    // ------------------------------- Implements PersistCursist.SavedCursist ----------------------
 
     @Override
-    public void onCursistSaved() {
-        // todo
+    public void onFailedReceivingDiplomas(DatabaseError databaseError) {
+        showErrorDialog();
     }
-
-    private class SaveCursistAsyncTask extends AsyncTask<Cursist, Void, Cursist> {
-
-
-        @Override
-        protected Cursist doInBackground(Cursist... cursist) {
-
-//            URL url = NetworkUtils.buildUrl("cursist");
-//            try {
-//                String cursistString = NetworkUtils.sendAndReceiveString(url, cursist[0].simpleCursistToJson(), "POST");
-//                if (cursistString == null || cursistString.equals(""))
-//                    return null;
-//                return OpenJsonUtils.getCursist(cursistString);
-////                return NetworkUtils.uploadToServer(url, cursist[0].simpleCursistToJson(), "POST");
-//            } catch (Exception e) {
-//                // check errors
-//                e.printStackTrace();
-//            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Cursist cursist) {
-            if (cursist != null) {
-                cursistSaved(cursist);
-            } else {
-                saveFailed();
-            }
-
-
-        }
-    }
-
 }

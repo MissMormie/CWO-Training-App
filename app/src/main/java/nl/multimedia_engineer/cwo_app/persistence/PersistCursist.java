@@ -4,10 +4,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -43,13 +45,37 @@ public class PersistCursist {
     }
 
     public interface SavedCursist {
-        void onCursistSaved();
+        void onCursistSaved(Cursist cursist);
+        void onCursistSaveFailed();
+    }
+
+    public interface DeletedCursist {
+        void onCursistDeleted();
+        void onCursistDeleteFailed();
+    }
+
+    public static void requestDeleteCursist(final String groupId, final Cursist cursist, final DeletedCursist receiver) {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("cursistenPerGroep/" + groupId + "/" + cursist.getId(), null);
+        childUpdates.put("groepen/" + groupId + "/cursisten/" + cursist.getId(), null);
+        rootRef.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                receiver.onCursistDeleted();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                receiver.onCursistDeleteFailed();
+            }
+        });
     }
 
 
     private static final String TAG = PersistCursist.class.getSimpleName();
 
-    public static void saveCursist(String groupId, Cursist cursist, final SavedCursist receiver) {
+    public static void saveCursist(String groupId, final Cursist cursist, final SavedCursist receiver) {
         DatabaseReference groepenCursistenRef = DatabaseRefUtil.getGroepenCursisten(groupId);
         if(cursist.getId() == null || cursist.getId().isEmpty()) {
             String cursistId = groepenCursistenRef.push().getKey();
@@ -57,30 +83,49 @@ public class PersistCursist {
         }
 
         CursistPartialDTO cursistPartialDTO = new CursistPartialDTO(cursist);
-
-        groepenCursistenRef.child(cursist.getId()).setValue(cursistPartialDTO);
-        Log.d(TAG, "saveCursist: " + cursist.getId());
-
-        DatabaseReference cursistGroepRef = DatabaseRefUtil.getCursist(groupId, cursist.getId());
         CursistDTO cursistDTO = new CursistDTO(cursist);
 
-        cursistGroepRef.setValue(cursistDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("cursistenPerGroep/" + groupId + "/" + cursist.getId(), cursistDTO);
+        childUpdates.put("groepen/" + groupId + "/cursisten/" + cursist.getId(), cursistPartialDTO);
+
+        rootRef.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-               receiver.onCursistSaved();
+                receiver.onCursistSaved(cursist);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                receiver.onCursistSaveFailed();
             }
         });
 
+
+
+
+//        groepenCursistenRef.child(cursist.getId()).setValue(cursistPartialDTO);
+//        Log.d(TAG, "saveCursist: " + cursist.getId());
+
+//        DatabaseReference cursistGroepRef = DatabaseRefUtil.getCursist(groupId, cursist.getId());
+//
+//        cursistGroepRef.setValue(cursistDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//               receiver.onCursistSaved(cursist);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                receiver.onCursistSaveFailed();
+//            }
+//        });
+
+
+
     }
 
-    /**
-     * Cursist needs to contain cursistId.
-     * @param groupId
-     * @param cursist
-     */
-    public static void updateCursist(String groupId, Cursist cursist) {
-
-    }
 
     @Deprecated
     public static void getCursistList(String groupId, final ReceiveCursistList receiver) {
@@ -211,8 +256,7 @@ public class PersistCursist {
      * @param delete
      */
     public static void saveCursistDiploma(String groupId, String curistId, String diplomaId, boolean delete) {
-        // todo maybe make update to not have to send everything.
-        DatabaseReference databaseReference = DatabaseRefUtil.getDiplomaCursist(groupId, curistId, diplomaId);
+          DatabaseReference databaseReference = DatabaseRefUtil.getDiplomaCursist(groupId, curistId, diplomaId);
         if(delete) {
             databaseReference.removeValue();
         } else {

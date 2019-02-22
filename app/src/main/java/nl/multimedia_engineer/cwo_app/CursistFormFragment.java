@@ -168,7 +168,7 @@ public class CursistFormFragment extends Fragment {
             } else {
                 paspoortCheckbox.setChecked(true);
             }
-            if (cursist.getFotoFileBase64() == null && cursist.getFotoFileBase64().isEmpty()) { 
+            if (cursist.getFotoFileBase64() == null || cursist.getFotoFileBase64().isEmpty()) {
 //                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
 //                new DownloadAndSetImageTask(fotoImageView, getContext()).execute(fotoUrl.toString());
             }

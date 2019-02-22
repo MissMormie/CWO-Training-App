@@ -1,7 +1,6 @@
 package nl.multimedia_engineer.cwo_app;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,18 +12,15 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.Map;
 
 import nl.multimedia_engineer.cwo_app.model.Group;
 import nl.multimedia_engineer.cwo_app.persistence.PersistGroepen;
-import nl.multimedia_engineer.cwo_app.util.ConnectionIssuesUtil;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
 public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGroepen.SavedUserGroepen {
     private static final String TAG = CreateOrJoinGroupActivity.class.getName();
+    private final String discipline = "windsurfen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +40,16 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
             Toast.makeText(this, getResources().getString(R.string.text_fields_filled_wrong), Toast.LENGTH_SHORT).show();
             return;
         }
-        PersistGroepen.createGroup(mAuth, groupName, this);
+        PersistGroepen.createGroup(mAuth, groupName, discipline, this);
         showProgressDialog();
     }
 
     public void onClickJoinGroup(View view) {
         final String accessCode = ((EditText) findViewById(R.id.editText_accessCode)).getText().toString();
         final String groupName = ((EditText) findViewById(R.id.editText_joinGroupName)).getText().toString();
+        // when allowing more disciplines this needs to be changed.
 
-        final Group group = new Group("windsurfen", "groupName");
+        final Group group = new Group(discipline, "groupName");
         group.setId(accessCode);
 
         if(accessCode.isEmpty() || groupName.isEmpty() ) {
@@ -79,7 +76,7 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // If there is a value all is fine, otherwise get rid of the previously made group.
                 if(dataSnapshot.exists()) {
-                    addGroupToSharedPreferences(accessCode, groupName);
+                    addGroupToSharedPreferences(accessCode, groupName, discipline);
                     onSuccesSavedUserGroup(group);
                     return;
                 }
@@ -99,10 +96,11 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
     }
 
 
-    private void addGroupToSharedPreferences(String groupId, String groupName) {
+    private void addGroupToSharedPreferences(String groupId, String groupName, String discipline) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), groupId).apply();
         sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), groupName).apply();
+        sharedPreferences.edit().putString(getResources().getString(R.string.pref_discipline), discipline).apply();
     }
 
     // ------------------ implements PersistGroepen.SavedUserGroepen -------------------------------
@@ -110,7 +108,14 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
     @Override
     public void onSuccesSavedUserGroup(Group group) {
         hideProgressDialog();
-        addGroupToSharedPreferences(group.getId(), group.getName());
+        // When addings more disciplines, this needs to be not hardcoded. Ok for now.
+        addGroupToSharedPreferences(group.getId(), group.getName(), discipline);
         finish();
+    }
+
+    @Override
+    public void onFailedSavedUserGroup() {
+        hideProgressDialog();
+        showErrorDialog();
     }
 }

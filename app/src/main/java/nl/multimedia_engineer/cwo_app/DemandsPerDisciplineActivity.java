@@ -17,14 +17,16 @@ import java.util.HashMap;
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.dto.SubDisciplinesWithDemandsList;
+import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
+import nl.multimedia_engineer.cwo_app.persistence.PersistDiploma;
+import nl.multimedia_engineer.cwo_app.persistence.PersistExamenEisen;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
-public class DemandsPerDisciplineActivity extends AppCompatActivity {
+public class DemandsPerDisciplineActivity extends BaseActivity implements PersistDiploma.ReceiveDiplomas {
     DisciplinesExpandableListAdapter listAdapter;
     ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,41 +36,26 @@ public class DemandsPerDisciplineActivity extends AppCompatActivity {
         // get the listview
         expListView = (ExpandableListView) findViewById(R.id.elv_demands_per_disciplines);
 
-        // preparing list data
-        prepareListData();
-
+        getListData();
     }
 
-    /*
-     * Preparing the list data
-     */
-    private void prepareListData() {
-        final Context context = this;
-        // todo when there is support for multiple disciplines this needs to be not hardcoded.
-        final DatabaseReference examDemands = DatabaseRefUtil.getExamenEisen("windsurfen");
-        examDemands.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<HashMap<String, HashMap<String, DiplomaEis>>> type = new GenericTypeIndicator<HashMap<String, HashMap<String, DiplomaEis>>>() {};
-                HashMap<String, HashMap<String, DiplomaEis>> map = dataSnapshot.getValue(type);
+    private void getListData() {
+        showProgressDialog();
+        String discipline = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_discipline), "");
+        PersistDiploma.getDiplomaEisen(discipline, this);
+    }
 
-                SubDisciplinesWithDemandsList list = new SubDisciplinesWithDemandsList(map);
-//                DisciplinesList disciplinesList = new DisciplinesList(dataSnapshot);
+    @Override
+    public void onReceiveDiplomas(List<Diploma> diplomas) {
+        hideProgressDialog();
+        // setting list adapter
+        listAdapter = new DisciplinesExpandableListAdapter(this, diplomas);
+        expListView.setAdapter(listAdapter);
+    }
 
-                listAdapter = new DisciplinesExpandableListAdapter(context, list.getDiplomaList());
-
-                // setting list adapter
-                expListView.setAdapter(listAdapter);
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // todo handle this nicely
-                Toast.makeText(context, "Something went wrong.. ", Toast.LENGTH_LONG);
-            }
-        });
-
+    @Override
+    public void onFailedReceivingDiplomas(DatabaseError databaseError) {
+        hideProgressDialog();
+        showErrorDialog();
     }
 }

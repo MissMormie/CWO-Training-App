@@ -7,23 +7,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-import nl.multimedia_engineer.cwo_app.dto.UserGroupPartialList;
 import nl.multimedia_engineer.cwo_app.model.GroupPartial;
 import nl.multimedia_engineer.cwo_app.persistence.PersistGroepen;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
@@ -59,7 +52,7 @@ public class GroupActivity extends BaseActivity
         super.onStart();
         final GroupAdapter.GroupItemClickListener listener = this;
 
-        PersistGroepen.getUserGroepen(mAuth, this);
+        PersistGroepen.getUserGroepenPartial(mAuth, this);
     }
 
     @Override
@@ -209,9 +202,12 @@ public class GroupActivity extends BaseActivity
 
     @Override
     public void onReceiveUserGroepen(List<GroupPartial> groupPartialList) {
+        if(groupPartialList == null) {
+            showErrorDialog();
+            return;
+        }
         userGroupPartialList = groupPartialList;
 
-        // todo check not null.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         final String groupId = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_id), "");
 
@@ -221,6 +217,6 @@ public class GroupActivity extends BaseActivity
 
     @Override
     public void onReceiveUserGroepenFailed() {
-
+        showErrorDialog();
     }
 }

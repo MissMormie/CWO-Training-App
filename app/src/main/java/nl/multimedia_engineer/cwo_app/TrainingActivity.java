@@ -13,6 +13,7 @@ import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistExamenEisen;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 public class TrainingActivity extends BaseActivity
         implements
@@ -67,8 +68,8 @@ public class TrainingActivity extends BaseActivity
 
     private void loadCwoEisData() {
         showProgressDialog();
-        // todo make this not hardcoded.
-        PersistExamenEisen.requestDiplomaEisen("windsurfen", this);
+        String discipline = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_discipline), "");
+        PersistExamenEisen.requestDiplomaEisen(discipline, this);
     }
 
     @Override
@@ -91,12 +92,18 @@ public class TrainingActivity extends BaseActivity
     }
 
     @Override
-    public void receiveDiplomaEisen(List<DiplomaEis> diplomaEisList) {
+    public void onReceiveDiplomaEisen(List<DiplomaEis> diplomaEisList) {
         hideProgressDialog();
         if(diplomaEisList == null || diplomaEisList.isEmpty()) {
             showErrorDialog();
         } else {
             trainingsListAdapter.setCwoData(diplomaEisList);
         }
+    }
+
+    @Override
+    public void onReceiveDiplomaEisenFailed() {
+        hideProgressDialog();
+        showErrorDialog();
     }
 }

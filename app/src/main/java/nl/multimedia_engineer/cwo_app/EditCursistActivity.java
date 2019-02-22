@@ -31,26 +31,6 @@ public class EditCursistActivity
         PersistCursist.saveCursist(PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), ""), cursist, this);
     }
 
-//    @Override
-    public void cursistSaved(Cursist cursist) {
-        if (cursist != null) {
-            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_opgeslagen), Toast.LENGTH_SHORT);
-            toast.show();
-            if(cursist.getFotoFileBase64()!= null && !cursist.getFotoFileBase64().isEmpty())
-//                cursist.getCursistFoto().setImage(this.cursist.getFotoFileBase64());
-//             TODO, fix this work around., check if code is used at all.
-            // For some reason the api returns a different date, it's saved correctly
-            cursist.setPaspoort(this.cursist.getPaspoort());
-        } else {
-            showErrorDialog();
-        }
-
-        Intent intent = new Intent();
-        intent.putExtra("cursist", cursist);
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -72,7 +52,7 @@ public class EditCursistActivity
     // ------------------------------- Implements PersistCursist.SavedCursist ----------------------
 
     @Override
-    public void onCursistSaved() {
+    public void onCursistSaved(Cursist cursist) {
         hideProgressDialog();
         Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_opgeslagen), Toast.LENGTH_SHORT);
         toast.show();
@@ -80,5 +60,11 @@ public class EditCursistActivity
         intent.putExtra("cursist", cursist);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void onCursistSaveFailed() {
+        hideProgressDialog();
+        showErrorDialog();
     }
 }

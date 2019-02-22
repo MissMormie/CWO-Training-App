@@ -2,7 +2,6 @@ package nl.multimedia_engineer.cwo_app;
 
 
 import android.content.Context;
-// todo
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

@@ -21,6 +21,7 @@
     <string name="pref_current_group_name" translatable="false">CurrentGroupName</string>
     <string name="pref_current_group_id" translatable="false">CurrentGroupID</string>
     <string name="pref_discipline" translatable="false">Discipline</string>
+    <string name="pref_current_user" translatable="false">CurrentUser</string>
 
     <string name="file_authority" translatable="false">nl.multimedia_engineer.cwo_app.fileprovider</string>
 

@@ -17,6 +17,7 @@ import java.util.List;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 import nl.multimedia_engineer.cwo_app.persistence.PersistDiploma;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 /**
  * Shows list of available diploma's from database. Can pick one as radio button.
@@ -51,8 +52,8 @@ public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUit
 
     private void loadCwoEisData() {
         showProgressDialog();
-        // todo make this not hardcoded.
-        PersistDiploma.getDiplomaEisen("windsurfen", this);
+        String discipline = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_discipline), "");
+        PersistDiploma.getDiplomaEisen(discipline, this);
     }
 
 // ---------------------------- Click ----------------------------------------------------------
@@ -65,7 +66,6 @@ public class DiplomaUitgevenActivity extends BaseActivity implements  DiplomaUit
 
     private void showCreateDiplomaActivity() {
         // Because we're now only allowing a single diploma we're adding that specific one to the list.
-        // TODO make this just pass a diploma as parcelable, not this ugly code ;)
         selectedDiplomaList.add(selectedDiploma);
 
         if(selectedDiplomaList.get(0).getDiplomaEisList() instanceof ArrayList) {

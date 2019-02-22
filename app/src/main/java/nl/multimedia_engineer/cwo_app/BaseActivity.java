@@ -19,11 +19,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 
-import nl.multimedia_engineer.cwo_app.util.ConnectionIssuesUtil;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
 /**
@@ -72,10 +72,17 @@ public abstract class BaseActivity extends AppCompatActivity {
      * Gets group data for this user, if no group data
      */
     private void getGroupDataOrMakeGroup() {
-        // Check if we already have the required group data.
+        // Check if we already have the required state data set
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(sharedPreferences.contains(getResources().getString(R.string.pref_current_group_id)) &&
-                sharedPreferences.contains(getResources().getString(R.string.pref_current_group_name))) {
+        if(        sharedPreferences.contains(getString(R.string.pref_current_group_id))
+                && !sharedPreferences.getString(getString(R.string.pref_current_group_id), "").isEmpty()
+                && sharedPreferences.contains(getResources().getString(R.string.pref_current_group_name))
+                && !sharedPreferences.getString(getString(R.string.pref_current_group_name), "").isEmpty()
+                && sharedPreferences.contains(getResources().getString(R.string.pref_discipline))
+                && !sharedPreferences.getString(getString(R.string.pref_discipline), "").isEmpty()
+                && sharedPreferences.contains(getString(R.string.pref_current_user))
+                && !sharedPreferences.getString(getString(R.string.pref_current_user), "").isEmpty()
+        ) {
             // all group settings are available.
             return;
         }
@@ -88,26 +95,32 @@ public abstract class BaseActivity extends AppCompatActivity {
         DatabaseReference myRef = DatabaseRefUtil.getUserGroupsRef(mAuth);
         final Context context = this;
 
+        Query query = myRef.orderByChild("id").limitToFirst(1);
+
+        // todo move this to a persistence class
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
+                Map<String, Map> map = (Map<String, Map>) dataSnapshot.getValue();
+
                 if(map.isEmpty()) {
                     // User does not have a group
                     Intent intent = new Intent(context, CreateOrJoinGroupActivity.class);
                     startActivity(intent);
                 } else {
                     // User does have a group but data was removed from device, adding again.
-                    for(Map.Entry<String, String> entry : map.entrySet()) {
+                    for(Map.Entry<String, Map> entry : map.entrySet()) {
+                        Map<String, String> results = entry.getValue();
                         // Only need 1, to set as current group.
-                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), entry.getValue()).commit();
-                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), entry.getKey()).commit();
+                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), results.get("name")).commit();
+                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), results.get("id")).apply();
+                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_discipline), results.get("discipline")).apply();
+                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_user), mAuth.getUid()).apply();
                         break;
                     }
                 }
-
                 hideProgressDialog();
             }
 
@@ -115,8 +128,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
-                ConnectionIssuesUtil.unableToConnect(context);
                 hideProgressDialog();
+                // todo show error that connection is not working now.
+
             }
         });
     }

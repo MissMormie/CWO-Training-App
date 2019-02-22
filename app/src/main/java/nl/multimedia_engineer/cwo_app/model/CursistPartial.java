@@ -16,6 +16,13 @@ public class CursistPartial implements Parcelable {
 
     }
 
+    public CursistPartial(Cursist cursist) {
+        id = cursist.getId();
+        voornaam = cursist.getVoornaam();
+        tussenvoegsel = cursist.getTussenvoegsel();
+        achternaam = cursist.getAchternaam();
+    }
+
     protected CursistPartial(Parcel in) {
         id = in.readString();
         voornaam = in.readString();

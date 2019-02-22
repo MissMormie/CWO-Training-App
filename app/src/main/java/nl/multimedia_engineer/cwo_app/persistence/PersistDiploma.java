@@ -47,8 +47,5 @@ public class PersistDiploma {
                 receiver.onFailedReceivingDiplomas(databaseError);
             }
         });
-
     }
-
-
 }

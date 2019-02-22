@@ -8,7 +8,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.model.Diploma;
@@ -17,11 +16,16 @@ import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
 public class PersistExamenEisen {
     public interface ReceivedDiplomaEisen {
-        void receiveDiplomaEisen(List<DiplomaEis> diplomaEisList);
+        void onReceiveDiplomaEisen(List<DiplomaEis> diplomaEisList);
+        void onReceiveDiplomaEisenFailed();
+    }
+
+    public interface ReceivedDiplomas {
+        void onReceiveDiplomasWithEisen(List<Diploma> diplomas);
+        void onReceiveDiplomasFailedWithEisen();
     }
 
     public static void requestDiplomaEisen(final String discipline, final ReceivedDiplomaEisen receiver) {
-        // todo make this not hardcoded. For now using only 1 discipline.
         DatabaseReference examenEisen = DatabaseRefUtil.getExamenEisen(discipline);
         examenEisen.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -39,15 +43,13 @@ public class PersistExamenEisen {
                         diplomaEisen.add(diplomaEis);
                     }
                 }
-                receiver.receiveDiplomaEisen(diplomaEisen);
+                receiver.onReceiveDiplomaEisen(diplomaEisen);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                receiver.onReceiveDiplomaEisenFailed();
             }
         });
-
     }
-
 }

@@ -1,11 +1,14 @@
 package nl.multimedia_engineer.cwo_app;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -32,7 +35,8 @@ import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 public class CursistDetailActivity
         extends BaseActivity
         implements PersistCursist.ReceiveCursist,
-                   PersistDiploma.ReceiveDiplomas
+                   PersistDiploma.ReceiveDiplomas,
+                   PersistCursist.DeletedCursist
             {
     private static final String TAG = CursistDetailActivity.class.getSimpleName();
 
@@ -138,32 +142,28 @@ public class CursistDetailActivity
     }
 
     private void deleteCursist() {
-        // todo
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setMessage(R.string.echt_verwijderen)
-//                .setPositiveButton(R.string.ja, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        new DeleteCursistTask().execute();
-//                    }
-//                })
-//                .setNegativeButton(R.string.nee, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                    }
-//                    // Create the AlertDialog object and return it
-//                });
-//
-//        Dialog dialog = builder.create();
-//        dialog.show();
+        final PersistCursist.DeletedCursist deletedCursist = this;
+        final String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.echt_verwijderen)
+                .setPositiveButton(R.string.ja, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        showProgressDialog();
+                        PersistCursist.requestDeleteCursist(groupId, cursist, deletedCursist);
+                        dialog.cancel();
+
+                    }
+                })
+                .setNegativeButton(R.string.nee, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        Dialog dialog = builder.create();
+        dialog.show();
     }
 
-    private void cursistDeleted() {
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_verwijderd), Toast.LENGTH_SHORT);
-        toast.show();
-        Intent intent = new Intent();
-        intent.putExtra("cursist", cursist);
-        setResult(RESULT_CANCELED, intent);
-        finish();
-    }
 
     // ---------------------------------------------------------------------------------------------
     // BACK BEHAVIOUR
@@ -200,7 +200,8 @@ public class CursistDetailActivity
 
 
     private void loadDiplomaData() {
-        PersistDiploma.getDiplomaEisen("windsurfen", this);
+        String discipline = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_discipline), "");
+        PersistDiploma.getDiplomaEisen(discipline, this);
         //new FetchCursistTask().execute(cursistId);
 //        new FetchCwoEisData().execute();
     }
@@ -241,24 +242,6 @@ public class CursistDetailActivity
         cursistBehaaldEisAdapter.setCursist(cursist);
     }
 
-////    @Override
-//    public void cursistSaved(Cursist cursist) {
-//        toggleLoading(false);
-//        if (cursist != null) {
-//            String tekst;
-//            if (cursist.isVerborgen())
-//                tekst = getString(R.string.cursist_verborgen);
-//            else
-//                tekst = getString(R.string.cursist_niet_verborgen);
-//
-//            Toast toast = Toast.makeText(getApplicationContext(), tekst, Toast.LENGTH_SHORT);
-//            toast.show();
-//        } else {
-//            showErrorDialog();
-//        }
-//    }
-
-
     // ------------------------------------- Persist cursist implementation ------------------------
     @Override
     public void onReceiveCursist(Cursist cursist) {
@@ -269,13 +252,13 @@ public class CursistDetailActivity
 
     @Override
     public void onReceiveCursistFailed() {
+        hideProgressDialog();
         Log.d(TAG, "failed receiving cursist");
         showErrorDialog();
     }
 
 
     // ------------------------------------- Persist Diploma eisen implementation ------------------------
-
 
     @Override
     public void onReceiveDiplomas(List<Diploma> diplomas) {
@@ -292,9 +275,7 @@ public class CursistDetailActivity
             showErrorDialog();
             Log.d(TAG, "failed getting list of diploma's");
         }
-
     }
-
 
 
     @Override
@@ -302,112 +283,23 @@ public class CursistDetailActivity
         Log.d(TAG, "failed receiving diplomas");
     }
 
-//
-//    private class DeleteCursistTask extends AsyncTask<Long, Void, Integer> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            showProgressDialog();
-//
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected Integer doInBackground(Long... params) {
-////            URL url = NetworkUtils.buildUrl("cursist", cursist.id.toString());
-////            int resultCode = 0;
-////            try {
-////                resultCode = NetworkUtils.sendToServer(url);
-////                return resultCode;
-////            } catch (IOException e) {
-////                e.printStackTrace();
-////            }
-////            return resultCode;
-//            return 404;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Integer resultCode) {
-//            hideProgressDialog();
-//            toggleLoading(false);
-//            if (resultCode == HttpURLConnection.HTTP_OK) {
-//                cursistDeleted();
-//            } else {
-//                Log.d(TAG, "failed deleting cursist");
-//                showErrorDialog();
-//            }
-//        }
-//    }
-//
-//    private class FetchCwoEisData extends AsyncTask<String, Void, List<Diploma>> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            toggleLoading(true);
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected List<Diploma> doInBackground(String... params) {
-////            URL diplomaListUrl = NetworkUtils.buildUrl("diplomas");
-////
-////            try {
-////                String jsonDiplomaLijstResponse = NetworkUtils.getResponseFromHttpUrl(diplomaListUrl);
-////                return OpenJsonUtils.getDiplomaLijst(jsonDiplomaLijstResponse);
-////            } catch (Exception e) {
-////                e.printStackTrace();
-////                return null;
-////            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(List<Diploma> diplomaListResult) {
-//            diplomaList = diplomaListResult;
-//            toggleLoading(false);
-//            if (diplomaListResult != null) {
-//                List<DiplomaEis> diplomaEisenLijst = new ArrayList<>();
-//                for (int i = 0; i < diplomaListResult.size(); i++) {
-//                    diplomaEisenLijst.addAll(diplomaListResult.get(i).getDiplomaEisList());
-//                }
-//
-//                displayDiplomaEisInfo(diplomaEisenLijst);
-//            } else {
-//                showErrorDialog();
-//                Log.d(TAG, "failed getting list of diploma's");
-//            }
-//        }
-//    }
-////
-//    class FetchCursistTask extends AsyncTask<Long, Void, Cursist> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            toggleLoading(true);
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected Cursist doInBackground(Long... id) {
-////            URL curistUrl = NetworkUtils.buildUrl("cursist", id[0].toString());
-////
-////            try {
-////                String jsonCursistResponse = NetworkUtils.getResponseFromHttpUrl(curistUrl);
-////                Cursist cursist = OpenJsonUtils.getCursist(jsonCursistResponse);
-////                return cursist;
-////
-////            } catch (Exception e) {
-////                e.printStackTrace();
-////                return null;
-////            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Cursist cursistObject) {
-//            toggleLoading(false);
-//            cursist = cursistObject;
-//            displayCursistInfo();
-//        }
-//    }
+    // ------------------------------------- Persist Cursist Deleted implementation ------------------------
+
+    @Override
+    public void onCursistDeleted() {
+        hideProgressDialog();
+        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_verwijderd), Toast.LENGTH_SHORT);
+        toast.show();
+        Intent intent = new Intent();
+        intent.putExtra("cursist", cursist);
+        setResult(RESULT_CANCELED, intent);
+        finish();
+    }
+
+    @Override
+    public void onCursistDeleteFailed() {
+        hideProgressDialog();
+        showErrorDialog();
+    }
+
 }

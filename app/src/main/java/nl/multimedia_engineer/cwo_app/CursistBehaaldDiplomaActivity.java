@@ -76,7 +76,6 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
 
     private void showNextCursist() {
         if (cursistList.isEmpty()) {
-            // todo show page that all cursisten are shown.
             backToMainActivity();
         } else {
             currentCursist = cursistList.remove(0);
@@ -131,20 +130,23 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
         if(this.cursistList == null) {
             this.cursistList = new ArrayList<>();
         }
-        // todo add check that the trainer does not want to see students who already have all diplomas.
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        showAlreadyCompleted = sharedPreferences.getBoolean(getString(R.string.pref_show_already_completed_key),
+                getResources().getBoolean(R.bool.pref_show_already_completed_default));
         for(Cursist cursist : cursistList) {
-            if(!cursist.isAlleDiplomasBehaald(diplomaList)) {
+            if(!cursist.isAlleDiplomasBehaald(diplomaList) || showAlreadyCompleted) {
                 this.cursistList.add(cursist);
             }
         }
 
         hideProgressDialog();
-//        this.cursistList = cursistList;
         showNextCursist();
     }
 
     @Override
     public void onReceiveCursistListFailed() {
-
+        hideProgressDialog();
+        showErrorDialog();
     }
 }

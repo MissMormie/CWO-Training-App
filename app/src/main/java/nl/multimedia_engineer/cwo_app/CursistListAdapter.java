@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -138,11 +139,10 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
 //            }
 
             // Set background color in case cursist is hidden.
-            // TODO get this from colors class. needs getResources().
             if (cursist.isVerborgen())
-                this.view.setBackgroundColor(Color.LTGRAY);
+                this.view.setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.colorGray, null));
             else
-                this.view.setBackgroundColor(Color.WHITE);
+                this.view.setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.colorWhite, null));
 
         }
 
