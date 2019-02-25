@@ -64,8 +64,8 @@
                 android:layout_weight="0.20"
                 android:adjustViewBounds="true"
                 android:scaleType="fitEnd"
-                app:layout_constraintRight_toRightOf="@+id/parent"
-                app:layout_constraintTop_toTopOf="@+id/parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_user_image"
                 tools:ignore="ContentDescription,MissingConstraints,RtlHardcoded" />
         </LinearLayout>

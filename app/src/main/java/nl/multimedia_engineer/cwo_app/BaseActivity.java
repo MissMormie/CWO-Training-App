@@ -12,6 +12,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +39,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeFireBaseAuth();
+        if(!(this instanceof MainActivity || this instanceof LoginActivity || this instanceof CreateOrJoinGroupActivity)) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
     }
 
     @Override
@@ -45,6 +50,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         showingLoginIfNotLoggedIn(this);
+
+
         getGroupDataOrMakeGroup();
     }
 
@@ -59,6 +66,17 @@ public abstract class BaseActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -86,6 +104,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             // all group settings are available.
             return;
         }
+
         if(this instanceof CreateOrJoinGroupActivity) {
             return;
         }
@@ -108,6 +127,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if(map.isEmpty()) {
                     // User does not have a group
                     Intent intent = new Intent(context, CreateOrJoinGroupActivity.class);
+                    intent.putExtra(CreateOrJoinGroupActivity.FIRST_GROUP, true);
                     startActivity(intent);
                 } else {
                     // User does have a group but data was removed from device, adding again.

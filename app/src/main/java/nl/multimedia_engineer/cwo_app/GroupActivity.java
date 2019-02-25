@@ -52,7 +52,6 @@ public class GroupActivity extends BaseActivity
         super.onStart();
         final GroupAdapter.GroupItemClickListener listener = this;
 
-
         showProgressDialog();
         PersistGroepen.getUserGroepenPartial(mAuth, this);
     }

@@ -1,6 +1,8 @@
 package nl.multimedia_engineer.cwo_app;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,10 +24,28 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
     private static final String TAG = CreateOrJoinGroupActivity.class.getName();
     private final String discipline = "windsurfen";
 
+    // Intent Extras
+    public static final String FIRST_GROUP = "firstGroup";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_or_join_group);
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setMessage(R.string.alert_dialog_first_group_text);
+        dialogBuilder.setTitle(R.string.alert_dialog_first_group_title);
+        dialogBuilder.setPositiveButton(R.string.alert_dialog_delete_all, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        if(!getIntent().getBooleanExtra(FIRST_GROUP, false)) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     /**
@@ -107,6 +127,7 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
 
     @Override
     public void onSuccesSavedUserGroup(Group group) {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         hideProgressDialog();
         // When addings more disciplines, this needs to be not hardcoded. Ok for now.
         addGroupToSharedPreferences(group.getId(), group.getName(), discipline);

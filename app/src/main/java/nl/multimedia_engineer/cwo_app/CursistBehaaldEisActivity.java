@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +37,11 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     private ActivityCursistChecklistBinding dataBinding;
     private Boolean showAlreadyCompleted = false;
 
+    private Button btnNext;
+
     // data used for keeping track of loading cursist
     private final int limit = 5;
-//    private boolean finishedList = false;
     private final int reloadAt = 3;
-//    private boolean currentlyLoading = false;
     private boolean moveToNextCursistAfterLoading = true;
 
     private PersistCursistList persistCursistList;
@@ -53,7 +54,8 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
 
         Intent intent = getIntent();
         diplomaEisList = intent.getParcelableArrayListExtra("selectedDiplomaEisList");
-
+        btnNext = findViewById(R.id.buttonVolgende);
+        btnNext.setEnabled(false);
 
         // Set up of the recycler view and adapter.
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -96,16 +98,14 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
             }
         }
 
-        if(persistCursistList.isEndOfListReached()) {
-            if(persistCursistList == null) {
-                String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
-                persistCursistList = new PersistCursistList(this, groupId)
-                        .setLimit(limit)
-                        .startAt(startAt)
-                        .execute();
-            } else {
-                persistCursistList.requestNextCursisten();
-            }
+        if(persistCursistList == null) {
+            String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+            persistCursistList = new PersistCursistList(this, groupId)
+                    .setLimit(limit)
+                    .startAt(startAt)
+                    .execute();
+        } else {
+            persistCursistList.requestNextCursisten();
         }
     }
 
@@ -165,6 +165,7 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     @Override
     public void onReceiveCursistList(List<Cursist> cursistList) {
         hideProgressDialog();
+        btnNext.setEnabled(true);
 
         if (cursistList == null && this.cursistList == null) {
             showErrorDialog();
