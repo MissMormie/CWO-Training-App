@@ -52,6 +52,8 @@ public class GroupActivity extends BaseActivity
         super.onStart();
         final GroupAdapter.GroupItemClickListener listener = this;
 
+
+        showProgressDialog();
         PersistGroepen.getUserGroepenPartial(mAuth, this);
     }
 
@@ -202,6 +204,7 @@ public class GroupActivity extends BaseActivity
 
     @Override
     public void onReceiveUserGroepen(List<GroupPartial> groupPartialList) {
+        hideProgressDialog();
         if(groupPartialList == null) {
             showErrorDialog();
             return;
@@ -217,6 +220,7 @@ public class GroupActivity extends BaseActivity
 
     @Override
     public void onReceiveUserGroepenFailed() {
+        hideProgressDialog();
         showErrorDialog();
     }
 }
