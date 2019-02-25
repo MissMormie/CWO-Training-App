@@ -38,7 +38,6 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
     private CursistListAdapater cursistListAdapater;
     private static final int CURSIST_DETAIL = 1;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -83,7 +82,6 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
         intent.putExtra("cursistId", cursist.getId());
         intent.putExtra("cursist", cursist);
         startActivityForResult(intent, CURSIST_DETAIL);
-        startActivity(intent);
     }
 
     @Override
