@@ -10,8 +10,8 @@
     <!-- Preferences  & other constants -->
     <string name="pref_show_already_completed_label">Laat al gehaald zien.</string>
     <string name="pref_show_already_completed_key" translatable="false">show_already_completed</string>
-    <string name="pref_show_already_completed_summary_off">Je ziet geen cursisten die al hebben geleerd wat er in de training gedaan is.</string>
-    <string name="pref_show_already_completed_summary_on">Je ziet wel cursisten die al hebben geleerd wat er in de training gedaan is.</string>
+    <string name="pref_show_already_completed_summary_off">Je ziet geen cursisten die al hebben geleerd wat er in de training gedaan is of die het diploma al gehaald hebben.</string>
+    <string name="pref_show_already_completed_summary_on">Je ziet wel cursisten die al hebben geleerd wat er in de training gedaan is of die het diploma al gehaald hebben.</string>
 
     <string name="pref_show_diploma_after_create_label">Diploma na nieuwe cursist</string>
     <string name="pref_show_diploma_after_create_key" translatable="false">show_diploma_after_create_cursist</string>

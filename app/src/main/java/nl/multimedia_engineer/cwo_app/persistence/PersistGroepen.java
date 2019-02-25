@@ -108,7 +108,6 @@ public class PersistGroepen {
     public static void addExistingGroupToUser(FirebaseAuth auth, GroupPartial groupPartial) {
         DatabaseReference groupRef = DatabaseRefUtil.getUserGroupsRef(auth).child(groupPartial.getId());
         groupRef.setValue(groupPartial);
-
     }
 
     public static void getUserGroepenPartial(FirebaseAuth auth, final ReceiveUserGroepen receiver) {
