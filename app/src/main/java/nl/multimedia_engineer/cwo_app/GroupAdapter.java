@@ -112,7 +112,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
             } else {
                 listener.onItemClicked(getAdapterPosition());
             }
-            Toast.makeText(v.getContext(), "clicked "  + getAdapterPosition(), Toast.LENGTH_LONG);
         }
     }
 

@@ -110,7 +110,8 @@ class TrainingsListAdapter extends RecyclerView.Adapter<TrainingsListAdapter.Tra
         void bind(int position) {
             DiplomaEis diplomaEis = diplomaEisList.get(position);
             cbCwoEis.setChecked(clickHandler.isSelectedDiplomaEis(diplomaEis));
-            cbCwoEis.setText(diplomaEis.getDiploma().getTitel() + " " + diplomaEis.getDiploma().getNivo() + " " + diplomaEis.getTitel());
+            String text = diplomaEis.getDiploma().getTitel() + " " + diplomaEis.getDiploma().getNivo() + " " + diplomaEis.getTitel();
+            cbCwoEis.setText(text);
         }
     }
 

@@ -1,16 +1,12 @@
 package nl.multimedia_engineer.cwo_app;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import nl.multimedia_engineer.cwo_app.databinding.ActivityCursistChecklistBinding;
@@ -20,13 +16,20 @@ import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 
-public class CursistBehaaldDiplomaActivity extends BaseActivity implements PersistCursist.ReceiveCursistList {
+public class CursistBehaaldDiplomaActivity extends BaseActivity implements PersistCursist.ReceiveCursist {
+    // Intent information
+    public static final String EXTRA_BACK_AFTER_FINISH = "nl.multimedia_engineer.cwo_app.CursistBehaaldDiplomaActivity.backAfterFinish";
+    public static final String EXTRA_CURSIST = "nl.multimedia_engineer.cwo_app.CursistBehaaldDiplomaActivity.cursist";
+
     private List<Diploma> diplomaList;
-    private List<Cursist> cursistList;
     private CursistBehaaldDiplomaAdapter cursistBehaaldDiplomaAdapter;
-    private Cursist currentCursist;
-    private Boolean showAlreadyCompleted = false;
+    private Cursist cursist;
     private ActivityCursistChecklistBinding dataBinding;
+    private boolean backAfterFinish = false;
+
+    // Fragment
+    private CursistHeaderFragment cursistHeaderFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +40,16 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
         // Get parceled info
         Intent intent = getIntent();
         diplomaList = intent.getParcelableArrayListExtra("selectedDiplomaList");
-        if (intent.hasExtra("cursist")) {
-            cursistList = new ArrayList<>();
-            cursistList.add((Cursist) intent.getExtras().getParcelable("cursist"));
+        if (intent.hasExtra(EXTRA_CURSIST)) {
+            cursist = (Cursist) intent.getExtras().getParcelable(EXTRA_CURSIST);
+        } else if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_CURSIST)) {
+            cursist = savedInstanceState.getParcelable(EXTRA_CURSIST);
+        } else {
+            showErrorDialog();
+            return;
         }
 
+        backAfterFinish = intent.getBooleanExtra(EXTRA_BACK_AFTER_FINISH, false);
 
         // Set up of the recycler view and adapter.
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -50,62 +58,39 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
         dataBinding.recyclerviewTrainingLijst.setHasFixedSize(true);
         cursistBehaaldDiplomaAdapter = new CursistBehaaldDiplomaAdapter(diplomaList);
         dataBinding.recyclerviewTrainingLijst.setAdapter(cursistBehaaldDiplomaAdapter);
+        cursistBehaaldDiplomaAdapter.setCursist(cursist);
+        ((CursistHeaderFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.cursist_header_fragment)).setCursist(cursist);
 
         // Get preference for showing cursisten who already met all eisen.
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        showAlreadyCompleted = sharedPreferences.getBoolean(getString(R.string.pref_show_already_completed_key),
-                getResources().getBoolean(R.bool.pref_show_already_completed_default));
+        Button btnFinish = findViewById(R.id.buttonVolgende);
+        btnFinish.setText(getString(R.string.btn_finish));
 
-
-        loadCursistListData();
     }
 
-    private void loadCursistListData() {
-        showProgressDialog();
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(EXTRA_CURSIST, cursist);
+    }
 
-        if (cursistList == null) {
-            String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
-            PersistCursist.getCursistList(groupId, this);
+//    private void loadCursistData() {
+//        showProgressDialog();
+//
+//        String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
+//        PersistCursist.getCursist(groupId, cursist.getId(), this);
+//    }
+
+
+
+    private void endActivity() {
+        if(backAfterFinish) {
+            Intent intent = new Intent();
+            intent.putExtra(CursistDetailActivity.EXTRA_CURSIST, cursist);
+            setResult(RESULT_OK, intent);
+            finish();
         } else {
-            // Got cursist through extras
-            hideProgressDialog();
-            showNextCursist();
-        }
-    }
-
-
-    private void showNextCursist() {
-        if (cursistList.isEmpty()) {
             backToMainActivity();
-        } else {
-            currentCursist = cursistList.remove(0);
-            // Als deze cursist alle eisen behaald heeft en deze preference is aangegeven, sla deze cursist dan over.
-
-            displayCursistInfo();
-        }
-    }
-
-    private void displayCursistInfo() {
-        cursistBehaaldDiplomaAdapter.setCursist(currentCursist);
-        dataBinding.textViewNaam.setText(currentCursist.nameToString());
-        dataBinding.textViewOpmerking.setText(currentCursist.getOpmerking());
-        String paspoortText;
-        if (currentCursist.getPaspoort() == null) {
-            paspoortText = getString(R.string.paspoort) +": " + getString(R.string.nee);
-        } else {
-            paspoortText = getString(R.string.paspoort) + ": " + getString(R.string.ja);
-        }
-
-        dataBinding.textViewPaspoort.setText(paspoortText);
-        // Set photo if available, else set user mockup.
-        if (currentCursist.getFotoFileBase64() != null) {
-            // todo foto
-//            URL fotoUrl = NetworkUtils.buildUrl("foto", currentCursist.getCursistFoto().getId().toString());
-//            new DownloadAndSetImageTask(dataBinding.imageViewFoto, getApplicationContext())
-//                    .execute(fotoUrl.toString());
-        } else {
-            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_user_image);
-            dataBinding.imageViewFoto.setImageDrawable(drawable);
         }
     }
 
@@ -115,38 +100,21 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
         startActivity(intent);
     }
 
-    public void onClickShowVolgendeCursist(View view) {
-        showNextCursist();
+    public void onClickButton(View view) {
+        // this is using activit
+        endActivity();
     }
 
-
     @Override
-    public void onReceiveCursistList(List<Cursist> cursistList) {
-        if (cursistList == null) {
-            showErrorDialog();
-            return;
-        }
-
-        if(this.cursistList == null) {
-            this.cursistList = new ArrayList<>();
-        }
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        showAlreadyCompleted = sharedPreferences.getBoolean(getString(R.string.pref_show_already_completed_key),
-                getResources().getBoolean(R.bool.pref_show_already_completed_default));
-        for(Cursist cursist : cursistList) {
-            if(!cursist.isAlleDiplomasBehaald(diplomaList) || showAlreadyCompleted) {
-                this.cursistList.add(cursist);
-            }
-        }
-
+    public void onReceiveCursist(Cursist cursist) {
+        this.cursist = cursist;
         hideProgressDialog();
-        showNextCursist();
     }
 
     @Override
-    public void onReceiveCursistListFailed() {
+    public void onReceiveCursistFailed() {
         hideProgressDialog();
         showErrorDialog();
+
     }
 }

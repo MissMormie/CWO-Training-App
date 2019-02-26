@@ -8,6 +8,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,12 +41,18 @@ public class CursistDetailActivity
             {
     private static final String TAG = CursistDetailActivity.class.getSimpleName();
 
+    // Intent information
+    public static final String EXTRA_CURSIST = "nl.multimedia_engineer.cwo_app.CursistDetailActivity.cursist";
+
+
     private ActivityCursistDetailBinding activityCursistDetailBinding;
     private Cursist cursist;
     private CursistBehaaldEisAdapter cursistBehaaldEisAdapter;
-    private static final int EDIT_CURSIST = 1;
     private List<Diploma> diplomaList;
     private MenuItem verbergenMenu;
+
+    private static final int EDIT_CURSIST = 1;
+    private static final int GIVE_DIPLOMA = 2;
 
 
     @Override
@@ -63,7 +70,7 @@ public class CursistDetailActivity
         recyclerView.setAdapter(cursistBehaaldEisAdapter);
 
         // Get info from parcel to fill part of cursist.
-        CursistPartial cursistPartial = getIntent().getExtras().getParcelable("cursist");
+        CursistPartial cursistPartial = getIntent().getExtras().getParcelable(EXTRA_CURSIST);
         cursist = new Cursist(cursistPartial);
 
         // Displaying data we got from the parcel, this does not contain complete cursist data but shows something while the rest is loading.
@@ -125,14 +132,14 @@ public class CursistDetailActivity
     }
 
     private void diplomaUitgeven() {
-        Class destinationClass = CursistBehaaldDiplomaActivity.class;
-        Intent intent = new Intent(this, destinationClass);
+        Intent intent = new Intent(this, CursistBehaaldDiplomaActivity.class);
 
         ArrayList<Diploma> diplomaArrayList = (ArrayList<Diploma>) diplomaList;
         intent.putParcelableArrayListExtra("selectedDiplomaList", diplomaArrayList);
-        intent.putExtra("cursist", cursist);
+        intent.putExtra(CursistBehaaldDiplomaActivity.EXTRA_CURSIST, cursist);
+        intent.putExtra(CursistBehaaldDiplomaActivity.EXTRA_BACK_AFTER_FINISH, true);
 
-        startActivity(intent);
+        startActivityForResult(intent, GIVE_DIPLOMA);
     }
 
     private void hideCursist() {
@@ -180,9 +187,9 @@ public class CursistDetailActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EDIT_CURSIST)
-            if (resultCode == RESULT_OK && data.hasExtra("cursist")) {
-                this.cursist = data.getExtras().getParcelable("cursist");
+        if (requestCode == EDIT_CURSIST || requestCode == GIVE_DIPLOMA)
+            if (resultCode == RESULT_OK && data.hasExtra(EXTRA_CURSIST)) {
+                this.cursist = data.getExtras().getParcelable(EXTRA_CURSIST);
                 displayCursistInfo();
             }
         super.onActivityResult(requestCode, resultCode, data);
@@ -198,43 +205,22 @@ public class CursistDetailActivity
 
     }
 
-
     private void loadDiplomaData() {
-        String discipline = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_discipline), "");
-        PersistDiploma.getDiplomaEisen(discipline, this);
-        //new FetchCursistTask().execute(cursistId);
-//        new FetchCwoEisData().execute();
+        if(diplomaList == null || diplomaList.isEmpty()) {
+            String discipline = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_discipline), "");
+            PersistDiploma.getDiplomaEisen(discipline, this);
+        } else {
+            onReceiveDiplomas(diplomaList);
+        }
     }
 
     private void displayCursistInfo() {
-        if (cursist == null)
+        if (cursist == null) {
+            showErrorDialog();
             return;
-
-        activityCursistDetailBinding.textviewNaam.setText(cursist.nameToString());
-        activityCursistDetailBinding.textViewOpmerking.setText(cursist.getOpmerking());
-        if (cursist.getPaspoort() == null)
-            activityCursistDetailBinding.textViewPaspoort.setText(getString(R.string.paspoort) + ": " + getString(R.string.nee));
-        else
-            activityCursistDetailBinding.textViewPaspoort.setText(getString(R.string.paspoort) + ": " + getString(R.string.ja));
-
-
-        if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
-            String imgData = cursist.getFotoFileBase64();
-            byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
-            activityCursistDetailBinding.imageViewFoto.setImageBitmap(bitmap);
-        } else {
-            // todo?
-
-//                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
-//                new DownloadAndSetImageTask(activityCursistDetailBinding.imageViewFoto, getApplicationContext())
-//                        .execute(fotoUrl.toString());
-
         }
+        ((CursistHeaderFragment) getSupportFragmentManager().findFragmentById(R.id.cursist_header_fragment)).setCursist(cursist);
         loadDiplomaData();
-//            activityCursistDetailBinding.imageViewFoto.setImageBitmap();
-        // Pass information to adapter for eisen met.
-//        cursistBehaaldEisAdapter.setCursist(cursist);
     }
 
     private void displayDiplomaEisInfo(List<DiplomaEis> diplomaEisList) {
@@ -242,7 +228,12 @@ public class CursistDetailActivity
         cursistBehaaldEisAdapter.setCursist(cursist);
     }
 
-    // ------------------------------------- Persist cursist implementation ------------------------
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+                // ------------------------------------- Persist cursist implementation ------------------------
     @Override
     public void onReceiveCursist(Cursist cursist) {
         hideProgressDialog();

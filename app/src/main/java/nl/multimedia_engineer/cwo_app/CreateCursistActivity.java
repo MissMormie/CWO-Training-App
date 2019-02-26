@@ -86,7 +86,7 @@ public class CreateCursistActivity
         Intent intent = new Intent(this, CursistBehaaldDiplomaActivity.class);
 
         intent.putParcelableArrayListExtra("selectedDiplomaList", diplomaArrayList);
-        intent.putExtra("cursist", cursist);
+        intent.putExtra(CursistBehaaldDiplomaActivity.EXTRA_CURSIST, cursist);
 
         startActivity(intent);
     }

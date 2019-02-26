@@ -39,7 +39,8 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String activeGroup = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_name), "");
-        tv_active_group.setText(getResources().getString(R.string.text_active_group) + " " + activeGroup);
+        String text = getResources().getString(R.string.text_active_group) + " " + activeGroup;
+        tv_active_group.setText(text);
     }
 
     @Override

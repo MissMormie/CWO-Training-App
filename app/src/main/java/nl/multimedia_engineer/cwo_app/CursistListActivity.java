@@ -79,8 +79,8 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
 
         Class destinationClass = CursistDetailActivity.class;
         Intent intent = new Intent(context, destinationClass);
-        intent.putExtra("cursistId", cursist.getId());
-        intent.putExtra("cursist", cursist);
+//        intent.putExtra("cursistId", cursist.getId());
+        intent.putExtra(CursistDetailActivity.EXTRA_CURSIST, cursist);
         startActivityForResult(intent, CURSIST_DETAIL);
     }
 

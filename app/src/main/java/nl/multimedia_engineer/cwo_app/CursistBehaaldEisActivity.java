@@ -133,22 +133,7 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
 
     private void setCursistData() {
         cursistBehaaldEisAdapter.setCursist(currentCursist);
-        dataBinding.textViewNaam.setText(currentCursist.nameToString());
-        dataBinding.textViewOpmerking.setText(currentCursist.getOpmerking());
-        if (currentCursist.getPaspoort() == null || currentCursist.getPaspoort() == 0L)
-            dataBinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.nee));
-        else
-            dataBinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.ja));
-
-        // Set photo if available, else set user mockup.
-        if (currentCursist.getFotoFileBase64() != null) {
-            byte[] imgByteArray = Base64.decode(currentCursist.getFotoFileBase64(), Base64.NO_WRAP);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
-            dataBinding.imageViewFoto.setImageBitmap(bitmap);
-        } else {
-            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_user_image);
-            dataBinding.imageViewFoto.setImageDrawable(drawable);
-        }
+        ((CursistHeaderFragment) getSupportFragmentManager().findFragmentById(R.id.cursist_header_fragment)).setCursist(currentCursist);
     }
 
     private void backToMainActivity() {
@@ -157,7 +142,7 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
         startActivity(intent);
     }
 
-    public void onClickShowVolgendeCursist(View view) {
+    public void onClickButton(View view) {
         moveToNextCursistAfterLoading = true;
         showNextCursist();
     }

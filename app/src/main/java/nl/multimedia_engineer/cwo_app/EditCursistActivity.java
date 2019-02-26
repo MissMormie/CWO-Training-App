@@ -44,7 +44,7 @@ public class EditCursistActivity
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra("cursist", cursist);
+        intent.putExtra(CursistDetailActivity.EXTRA_CURSIST, cursist);
         setResult(RESULT_CANCELED, intent);
         finish();
     }
@@ -57,7 +57,7 @@ public class EditCursistActivity
         Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_opgeslagen), Toast.LENGTH_SHORT);
         toast.show();
         Intent intent = new Intent();
-        intent.putExtra("cursist", cursist);
+        intent.putExtra(CursistDetailActivity.EXTRA_CURSIST, cursist);
         setResult(RESULT_OK, intent);
         finish();
     }

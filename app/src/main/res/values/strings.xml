@@ -100,6 +100,9 @@
     <string name="btn_join_group">Groep toevoegen</string>
     <string name="error_msg_access_code_wrong">De toegangscode is onjuist.</string>
     <string name="text_explanation_groups">De groep die nu actief is wordt met een vinkje aangegeven, klik op een andere groep om deze actief te maken. Met het pennetje kun je de naam wijzigen, de rode x verwijderd de groep. Klik op de zwevende actieknop onderaan om een nieuwe groep te maken.</string>
+    <string name="context_description_edit">Wijzigen</string>
+    <string name="context_description_delete">Verwijderen</string>
+    <string name="context_description_active">Actief</string>
 
     <!-- Alert Dialog -->
     <string name="alert_dialog_title_delete">Verwijderen</string>

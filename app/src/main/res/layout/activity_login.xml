@@ -8,15 +8,14 @@
 
     <EditText
         android:id="@+id/edit_email"
-        android:layout_width="0dp"
+        android:layout_width="387dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="94dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="208dp"
+        android:autofillHints=".AUTOFILL_HINT_EMAIL_ADDRESS"
         android:ems="10"
         android:hint="@string/hint_email_adres"
         android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,6 +28,7 @@
         android:ems="10"
         android:hint="@string/hint_password"
         android:inputType="textPassword"
+        android:autofillHints=".AUTOFILL_HINT_PASSWORD"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/edit_email"
         app:layout_constraintTop_toBottomOf="@+id/edit_email" />

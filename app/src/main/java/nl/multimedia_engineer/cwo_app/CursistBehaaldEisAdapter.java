@@ -123,7 +123,8 @@ class CursistBehaaldEisAdapter extends RecyclerView.Adapter<CursistBehaaldEisAda
 
         void bind(int position) {
             DiplomaEis diplomaEis = diplomaEisList.get(position);
-            cbCwoEis.setText(diplomaEis.getDiploma().getTitel() + " " + diplomaEis.getDiploma().getNivo() + " " + diplomaEis.getTitel());
+            String text = diplomaEis.getDiploma().getTitel() + " " + diplomaEis.getDiploma().getNivo() + " " + diplomaEis.getTitel();
+            cbCwoEis.setText(text);
 
             // Save data set to false so changing of checkbox doesn't trigger saving to server.
             saveData = false;

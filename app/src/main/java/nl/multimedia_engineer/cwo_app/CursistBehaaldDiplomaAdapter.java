@@ -93,7 +93,8 @@ class CursistBehaaldDiplomaAdapter extends RecyclerView.Adapter<CursistBehaaldDi
 
         void bind(int position) {
             Diploma diploma = diplomaList.get(position);
-            diplomaCheckBox.setText(diploma.getTitel() + " " + diploma.getNivo());
+            String text = diploma.getTitel() + " " + diploma.getNivo();
+            diplomaCheckBox.setText(text);
 
             // Save data set to false so changing of checkbox doesn't trigger saving to server.
             saveData = false;
@@ -120,48 +121,4 @@ class CursistBehaaldDiplomaAdapter extends RecyclerView.Adapter<CursistBehaaldDi
 
         }
     }
-
-
-    private class SaveDiplomaBehaaldTask extends AsyncTask<CursistHeeftDiploma, Void, Boolean> {
-
-        /**
-         * params: Long cursist Id, Long cwoEis id, Boolean behaald.
-         */
-        @Override
-        protected Boolean doInBackground(CursistHeeftDiploma... params) {
-            CursistHeeftDiploma cursistHeeftDiploma = params[0];
-            if (cursistHeeftDiploma.isBehaald())
-                return saveCursistHeeftDiploma(cursistHeeftDiploma, "POST");
-            else
-                return saveCursistHeeftDiploma(cursistHeeftDiploma, "DELETE");
-
-        }
-
-        private boolean saveCursistHeeftDiploma(CursistHeeftDiploma cursistHeeftDiploma, String action) {
-//
-//            URL url = NetworkUtils.buildUrl("cursistHeeftDiploma");
-//            //String json = "{\"diplomaId\": 1, \"cursistId\": 1}";
-//            String json = cursistHeeftDiploma.toJson();
-//            try {
-//                int resultCode = NetworkUtils.uploadToServer(url, json, action);
-//                if (resultCode == 200)
-//                    return true;
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-            return false;
-
-        }
-
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (!success) {
-                String error = context.getString(R.string.opslaan_mislukt);
-                Toast.makeText(context, "" + error, Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    }
-
 }

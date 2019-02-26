@@ -59,10 +59,13 @@ public class CursistHeaderFragment extends Fragment {
             return;
         databinding.textViewNaam.setText(cursist.nameToString());
         databinding.textViewOpmerking.setText(cursist.getOpmerking());
-        if (cursist.getPaspoort() == null)
-            databinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.nee));
-        else
-            databinding.textViewPaspoort.setText(getString(R.string.paspoort) +": " + getString(R.string.ja));
+        String text;
+        if (cursist.getPaspoort() == null) {
+            text = getString(R.string.paspoort) + ": " + getString(R.string.nee);
+        } else {
+            text = getString(R.string.paspoort) + ": " + getString(R.string.ja);
+        }
+        databinding.textViewPaspoort.setText(text);
 
         if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
             // Check if photo is included in cursist object

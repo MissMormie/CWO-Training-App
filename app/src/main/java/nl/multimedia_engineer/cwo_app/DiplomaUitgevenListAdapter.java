@@ -94,7 +94,8 @@ class DiplomaUitgevenListAdapter extends RecyclerView.Adapter<DiplomaUitgevenLis
         void bind(int position) {
             Diploma diploma = diplomaList.get(position);
             diplomaRadioButton.setChecked(clickHandler.isSelectedDiploma(diploma));
-            diplomaRadioButton.setText(diploma.getTitel() + " " + diploma.getNivo());
+            String text = diploma.getTitel() + " " + diploma.getNivo();
+            diplomaRadioButton.setText(text);
         }
     }
 

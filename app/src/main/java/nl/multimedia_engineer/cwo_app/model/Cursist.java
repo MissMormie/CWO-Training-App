@@ -28,6 +28,17 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     }
 
+    public boolean isPartialCursist() {
+        if((fotoFileBase64 == null || fotoFileBase64.isEmpty())
+        && (paspoort == null || paspoort == 0L)
+        && (opmerking == null || opmerking.isEmpty())
+        && (diplomaSet == null || diplomaSet.isEmpty())
+        && (diplomaEisSet == null || diplomaEisSet.isEmpty())) {
+            return true;
+        }
+        return false;
+    }
+
     @Nullable
     public Long getPaspoort() {
         if(paspoort == null || paspoort == 0L) {
@@ -212,7 +223,7 @@ public class Cursist extends CursistPartial implements Parcelable{
         parcel.writeString(tussenvoegsel);
         parcel.writeString(achternaam);
         parcel.writeString(opmerking);
-        parcel.writeValue(verborgen);
+        parcel.writeByte((byte) (verborgen ? 1 : 0));
         if (paspoort != null) {
             parcel.writeLong(paspoort);
         } else {
@@ -263,7 +274,7 @@ public class Cursist extends CursistPartial implements Parcelable{
         tussenvoegsel = parcel.readString();
         achternaam = parcel.readString();
         opmerking = parcel.readString();
-        verborgen = (Boolean) parcel.readValue(null);
+        verborgen = parcel.readByte() != 0;
 
         // Get around paspoortDate sometimes being null.
         Long paspoortTemp = parcel.readLong();
