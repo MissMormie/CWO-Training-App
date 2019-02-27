@@ -73,12 +73,6 @@ public class CursistHeaderFragment extends Fragment {
                 byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
                 databinding.imageViewFoto.setImageBitmap(bitmap);
-        } else {
-
-            // todo
-//                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
-//                new DownloadAndSetImageTask(databinding.imageViewFoto, getContext())
-//                        .execute(fotoUrl.toString());
         }
     }
 

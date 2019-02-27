@@ -83,41 +83,6 @@ public class CreateOrJoinGroupActivity
         }
 
         PersistGroepen.joinGroup(mAuth, groupName, accessCode, this);
-
-//        // todo Check group exists. But how, without adding the group there is no access..
-//        // Add check, remove maybe in 1 transaction?
-//        // for now not so great workaround.
-//        final DatabaseReference userGroupRef = DatabaseRefUtil.getUserGroupsRef(mAuth).child(accessCode);
-//        userGroupRef.setValue(groupName);
-//
-//        // Checking for discipline so we don't have to retrieve all the data.
-//        DatabaseReference groepRef = DatabaseRefUtil.getGroepDisciplineRef(accessCode);
-//
-//
-//        final Context context = this;
-//        // todo move this to a persistence class.
-//        groepRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // If there is a value all is fine, otherwise get rid of the previously made group.
-//                if(dataSnapshot.exists()) {
-//                    addGroupToSharedPreferences(accessCode, groupName, discipline);
-//                    onSuccesSavedUserGroup(group);
-//                    return;
-//                }
-//
-//                // removing group from the person.
-//                userGroupRef.removeValue();
-//                showErrorDialog(getString(R.string.alert_dialog_error_title), getString(R.string.alert_dialog_error_tekst));
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                // anything but permissions denied. Probably connection errors
-//                showErrorDialog();
-//                Log.w(TAG, "Failed to read value.", error.toException());
-//            }
-//        });
     }
 
 

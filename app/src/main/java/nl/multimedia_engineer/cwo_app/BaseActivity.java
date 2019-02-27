@@ -135,6 +135,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     for(Map.Entry<String, Map> entry : map.entrySet()) {
                         Map<String, String> results = entry.getValue();
                         // Only need 1, to set as current group.
+                        // todo make sure that when this is set the information in the current activity also updates (example groupname in main)
                         sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), results.get("name")).commit();
                         sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), results.get("id")).apply();
                         sharedPreferences.edit().putString(getResources().getString(R.string.pref_discipline), results.get("discipline")).apply();
@@ -150,8 +151,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
                 hideProgressDialog();
-                // todo show error that connection is not working now.
-
+                showErrorDialog();
             }
         });
     }
