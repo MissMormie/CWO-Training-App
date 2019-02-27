@@ -4,13 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class CursistPartial implements Parcelable {
-    protected String id;
-    protected String voornaam;
-    protected String tussenvoegsel;
-    protected String achternaam;
-
-//    protected CursistFoto cursistFoto;
-    protected boolean verborgen = false;
+    String id;
+    String voornaam;
+    String tussenvoegsel;
+    String achternaam;
+    boolean verborgen = false;
+    String hoogsteDiploma;
 
     public CursistPartial() {
 
@@ -23,13 +22,17 @@ public class CursistPartial implements Parcelable {
         achternaam = cursist.getAchternaam();
     }
 
-    protected CursistPartial(Parcel in) {
+    public void setHoogsteDiploma(String hoogsteDiploma) {
+        this.hoogsteDiploma = hoogsteDiploma;
+    }
+
+    CursistPartial(Parcel in) {
         id = in.readString();
         voornaam = in.readString();
         tussenvoegsel = in.readString();
         achternaam = in.readString();
-//        cursistFoto = in.readParcelable(CursistFoto.class.getClassLoader());
         verborgen = in.readByte() != 0;
+        hoogsteDiploma = in.readString();
     }
 
 
@@ -90,14 +93,6 @@ public class CursistPartial implements Parcelable {
         verborgen = !verborgen;
     }
 
-//    public CursistFoto getCursistFoto() {
-//        return cursistFoto;
-//    }
-//
-//    public void setCursistFoto(CursistFoto cursistFoto) {
-//        this.cursistFoto = cursistFoto;
-//    }
-
     public String nameToString() {
         String tussenstuk = "";
         if (tussenvoegsel != null && !tussenvoegsel.equals(""))
@@ -152,8 +147,8 @@ public class CursistPartial implements Parcelable {
         dest.writeString(voornaam);
         dest.writeString(tussenvoegsel);
         dest.writeString(achternaam);
-//        dest.writeParcelable(cursistFoto, flags);
         dest.writeByte((byte) (verborgen ? 1 : 0));
+        dest.writeString(hoogsteDiploma);
 
     }
 }

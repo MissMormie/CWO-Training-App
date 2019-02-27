@@ -23,6 +23,8 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +107,28 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
             showGeenCursisten();
             return;
         }
+
+        Comparator<CursistPartial> comparator = new Comparator<CursistPartial>() {
+            @Override
+            public int compare(CursistPartial c1, CursistPartial c2) {
+                if(c1.isVerborgen() && !c2.isVerborgen()) {
+                    return 1;
+                } else if(!c1.isVerborgen() && c2.isVerborgen()) {
+                    return -1;
+                }
+                // alle verborgen, of allebei niet verborgen.
+
+                int comparison = c1.getVoornaam().compareToIgnoreCase(c2.getVoornaam());
+                Log.d(TAG,  "" + comparison);
+                if(comparison != 0 ){
+                    return comparison;
+                }
+                return c1.getAchternaam().compareToIgnoreCase(c2.getAchternaam());
+            }
+        };
+
+        Collections.sort(cursistPartialList, comparator);
+
         cursistListAdapater.setCursistListData(cursistPartialList);
     }
 

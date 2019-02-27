@@ -218,12 +218,13 @@ public class Cursist extends CursistPartial implements Parcelable{
 
 //    @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeString(id);
-        parcel.writeString(voornaam);
-        parcel.writeString(tussenvoegsel);
-        parcel.writeString(achternaam);
-        parcel.writeString(opmerking);
-        parcel.writeByte((byte) (verborgen ? 1 : 0));
+        super.writeToParcel(parcel, flags);
+//        parcel.writeString(id);
+//        parcel.writeString(voornaam);
+//        parcel.writeString(tussenvoegsel);
+//        parcel.writeString(achternaam);
+//        parcel.writeString(opmerking);
+//        parcel.writeByte((byte) (verborgen ? 1 : 0));
         if (paspoort != null) {
             parcel.writeLong(paspoort);
         } else {
@@ -269,12 +270,13 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     // Note, the order IS important, if it's not the same as when parceling it doesn't work.
     private Cursist(Parcel parcel) {
-        id = parcel.readString();
-        voornaam = parcel.readString();
-        tussenvoegsel = parcel.readString();
-        achternaam = parcel.readString();
-        opmerking = parcel.readString();
-        verborgen = parcel.readByte() != 0;
+        super(parcel);
+//        id = parcel.readString();
+//        voornaam = parcel.readString();
+//        tussenvoegsel = parcel.readString();
+//        achternaam = parcel.readString();
+//        opmerking = parcel.readString();
+//        verborgen = parcel.readByte() != 0;
 
         // Get around paspoortDate sometimes being null.
         Long paspoortTemp = parcel.readLong();

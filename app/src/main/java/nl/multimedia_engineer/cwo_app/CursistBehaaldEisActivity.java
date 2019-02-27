@@ -163,7 +163,6 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
             return;
         }
 
-
         // Er zijn nog geen cursisten.
         if(cursistList.isEmpty() && this.cursistList == null) {
             showGeenCursisten();
