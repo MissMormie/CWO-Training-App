@@ -219,19 +219,20 @@ public class Cursist extends CursistPartial implements Parcelable{
 //    @Override
     public void writeToParcel(Parcel parcel, int flags) {
         super.writeToParcel(parcel, flags);
-//        parcel.writeString(id);
-//        parcel.writeString(voornaam);
-//        parcel.writeString(tussenvoegsel);
-//        parcel.writeString(achternaam);
-//        parcel.writeString(opmerking);
-//        parcel.writeByte((byte) (verborgen ? 1 : 0));
         if (paspoort != null) {
             parcel.writeLong(paspoort);
         } else {
             parcel.writeLong(0L);
         }
 
-        parcel.writeString(fotoFileBase64);
+
+        // In some cases the base64 string is too long for parcelable, this will be solved when moving to web assets
+        // for now filtering it out and not parceling the image in that case.
+        if(fotoFileBase64.length() * 2 > 990000) {
+            parcel.writeString("");
+        } else {
+            parcel.writeString(fotoFileBase64);
+        }
 
         if(diplomaSet == null || diplomaSet.size() == 0) {
             parcel.writeInt(0);

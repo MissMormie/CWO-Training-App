@@ -3,6 +3,8 @@ package nl.multimedia_engineer.cwo_app.model;
 public class GroupPartial {
     private String id;
     private String name;
+    private String discipline;
+
 
     GroupPartial() {}
 
@@ -25,5 +27,14 @@ public class GroupPartial {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public String getDiscipline() {
+        return discipline;
+    }
+
+    public void setDiscipline(String discipline) {
+        this.discipline = discipline;
     }
 }

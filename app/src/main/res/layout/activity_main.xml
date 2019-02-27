@@ -9,46 +9,66 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="32dp"
-
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/tv_active_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/text_active_group"
-        android:textSize="24sp" />
+        <TextView
+            android:id="@+id/tv_active_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="16dp"
+            android:text="@string/text_active_group"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="75dp"
         android:onClick="onClickNieuweTraining"
         android:text="@string/btn_nieuwe_training" />
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="75dp"
         android:onClick="onClickCursistenLijst"
         android:text="@string/btn_cursisten_lijst" />
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="75dp"
         android:onClick="onClickNieuweCursist"
         android:text="@string/btn_nieuwe_cursist" />
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="75dp"
         android:onClick="onClickUitgevenDiploma"
         android:text="@string/btn_diploma_uitgeven" />
 
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorPrimaryDark" />
+
     <Button
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="75dp"
         android:onClick="onClickShowDisciplines"
-        android:text="@string/btn_bekijk_diploma_eisen" />
+        android:text="@string/btn_bekijk_diploma_eisen"
+    />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:onClick="onClickGroepenBeheren"
+        android:text="@string/btn_groepen_beheren" />
 
     </LinearLayout>
 </ScrollView>

@@ -4,7 +4,6 @@ import java.util.List;
 
 public class Group extends GroupPartial {
 
-    private String discipline;
     private List<Cursist> cursisten;
 
     public Group(String discipline, String name) {
@@ -13,13 +12,6 @@ public class Group extends GroupPartial {
         setName(name);
     }
 
-    public String getDiscipline() {
-        return discipline;
-    }
-
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline;
-    }
 
     public List<Cursist> getCursisten() {
         return cursisten;

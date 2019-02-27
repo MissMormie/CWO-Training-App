@@ -80,6 +80,8 @@ public class GroupActivity extends BaseActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), group.getId()).apply();
         sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), group.getName()).apply();
+        sharedPreferences.edit().putString(getResources().getString(R.string.pref_discipline), group.getDiscipline()).apply();
+        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_user), mAuth.getUid()).apply();
 
         mAdapter.setCurrentActiveGroupId(group.getId());
         mAdapter.notifyDataSetChanged();

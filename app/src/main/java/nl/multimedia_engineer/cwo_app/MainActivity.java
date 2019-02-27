@@ -39,7 +39,8 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String activeGroup = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_name), "");
-        String text = getResources().getString(R.string.text_active_group) + " " + activeGroup;
+//        getSupportActionBar().setTitle(activeGroup);
+        String text = activeGroup;
         tv_active_group.setText(text);
     }
 
@@ -62,10 +63,6 @@ public class MainActivity extends BaseActivity {
                 mAuth.signOut();
                 Intent startLoginActivity = new Intent(this, LoginActivity.class);
                 startActivity(startLoginActivity);
-                return true;
-            case R.id.action_maintain_groups:
-                Intent startGroupActivity = new Intent(this, GroupActivity.class);
-                startActivity(startGroupActivity);
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
@@ -109,6 +106,11 @@ public class MainActivity extends BaseActivity {
         Intent intent = new Intent(context, destinationClass);
         startActivity(intent);
 
+    }
+
+    public void onClickGroepenBeheren(View view) {
+        Intent startGroupActivity = new Intent(this, GroupActivity.class);
+        startActivity(startGroupActivity);
     }
 
     private void setNotification() {

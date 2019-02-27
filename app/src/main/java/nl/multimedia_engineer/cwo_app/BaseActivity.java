@@ -49,15 +49,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        showingLoginIfNotLoggedIn(this);
-
-
-        getGroupDataOrMakeGroup();
+        if(!showingLoginIfNotLoggedIn(this)) {
+            getGroupDataOrMakeGroup();
+        }
     }
 
-    public void showingLoginIfNotLoggedIn(Context context) {
+    public boolean showingLoginIfNotLoggedIn(Context context) {
         if(context.getClass() == LoginActivity.class) {
-            return;
+            return true;
         }
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -66,7 +65,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
+            return true;
         }
+        return false;
     }
 
     @Override

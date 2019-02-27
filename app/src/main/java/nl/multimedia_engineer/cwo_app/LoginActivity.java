@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,10 @@ public class LoginActivity extends BaseActivity {
     private EditText editEmail, editPassword;
     private Button btnAction;
     private TextView textSwitchLoginRegister;
+    private ScrollView svTermsAndConditions;
+    private CheckBox cbConditions;
+    private TextView tvConditions;
+
     private ProgressBar progressBar;
 
     // On click listeners
@@ -47,7 +53,6 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +62,10 @@ public class LoginActivity extends BaseActivity {
         editPassword = findViewById(R.id.edit_password);
         btnAction = findViewById(R.id.btn_login);
         textSwitchLoginRegister = findViewById(R.id.text_login_register_switch);
+        svTermsAndConditions = findViewById(R.id.sv_terms_and_conditions);
         progressBar = findViewById(R.id.pb_login);
+        cbConditions = findViewById(R.id.checkBox_conditions);
+        tvConditions = findViewById(R.id.tv_conditions);
 
         // Set on click listeners.
         setUserInteraction(true);
@@ -77,6 +85,11 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean fieldsFilledCorrectly() {
+        if(currentState == STATE_REGISTER) {
+            if(!cbConditions.isChecked()) {
+                return false;
+            }
+        }
         return (!editPassword.getText().toString().isEmpty() &&
                 ValidationUtil.isValidEmailAddress(editEmail.getText().toString()));
     }
@@ -167,9 +180,15 @@ public class LoginActivity extends BaseActivity {
         if(currentState.equals(STATE_LOGIN)) {
             currentState = STATE_REGISTER;
             btnAction.setText(R.string.btn_register);
+            svTermsAndConditions.setVisibility(View.VISIBLE);
+            tvConditions.setVisibility(View.VISIBLE);
+            cbConditions.setVisibility(View.VISIBLE);
             textSwitchLoginRegister.setText(R.string.text_register);
         } else {
             currentState = STATE_LOGIN;
+            svTermsAndConditions.setVisibility(View.GONE);
+            tvConditions.setVisibility(View.GONE);
+            cbConditions.setVisibility(View.GONE);
             btnAction.setText(R.string.btn_login);
             textSwitchLoginRegister.setText(R.string.text_login);
         }

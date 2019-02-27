@@ -17,7 +17,7 @@ public class NotificationService extends IntentService {
         super("Notification Service");
     }
 
-    public static final String CHANNEL_ID = "CWO APP";
+    public static final String CHANNEL_ID = "CWO TRAINING";
     public static final String CHANNEL_NAME = "channel name";
     public static final String CHANNEL_DESCRIPTION = "reminders to fill out cwo app";
 
