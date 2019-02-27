@@ -1,6 +1,8 @@
 package nl.multimedia_engineer.cwo_app;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -20,12 +22,15 @@ import java.util.List;
 import nl.multimedia_engineer.cwo_app.dto.UserGroupPartialList;
 import nl.multimedia_engineer.cwo_app.model.GroupPartial;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
+
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapterViewHolder>  {
 
     public interface GroupItemClickListener {
         void onItemClicked(int position);
         void onItemEditClicked(int position);
         void onItemDeleteClicked(int position);
+        void onItemShareClicked(int position);
     }
 
     private final List<GroupPartial> groupList;
@@ -77,6 +82,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
         final ImageView iv_edit;
         final ImageView iv_delete;
         final ImageView iv_check;
+        final ImageView iv_share;
         private WeakReference<GroupItemClickListener> listenerRef;
 
         GroupAdapterViewHolder(View itemView, GroupItemClickListener listener) {
@@ -85,12 +91,15 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
             iv_edit = itemView.findViewById(R.id.iv_group_list_item_edit);
             iv_delete = itemView.findViewById(R.id.iv_group_list_item_delete);
             iv_check = itemView.findViewById(R.id.iv_group_list_item_check);
+            iv_share = itemView.findViewById(R.id.iv_group_list_item_share);
 
             listenerRef = new WeakReference(listener);
 
             itemView.setOnClickListener(this);
             iv_delete.setOnClickListener(this);
             iv_edit.setOnClickListener(this);
+            iv_share.setOnClickListener(this);
+
         }
 
         void bind(int position) {
@@ -109,10 +118,13 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
                 listener.onItemDeleteClicked(getAdapterPosition());
             } else if(v.getId() == iv_edit.getId()) {
                 listener.onItemEditClicked(getAdapterPosition());
+            } else if(v.getId() == iv_share.getId()) {
+                listener.onItemShareClicked(getAdapterPosition());
             } else {
                 listener.onItemClicked(getAdapterPosition());
             }
         }
     }
+
 
 }

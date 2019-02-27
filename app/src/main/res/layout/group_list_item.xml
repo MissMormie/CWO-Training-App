@@ -33,11 +33,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:contentDescription="@string/context_description_edit"
         app:layout_constraintBottom_toBottomOf="@+id/tv_group_list_item_name"
         app:layout_constraintEnd_toStartOf="@+id/iv_group_list_item_delete"
         app:layout_constraintTop_toTopOf="@+id/tv_group_list_item_name"
-        app:srcCompat="@android:drawable/ic_menu_edit"
-        android:contentDescription="@string/context_description_edit"/>
+        app:srcCompat="@android:drawable/ic_menu_edit" />
 
     <ImageView
         android:id="@+id/iv_group_list_item_check"
@@ -49,5 +49,15 @@
         app:layout_constraintTop_toTopOf="@+id/tv_group_list_item_name"
         app:srcCompat="@drawable/ic_check_black_24dp"
         android:contentDescription="@string/context_description_active"/>
+
+    <ImageView
+        android:id="@+id/iv_group_list_item_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_group_list_item_edit"
+        app:layout_constraintEnd_toStartOf="@+id/iv_group_list_item_edit"
+        app:layout_constraintTop_toTopOf="@+id/iv_group_list_item_edit"
+        app:srcCompat="@android:drawable/ic_menu_share" />
 
 </android.support.constraint.ConstraintLayout>

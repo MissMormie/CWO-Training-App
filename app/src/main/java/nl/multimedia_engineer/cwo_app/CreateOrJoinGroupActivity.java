@@ -20,7 +20,10 @@ import nl.multimedia_engineer.cwo_app.model.Group;
 import nl.multimedia_engineer.cwo_app.persistence.PersistGroepen;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
-public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGroepen.SavedUserGroepen {
+public class CreateOrJoinGroupActivity
+        extends BaseActivity
+        implements PersistGroepen.SavedUserGroepen,
+                   PersistGroepen.JoinGroup {
     private static final String TAG = CreateOrJoinGroupActivity.class.getName();
     private final String discipline = "windsurfen";
 
@@ -69,8 +72,8 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
         final String groupName = ((EditText) findViewById(R.id.editText_joinGroupName)).getText().toString();
         // when allowing more disciplines this needs to be changed.
 
-        final Group group = new Group(discipline, "groupName");
-        group.setId(accessCode);
+//        final Group group = new Group(discipline, "groupName");
+//        group.setId(accessCode);
 
         if(accessCode.isEmpty() || groupName.isEmpty() ) {
             Toast.makeText(this, getResources().getString(R.string.text_fields_filled_wrong), Toast.LENGTH_SHORT).show();
@@ -79,40 +82,42 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
             Toast.makeText(this, getResources().getString(R.string.error_msg_access_code_wrong), Toast.LENGTH_SHORT).show();
         }
 
-        // todo Check group exists. But how, without adding the group there is no access..
-        // Add check, remove maybe in 1 transaction?
-        // for now not so great workaround.
-        final DatabaseReference userGroupRef = DatabaseRefUtil.getUserGroupsRef(mAuth).child(accessCode);
-        userGroupRef.setValue(groupName);
+        PersistGroepen.joinGroup(mAuth, groupName, accessCode, this);
 
-        // Checking for discipline so we don't have to retrieve all the data.
-        DatabaseReference groepRef = DatabaseRefUtil.getGroepDisciplineRef(accessCode);
-
-
-        final Context context = this;
-        // todo move this to a persistence class.
-        groepRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // If there is a value all is fine, otherwise get rid of the previously made group.
-                if(dataSnapshot.exists()) {
-                    addGroupToSharedPreferences(accessCode, groupName, discipline);
-                    onSuccesSavedUserGroup(group);
-                    return;
-                }
-
-                // removing group from the person.
-                userGroupRef.removeValue();
-                showErrorDialog(getString(R.string.alert_dialog_error_title), getString(R.string.alert_dialog_error_tekst));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // anything but permissions denied. Probably connection errors
-                showErrorDialog();
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+//        // todo Check group exists. But how, without adding the group there is no access..
+//        // Add check, remove maybe in 1 transaction?
+//        // for now not so great workaround.
+//        final DatabaseReference userGroupRef = DatabaseRefUtil.getUserGroupsRef(mAuth).child(accessCode);
+//        userGroupRef.setValue(groupName);
+//
+//        // Checking for discipline so we don't have to retrieve all the data.
+//        DatabaseReference groepRef = DatabaseRefUtil.getGroepDisciplineRef(accessCode);
+//
+//
+//        final Context context = this;
+//        // todo move this to a persistence class.
+//        groepRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // If there is a value all is fine, otherwise get rid of the previously made group.
+//                if(dataSnapshot.exists()) {
+//                    addGroupToSharedPreferences(accessCode, groupName, discipline);
+//                    onSuccesSavedUserGroup(group);
+//                    return;
+//                }
+//
+//                // removing group from the person.
+//                userGroupRef.removeValue();
+//                showErrorDialog(getString(R.string.alert_dialog_error_title), getString(R.string.alert_dialog_error_tekst));
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // anything but permissions denied. Probably connection errors
+//                showErrorDialog();
+//                Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
     }
 
 
@@ -129,8 +134,7 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
     public void onSuccesSavedUserGroup(Group group) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         hideProgressDialog();
-        // When addings more disciplines, this needs to be not hardcoded. Ok for now.
-        addGroupToSharedPreferences(group.getId(), group.getName(), discipline);
+        addGroupToSharedPreferences(group.getId(), group.getName(), group.getDiscipline());
         finish();
     }
 
@@ -138,5 +142,21 @@ public class CreateOrJoinGroupActivity extends BaseActivity implements PersistGr
     public void onFailedSavedUserGroup() {
         hideProgressDialog();
         showErrorDialog();
+    }
+
+    @Override
+    public void onSuccessJoinedGroup(Group group) {
+        onSuccesSavedUserGroup(group);
+    }
+
+    @Override
+    public void onFailedJoinedGroup() {
+        hideProgressDialog();
+        showErrorDialog();
+    }
+
+    @Override
+    public void onJoinGroupDoesNotExist() {
+        showErrorDialog(getString(R.string.alert_dialog_error_title), getString(R.string.alert_dialog_error_tekst));
     }
 }

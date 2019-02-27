@@ -103,6 +103,7 @@
     <string name="context_description_edit">Wijzigen</string>
     <string name="context_description_delete">Verwijderen</string>
     <string name="context_description_active">Actief</string>
+    <string name="clip_data_group_code">Groep code</string>
 
     <!-- Alert Dialog -->
     <string name="alert_dialog_title_delete">Verwijderen</string>
@@ -124,6 +125,10 @@
     <string name="alert_dialog_first_group_title">Groep maken</string>
     <string name="alert_dialog_first_group_text">Hier kun je een groep aanmaken, je hebt minimaal 1 groep nodig om de app te kunnen gebruiken.</string>
 
+    <string name="alert_dialog_share_group_title">Groep delen</string>
+    <!--<string name="alert_dialog_share_group_text">Geef deze code door aan de persoon met wie je de groep wilt delen: %1$s Deze code is al voor je gekopieerd.</string>-->
+
+    <string name="alert_dialog_share_group_text">Geef deze code door aan de persoon met wie je de groep wilt delen: %1$s Deze code is al voor je gekopieerd.</string>
 
     <string name="alert_dialog_no_cursist_title">Geen cursisten</string>
     <string name="alert_dialog_no_cursist_text">Voeg eerst minimaal 1 cursist toe in deze groep.</string>
@@ -135,6 +140,7 @@
     <string name="alert_dialog_text_yes">Ja</string>
 
     <string name="alert_dialog_text_no_such_access_code">De toegangscode die je hebt ingevuld is onbekend. Controleer of deze juist is ingevuld.</string>
+
 
 
 

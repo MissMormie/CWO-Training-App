@@ -92,6 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void getGroupDataOrMakeGroup() {
         // Check if we already have the required state data set
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        // todo check if this needs to be validated in every activity
         if(        sharedPreferences.contains(getString(R.string.pref_current_group_id))
                 && !sharedPreferences.getString(getString(R.string.pref_current_group_id), "").isEmpty()
                 && sharedPreferences.contains(getResources().getString(R.string.pref_current_group_name))
@@ -124,7 +125,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 // whenever data at this location is updated.
                 Map<String, Map> map = (Map<String, Map>) dataSnapshot.getValue();
 
-                if(map.isEmpty()) {
+                if(map == null || map.isEmpty()) {
                     // User does not have a group
                     Intent intent = new Intent(context, CreateOrJoinGroupActivity.class);
                     intent.putExtra(CreateOrJoinGroupActivity.FIRST_GROUP, true);

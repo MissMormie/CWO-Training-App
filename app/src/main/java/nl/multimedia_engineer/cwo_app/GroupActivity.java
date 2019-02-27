@@ -1,6 +1,8 @@
 package nl.multimedia_engineer.cwo_app;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -160,6 +162,30 @@ public class GroupActivity extends BaseActivity
 
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public void onItemShareClicked(int position) {
+        String id = userGroupPartialList.get(position).getId();
+
+        String resource = getResources().getString(R.string.alert_dialog_share_group_text);
+        String text = String.format(resource, id);
+
+        // Copy group code to clipboard
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(getString(R.string.clip_data_group_code), id);
+        clipboard.setPrimaryClip(clip);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setNeutralButton(getString(R.string.alert_dialog_text_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        })
+            .setTitle(getString(R.string.alert_dialog_share_group_title))
+            .setMessage(text)
+            .show();
     }
 
     private void setNewActiveGroup() {

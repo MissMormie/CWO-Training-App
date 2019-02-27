@@ -1,6 +1,8 @@
 package nl.multimedia_engineer.cwo_app.persistence;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nl.multimedia_engineer.cwo_app.R;
 import nl.multimedia_engineer.cwo_app.model.Group;
 import nl.multimedia_engineer.cwo_app.model.GroupPartial;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
@@ -30,6 +33,12 @@ public class PersistGroepen {
     public interface SavedUserGroepen {
         void onSuccesSavedUserGroup(Group group);
         void onFailedSavedUserGroup();
+    }
+
+    public interface JoinGroup {
+        void onSuccessJoinedGroup(Group group);
+        void onFailedJoinedGroup();
+        void onJoinGroupDoesNotExist();
     }
 
 
@@ -58,19 +67,6 @@ public class PersistGroepen {
 
             }
         });
-
-
-      // todo look into transaction for this
-//
-//        // remove first from general, otherwise i'm not allowed to remove it from general anymore.
-//        DatabaseReference cursistenPerGroepRef = DatabaseRefUtil.getCursistenPerGroep(groupId);
-//
-//        cursistenPerGroepRef.setValue(map);
-//
-//        DatabaseReference groepRef = DatabaseRefUtil.getGroepRef(groupId);
-//        groepRef.setValue(map);
-//
-//        removeGroupForUser(auth, groupId);
     }
 
     /**
@@ -100,6 +96,42 @@ public class PersistGroepen {
             @Override
             public void onFailure(@NonNull Exception e) {
                 receiver.onFailedSavedUserGroup();
+            }
+        });
+    }
+
+
+    public static void joinGroup(FirebaseAuth auth, final String groupName, final String accessCode, final JoinGroup receiver) {
+        // First add group to user, otherwise no access to check if group exists.
+        final DatabaseReference userGroupRef = DatabaseRefUtil.getUserGroupsRef(auth).child(accessCode);
+        userGroupRef.setValue(groupName);
+
+        // Checking for discipline so we don't have to retrieve all the data.
+        DatabaseReference groepRef = DatabaseRefUtil.getGroepDisciplineRef(accessCode);
+
+        groepRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // If there is a value all is fine, otherwise get rid of the previously made group.
+                if(dataSnapshot.exists()) {
+                    String discipline = dataSnapshot.getValue(String.class);
+                    Group group = new Group(discipline, groupName);
+                    group.setId(accessCode);
+                    // Nog een keer eigen usergroup updaten met volledige info.
+                    userGroupRef.setValue(group);
+                    receiver.onSuccessJoinedGroup(group);
+                    return;
+                }
+
+                // removing group from the person.
+                userGroupRef.removeValue();
+                receiver.onJoinGroupDoesNotExist();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // anything but permissions denied. Probably connection errors
+                receiver.onFailedJoinedGroup();
             }
         });
 
