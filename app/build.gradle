@@ -1,5 +1,12 @@
+import java.sql.Timestamp
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+
+def buildTime() {
+    def timestamp = System.currentTimeMillis();
+    return timestamp
+}
 
 android {
     compileSdkVersion 28
@@ -23,6 +30,16 @@ android {
         }
     }
     dataBinding.enabled = true
+
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
+            variant.outputs.each { output ->
+                output.versionNameOverride = buildTime() + "-" + variant.flavorName
+                output.versionCodeOverride = buildTime()
+            }
+        }
+
+    }
 }
 
 dependencies {

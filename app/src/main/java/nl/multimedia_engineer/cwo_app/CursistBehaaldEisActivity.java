@@ -1,5 +1,8 @@
 package nl.multimedia_engineer.cwo_app;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
@@ -116,6 +119,9 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
     }
 
     private void showNextCursist() {
+        if(cursistList == null) {
+            return;
+        }
         if (cursistList.isEmpty() && persistCursistList.isEndOfListReached()) {
             backToMainActivity();
         } else if (cursistList.isEmpty() && !persistCursistList.isEndOfListReached()){
@@ -157,8 +163,11 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
             return;
         }
 
-        if(cursistList == null || cursistList.isEmpty()) {
-             return;
+
+        // Er zijn nog geen cursisten.
+        if(cursistList.isEmpty() && this.cursistList == null) {
+            showGeenCursisten();
+            return;
         }
 
         if(!showAlreadyCompleted) {

@@ -124,6 +124,11 @@
     <string name="alert_dialog_first_group_title">Groep maken</string>
     <string name="alert_dialog_first_group_text">Hier kun je een groep aanmaken, je hebt minimaal 1 groep nodig om de app te kunnen gebruiken.</string>
 
+
+    <string name="alert_dialog_no_cursist_title">Geen cursisten</string>
+    <string name="alert_dialog_no_cursist_text">Voeg eerst minimaal 1 cursist toe in deze groep.</string>
+
+
     <string name="alert_dialog_text_ok">OK</string>
     <string name="alert_dialog_text_cancel">Annuleren</string>
     <string name="alert_dialog_text_no">Nee</string>

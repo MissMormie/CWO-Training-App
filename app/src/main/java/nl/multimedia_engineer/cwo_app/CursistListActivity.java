@@ -102,7 +102,7 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
     public void onReceiveCursistPartialList(List<CursistPartial> cursistPartialList) {
         hideProgressDialog();
         if(cursistPartialList == null || cursistPartialList.isEmpty()) {
-            findViewById(R.id.tv_empty_cursist_list).setVisibility(View.VISIBLE);
+            showGeenCursisten();
             return;
         }
         cursistListAdapater.setCursistListData(cursistPartialList);

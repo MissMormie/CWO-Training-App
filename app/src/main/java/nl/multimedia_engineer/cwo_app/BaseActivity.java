@@ -204,6 +204,25 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    public void showGeenCursisten() {
+        final Context context = this;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.alert_dialog_no_cursist_text));
+        builder.setTitle(getString(R.string.alert_dialog_no_cursist_title));
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+
+                dialog.cancel();
+            }
+        });
+        builder.show();
+        return;
+    }
+
     @Override
     public void onStop() {
         super.onStop();
