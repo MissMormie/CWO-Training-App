@@ -3,14 +3,17 @@ package nl.multimedia_engineer.cwo_app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +29,15 @@ import com.mikelau.croperino.Croperino;
 import com.mikelau.croperino.CroperinoConfig;
 import com.mikelau.croperino.CroperinoFileUtil;
 
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.tasks.ImageCompressTask;
 import nl.multimedia_engineer.cwo_app.util.KeyboardUtil;
 import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
@@ -45,6 +55,9 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     // bundle info
     final String CURSIST = "cursist";
     final String IMG_URI = "imgUri";
+    final String FILE_THUMBNAIL = "fileThumbnail";
+    final String FILE_NORMAL = "fileNormal";
+    final String FILE_LARGE = "fileLarge";
 
     private OnFragmentInteractionListener parentActivity;
     private Cursist cursist;
@@ -57,7 +70,6 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     private CheckBox paspoortCheckbox;
     private ImageView fotoImageView;
     private Button saveButton;
-    private ProgressBar loadingProgressBar;
 
     private boolean takingPhoto = false;
 
@@ -83,7 +95,6 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         paspoortCheckbox =  getActivity().findViewById(R.id.checkBoxPaspoort);
         fotoImageView =  getActivity().findViewById(R.id.imageViewFoto);
         saveButton =  getActivity().findViewById(R.id.buttonSave);
-        loadingProgressBar =  getActivity().findViewById(R.id.loadingProgressBar);
         ImageButton takeImageButton =  getActivity().findViewById(R.id.imageButtonPhoto);
         takeImageButton.setOnClickListener(new View.OnClickListener() {
 
@@ -122,7 +133,21 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         super.onSaveInstanceState(outState);
         populateCursist();
         outState.putParcelable(CURSIST, cursist);
-        outState.putParcelable(IMG_URI, tempImgUri);
+
+        if(fileThumbnail != null) {
+            String path = fileThumbnail.getAbsolutePath();
+            outState.putString(FILE_THUMBNAIL, path);
+        }
+
+        if(fileNormal != null) {
+            String path = fileNormal.getAbsolutePath();
+            outState.putString(FILE_NORMAL, path);
+        }
+
+        if(fileLarge != null) {
+            String path = fileLarge.getAbsolutePath();
+            outState.putString(FILE_LARGE, path);
+        }
     }
 
     @Override
@@ -131,7 +156,20 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         takingPhoto = false;
         if(savedInstanceState != null && savedInstanceState.containsKey(CURSIST)) {
             cursist = savedInstanceState.getParcelable(CURSIST);
-            tempImgUri = savedInstanceState.getParcelable(IMG_URI);
+
+            // get Files
+            if(savedInstanceState.containsKey(FILE_LARGE)) {
+                fileLarge = new File(savedInstanceState.getString(FILE_LARGE));
+            }
+
+            if(savedInstanceState.containsKey(FILE_NORMAL)) {
+                fileNormal = new File(savedInstanceState.getString(FILE_NORMAL));
+            }
+
+            if(savedInstanceState.containsKey(FILE_THUMBNAIL)) {
+                fileThumbnail = new File(savedInstanceState.getString(FILE_THUMBNAIL));
+            }
+
             populateFields();
         }
     }
@@ -164,7 +202,6 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     }
 
     private void populateFields() {
-//        parentActivity.showProgressDialog();
         if (voornaamEditText == null) {
             setupFields();
         }
@@ -179,15 +216,17 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
             } else {
                 paspoortCheckbox.setChecked(true);
             }
-            if (cursist.getFotoFileBase64() == null || cursist.getFotoFileBase64().isEmpty()) {
-//                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
-//                new DownloadAndSetImageTask(fotoImageView, getContext()).execute(fotoUrl.toString());
-            }
+//            if (cursist.getFotoFileBase64() == null || cursist.getFotoFileBase64().isEmpty()) {
+////                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
+////                new DownloadAndSetImageTask(fotoImageView, getContext()).execute(fotoUrl.toString());
+//            }
         }
-        // Checking this because it may be called after rotating the screen. Other fields are filled automatically.
-        if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
-            placePicture(cursist.getFotoFileBase64());
-        }
+//        // Checking this because it may be called after rotating the screen. Other fields are filled automatically.
+//        if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
+//            placePicture(cursist.getFotoFileBase64());
+//        }
+
+
 
         if(tempImgUri != null) {
             fotoImageView.setImageURI(tempImgUri);
@@ -210,23 +249,32 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         } else {
             cursist.setPaspoort(null);
         }
+        cursist.setThumbnailPhotoFile(fileThumbnail);
+        cursist.setPhotoFileNormal(fileNormal);
+        cursist.setPhotoFileLarge(fileLarge);
 
-        if(tempImgUri != null) {
-            cursist.setTempImgUri(tempImgUri);
+        if(!isNewImageTaken()) {
+            showImg();
+        } else {
+            showTempImg();
+        }
+    }
+
+
+    private void showImg(){
+        String path;
+        if(cursist.getPhotoPathNormal() != null && !cursist.getPhotoPathNormal().isEmpty()) {
+            path = cursist.getPhotoPathNormal();
+        } else if (cursist.getPhotoPathLarge() != null && !cursist.getPhotoPathLarge().isEmpty()) {
+            path = cursist.getPhotoPathLarge();
+        } else if(cursist.getThumbnailPhotoPath() != null && !cursist.getThumbnailPhotoPath().isEmpty()) {
+            path = cursist.getThumbnailPhotoPath();
+        } else {
+            return;
         }
 
-        // Check if picture was taken, if so, path to the photo is not null.
-//        if (mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty() && takingPhoto == false) {
-//            //Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath);
-//            BitmapDrawable drawable = (BitmapDrawable) fotoImageView.getDrawable();
-//            Bitmap bm = drawable.getBitmap();
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-//            byte[] b = baos.toByteArray();
-//
-//            String image = Base64.encodeToString(b, Base64.NO_WRAP);
-//            cursist.setFotoFileBase64(image);
-//        }
+
+
     }
 
     private void onClickSaveCursist() {
@@ -273,6 +321,15 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
 
 
     // ------------------------------------ PHOTO SUPPORT -----------------------------------------------
+    private ExecutorService mExecutorService = Executors.newFixedThreadPool(1);
+    private ImageCompressTask imageCompressTask;
+    private File fileLarge;
+    private File fileNormal;
+    private File fileThumbnail;
+
+    private boolean isNewImageTaken() {
+        return (fileLarge != null || fileNormal != null || fileThumbnail != null);
+    }
 
     private void onClickTakePicture(){
         KeyboardUtil.hideKeyboard(getActivity());
@@ -284,7 +341,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
             Croperino.prepareCamera(getActivity());
         } catch(Exception e) {
             e.printStackTrace();
-            // todo handle error
+            parentActivity.showErrorDialog();
         }
     }
 
@@ -306,87 +363,73 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
                     tempImgUri = Uri.fromFile(CroperinoFileUtil.getTempFile());
                     fotoImageView.setImageURI(tempImgUri);
 
-                    //Do saving / uploading of photo method here.
-                    //The image file can always be retrieved via CroperinoFileUtil.getTempFile()
+                    // Compress Photo
+                    compressPhoto(tempImgUri);
                 }
+
                 break;
             default:
                 break;
         }
     }
-//    private static final int REQUEST_IMAGE_CAPTURE = 1;
-//    private static final int REQUEST_TAKE_PHOTO = 1;
-//    private String mCurrentPhotoPath;
-//
-//    private void dispatchTakePictureIntent() {
-//        takingPhoto = true;
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        // Ensure that there's a camera activity to handle the intent
-//        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-//            // Create the File where the photo should go
-//            File photoFile = null;
-//            try {
-//                photoFile = createImageFile();
-//            } catch (IOException ex) {
-//                // Error occurred while creating the File
-//            }
-//            // Continue only if the File was successfully created
-//            if (photoFile != null) {
-//                Uri photoURI = FileProvider.getUriForFile(getActivity(),
-//                        getString(R.string.file_authority),
-//                        photoFile);
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-//            }
-//        }
-//    }
-//
-//    private File createImageFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new Timestamp(System.currentTimeMillis()).toString();
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        File image = File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-//
-//        // Save a file: path for use with ACTION_VIEW intents
-//        mCurrentPhotoPath = image.getAbsolutePath();
-//        return image;
-//    }
-//
-//    private void setPic() {
-//        // Get the dimensions of the View
-//        int targetW = fotoImageView.getWidth();
-//        int targetH = fotoImageView.getHeight();
-//
-//        // Get the dimensions of the bitmap
-//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//        bmOptions.inJustDecodeBounds = true;
-//        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        int photoW = bmOptions.outWidth;
-//        int photoH = bmOptions.outHeight;
-//
-//        // Determine how much to scale down the image
-//        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-//
-//        // Decode the image file into a Bitmap sized to fill the View
-//        bmOptions.inJustDecodeBounds = false;
-//        bmOptions.inSampleSize = scaleFactor;
-//
-//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        fotoImageView.setImageBitmap(bitmap);
-//    }
-//
-//
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-//        takingPhoto = false;
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//
-//            setPic();
-//        }
-//    }
+
+    private void compressPhoto(Uri uri) {
+        if(uri != null) {
+            String path = uri.getPath();
+
+            ImageCompressTask.Size[] sizes = {ImageCompressTask.Size.LARGE, ImageCompressTask.Size.NORMAL, ImageCompressTask.Size.THUMBNAIL};
+            //Create ImageCompressTask and execute with Executor.
+            imageCompressTask = new ImageCompressTask(getContext(), path, iImageCompressTaskListener, sizes);
+
+            mExecutorService.execute(imageCompressTask);
+        }
+    }
+
+    private void showTempImg() {
+        if(fileLarge != null) {
+            fotoImageView.setImageURI(Uri.fromFile(fileLarge));
+            fotoImageView.setImageURI(Uri.fromFile(fileLarge));
+        } else if(fileNormal != null){
+            fotoImageView.setImageURI(Uri.fromFile(fileNormal));
+        } else if(fileThumbnail != null) {
+            fotoImageView.setImageURI(Uri.fromFile(fileThumbnail));
+        }
+    }
+
+    private ImageCompressTask.IImageCompressTaskListener iImageCompressTaskListener = new ImageCompressTask.IImageCompressTaskListener() {
+        @Override
+        public void onComplete(Map<ImageCompressTask.Size, File> compressed) {
+            //photo compressed. Yay!
+            //prepare for uploads. Use an Http library like Retrofit, Volley or async-http-client (My favourite)
+
+            if(compressed.containsKey(ImageCompressTask.Size.LARGE)) {
+                fileLarge = compressed.get(ImageCompressTask.Size.LARGE);
+            }
+
+            if(compressed.containsKey(ImageCompressTask.Size.NORMAL)) {
+                fileNormal = compressed.get(ImageCompressTask.Size.NORMAL);
+            }
+
+            if(compressed.containsKey(ImageCompressTask.Size.THUMBNAIL)) {
+                fileThumbnail = compressed.get(ImageCompressTask.Size.THUMBNAIL);
+            }
+            showTempImg();
+        }
+
+
+        @Override
+        public void onError(Throwable error) {
+            //very unlikely, but it might happen on a device with extremely low storage.
+            //log it, log.WhatTheFuck?, or show a dialog asking the user to delete some files....etc, etc
+            Log.wtf("ImageCompressor", "Error occurred", error);
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mExecutorService.shutdown();
+        mExecutorService = null;
+        imageCompressTask = null;
+    }
 }

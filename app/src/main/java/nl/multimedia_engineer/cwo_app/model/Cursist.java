@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,18 +24,11 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     private Set<Diploma> diplomaSet;
     private Set<DiplomaEis> diplomaEisSet;
-    private String photoPath;
+    private String photoPathLarge;
+    private String photoPathNormal;
 
-
-    private transient Uri tempImgUri;
-
-    public Uri getTempImgUri() {
-        return tempImgUri;
-    }
-
-    public void setTempImgUri(Uri tempImgUri) {
-        this.tempImgUri = tempImgUri;
-    }
+    private transient File photoFileLarge;
+    private transient File photoFileNormal;
 
     public Cursist() {
 
@@ -107,6 +101,38 @@ public class Cursist extends CursistPartial implements Parcelable{
         this.paspoort = paspoort;
         this.opmerking = opmerking;
         this.verborgen = verborgen;
+    }
+
+    public File getPhotoFileLarge() {
+        return photoFileLarge;
+    }
+
+    public void setPhotoFileLarge(File photoFileLarge) {
+        this.photoFileLarge = photoFileLarge;
+    }
+
+    public File getPhotoFileNormal() {
+        return photoFileNormal;
+    }
+
+    public void setPhotoFileNormal(File photoFileNormal) {
+        this.photoFileNormal = photoFileNormal;
+    }
+
+    public String getPhotoPathLarge() {
+        return photoPathLarge;
+    }
+
+    public void setPhotoPathLarge(String photoPathLarge) {
+        this.photoPathLarge = photoPathLarge;
+    }
+
+    public String getPhotoPathNormal() {
+        return photoPathNormal;
+    }
+
+    public void setPhotoPathNormal(String photoPathNormal) {
+        this.photoPathNormal = photoPathNormal;
     }
 
     public void addDiploma(Diploma diploma) {
@@ -269,6 +295,9 @@ public class Cursist extends CursistPartial implements Parcelable{
             // save eisen.
         }
 
+        parcel.writeString(photoPathLarge);
+        parcel.writeString(photoPathNormal);
+
 
     }
 
@@ -320,6 +349,8 @@ public class Cursist extends CursistPartial implements Parcelable{
             }
         }
 
+        photoPathLarge = parcel.readString();
+        photoPathNormal = parcel.readString();
     }
 
 

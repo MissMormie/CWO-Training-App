@@ -2,8 +2,11 @@ package nl.multimedia_engineer.cwo_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.mikelau.croperino.CroperinoConfig;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
@@ -41,6 +44,15 @@ public class EditCursistActivity
         intent.putExtra(CursistDetailActivity.EXTRA_CURSIST, cursist);
         setResult(RESULT_CANCELED, intent);
         finish();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == CroperinoConfig.REQUEST_TAKE_PHOTO || requestCode == CroperinoConfig.REQUEST_CROP_PHOTO) {
+            cursistFormFragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     // ------------------------------- Implements PersistCursist.SavedCursist ----------------------

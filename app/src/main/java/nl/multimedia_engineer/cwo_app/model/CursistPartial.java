@@ -3,6 +3,8 @@ package nl.multimedia_engineer.cwo_app.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.File;
+
 public class CursistPartial implements Parcelable {
     String id;
     String voornaam;
@@ -12,8 +14,19 @@ public class CursistPartial implements Parcelable {
     String hoogsteDiploma;
     String thumbnailPhotoPath;
 
+    private transient File thumbnail;
+
+
     public CursistPartial() {
 
+    }
+
+    public void setThumbnailPhotoFile(File thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public File getThumbnailPhotoFile() {
+        return thumbnail;
     }
 
     public String getThumbnailPhotoPath() {
@@ -29,6 +42,9 @@ public class CursistPartial implements Parcelable {
         voornaam = cursist.getVoornaam();
         tussenvoegsel = cursist.getTussenvoegsel();
         achternaam = cursist.getAchternaam();
+        verborgen = cursist.isVerborgen();
+        hoogsteDiploma = cursist.getHoogsteDiploma();
+        thumbnailPhotoPath = cursist.getThumbnailPhotoPath();
     }
 
     public void setHoogsteDiploma(String hoogsteDiploma) {

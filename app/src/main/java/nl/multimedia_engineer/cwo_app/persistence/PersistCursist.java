@@ -1,9 +1,7 @@
 package nl.multimedia_engineer.cwo_app.persistence;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -14,18 +12,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
 
 import nl.multimedia_engineer.cwo_app.dto.CursistDTO;
-import nl.multimedia_engineer.cwo_app.dto.CursistPartialDTO;
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.CursistPartial;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
@@ -86,17 +79,17 @@ public class PersistCursist {
             cursist.setId(cursistId);
         }
 
-        if(cursist.getTempImgUri() != null) {
-            saveCursistFoto(groupId, cursist);
-        }
+        saveCursistFoto(groupId, cursist);
 
-        CursistPartialDTO cursistPartialDTO = new CursistPartialDTO(cursist);
+
+        CursistPartial cursistPartial = new CursistPartial(cursist);
+//        CursistPartialDTO cursistPartialDTO = new CursistPartialDTO(cursist);
         CursistDTO cursistDTO = new CursistDTO(cursist);
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("cursistenPerGroep/" + groupId + "/" + cursist.getId(), cursistDTO);
-        childUpdates.put("groepen/" + groupId + "/cursisten/" + cursist.getId(), cursistPartialDTO);
+        childUpdates.put("groepen/" + groupId + "/cursisten/" + cursist.getId(), cursistPartial);
 
         rootRef.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -112,37 +105,46 @@ public class PersistCursist {
 
     }
 
+    /**
+     * This also adds the paths for the photos to the cursist Object
+     * @param groupId
+     * @param cursist
+     * @return
+     */
     public static boolean saveCursistFoto(String groupId, Cursist cursist) {
-        if(cursist.getTempImgUri() == null) {
-            return false;
+        String path = groupId + "/cursisten/" + cursist.getId();
+        String suffix = ".jgp";
+
+        if(cursist.getPhotoFileLarge() != null) {
+            String namedPath = path +"_large" + suffix;
+            PersistPhoto.savePhoto(groupId, cursist.getPhotoFileLarge(), namedPath);
+            cursist.setPhotoPathLarge(namedPath);
         }
 
-        String path = groupId + "/cursisten/" + cursist.getId();
-        String cursistFotoPath = path + ".jgp";
-        String cursistThumbnailPath = path + "_thumbnail.jgp";
-        StorageReference fotoRef = FirebaseStorage.getInstance().getReference().child(cursistFotoPath);
-        StorageReference fotoThumbRef = FirebaseStorage.getInstance().getReference().child(cursistThumbnailPath);
+        if(cursist.getPhotoFileNormal() != null) {
+            String namedPath = path + suffix;
+            PersistPhoto.savePhoto(groupId, cursist.getPhotoFileNormal(), namedPath);
+            cursist.setPhotoPathNormal(namedPath);
+        }
 
-        fotoRef.putFile(cursist.getTempImgUri())
-            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // Get a URL to the uploaded content
-                    int i = 0;
-                }
-            });
-
-        fotoThumbRef.putFile(cursist.getTempImgUri())
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get a URL to the uploaded content
-                        int i = 0;
-                    }
-                });
+        if(cursist.getThumbnailPhotoFile() != null) {
+            String namedPath = path +"_thumbnail" + suffix;
+            PersistPhoto.savePhoto(groupId, cursist.getThumbnailPhotoFile(), namedPath);
+            cursist.setThumbnailPhotoPath(namedPath);
+        }
 
         return true;
     }
+
+//    private static void saveFoto(String groupId, File photoFile, String path) {
+//        Uri uri = Uri.fromFile(photoFile);
+//        StorageReference fotoRef = FirebaseStorage.getInstance().getReference().child(path);
+//
+//        // Should add success & failure listener when I intend to do something with the result.
+//        fotoRef.putFile(uri);
+//
+//    }
+
 
     @Deprecated
     public static void getCursistList(String groupId, final ReceiveCursistList receiver) {

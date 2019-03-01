@@ -14,7 +14,8 @@ public class CursistDTO extends CursistPartialDTO {
     protected final String opmerking;
     protected final Map<String, String> behaaldeEisen;
     protected final Map<String, String> diplomas;
-
+    protected String photoPathLarge;
+    protected String photoPathNormal;
 
     public CursistDTO(Cursist cursist) {
         super(cursist);
@@ -39,6 +40,9 @@ public class CursistDTO extends CursistPartialDTO {
                 diplomas.put(diploma.getId(), diploma.getId());
             }
         }
+
+        photoPathLarge = cursist.getPhotoPathLarge();
+        photoPathNormal = cursist.getPhotoPathNormal();
     }
 
 }
