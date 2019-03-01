@@ -10,9 +10,18 @@ public class CursistPartial implements Parcelable {
     String achternaam;
     boolean verborgen = false;
     String hoogsteDiploma;
+    String thumbnailPhotoPath;
 
     public CursistPartial() {
 
+    }
+
+    public String getThumbnailPhotoPath() {
+        return thumbnailPhotoPath;
+    }
+
+    public void setThumbnailPhotoPath(String thumbnailPhotoPath) {
+        this.thumbnailPhotoPath = thumbnailPhotoPath;
     }
 
     public CursistPartial(Cursist cursist) {

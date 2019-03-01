@@ -1,18 +1,15 @@
 package nl.multimedia_engineer.cwo_app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,28 +22,31 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Date;
+import com.mikelau.croperino.Croperino;
+import com.mikelau.croperino.CroperinoConfig;
+import com.mikelau.croperino.CroperinoFileUtil;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
-
-import static android.app.Activity.RESULT_OK;
+import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
+import nl.multimedia_engineer.cwo_app.util.KeyboardUtil;
+import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CursistFormFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
+ * Fragment that allows editing of a cursist object.
+ * To use this fragment the implementing activity MUST implement onActivityResult with the following code:
+ * if(requestCode == CroperinoConfig.REQUEST_TAKE_PHOTO || requestCode == CroperinoConfig.REQUEST_CROP_PHOTO) {
+ *    cursistFormFragment.onActivityResult(requestCode, resultCode, data);
+ * }
+ * This is because this library only supports a callback to an activity.
+ *
  */
-public class CursistFormFragment extends Fragment {
+public class CursistFormFragment extends Fragment implements PersistCursist.SavedCursist {
     // bundle info
     final String CURSIST = "cursist";
+    final String IMG_URI = "imgUri";
 
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener parentActivity;
     private Cursist cursist;
 
     // UI elements.
@@ -61,6 +61,15 @@ public class CursistFormFragment extends Fragment {
 
     private boolean takingPhoto = false;
 
+
+    /**
+     */
+    interface OnFragmentInteractionListener {
+        void onCursistSaved(Cursist cursist);
+        void showProgressDialog();
+        void hideProgressDialog();
+        void showErrorDialog();
+    }
 
     public CursistFormFragment() {
 
@@ -80,7 +89,7 @@ public class CursistFormFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                dispatchTakePictureIntent();
+                onClickTakePicture();
             }
         });
     }
@@ -111,8 +120,9 @@ public class CursistFormFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        readCursist();
+        populateCursist();
         outState.putParcelable(CURSIST, cursist);
+        outState.putParcelable(IMG_URI, tempImgUri);
     }
 
     @Override
@@ -121,6 +131,7 @@ public class CursistFormFragment extends Fragment {
         takingPhoto = false;
         if(savedInstanceState != null && savedInstanceState.containsKey(CURSIST)) {
             cursist = savedInstanceState.getParcelable(CURSIST);
+            tempImgUri = savedInstanceState.getParcelable(IMG_URI);
             populateFields();
         }
     }
@@ -140,7 +151,7 @@ public class CursistFormFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            parentActivity = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
@@ -149,11 +160,11 @@ public class CursistFormFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        parentActivity = null;
     }
 
     private void populateFields() {
-        toggleLoading(false);
+//        parentActivity.showProgressDialog();
         if (voornaamEditText == null) {
             setupFields();
         }
@@ -172,18 +183,21 @@ public class CursistFormFragment extends Fragment {
 //                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
 //                new DownloadAndSetImageTask(fotoImageView, getContext()).execute(fotoUrl.toString());
             }
-
         }
         // Checking this because it may be called after rotating the screen. Other fields are filled automatically.
         if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
             placePicture(cursist.getFotoFileBase64());
+        }
+
+        if(tempImgUri != null) {
+            fotoImageView.setImageURI(tempImgUri);
         }
     }
 
     /**
      * Read the entered data and use it to fill the member Cursist instance cursist.
      */
-    private void readCursist() {
+    private void populateCursist() {
         cursist.setVoornaam(voornaamEditText.getText().toString());
         cursist.setTussenvoegsel(tussenvoegselEditText.getText().toString());
         cursist.setAchternaam(achternaamEditText.getText().toString());
@@ -196,18 +210,23 @@ public class CursistFormFragment extends Fragment {
         } else {
             cursist.setPaspoort(null);
         }
-        // Check if picture was taken, if so, path to the photo is not null.
-        if (mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty() && takingPhoto == false) {
-            //Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            BitmapDrawable drawable = (BitmapDrawable) fotoImageView.getDrawable();
-            Bitmap bm = drawable.getBitmap();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-            byte[] b = baos.toByteArray();
 
-            String image = Base64.encodeToString(b, Base64.NO_WRAP);
-            cursist.setFotoFileBase64(image);
+        if(tempImgUri != null) {
+            cursist.setTempImgUri(tempImgUri);
         }
+
+        // Check if picture was taken, if so, path to the photo is not null.
+//        if (mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty() && takingPhoto == false) {
+//            //Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath);
+//            BitmapDrawable drawable = (BitmapDrawable) fotoImageView.getDrawable();
+//            Bitmap bm = drawable.getBitmap();
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+//            byte[] b = baos.toByteArray();
+//
+//            String image = Base64.encodeToString(b, Base64.NO_WRAP);
+//            cursist.setFotoFileBase64(image);
+//        }
     }
 
     private void onClickSaveCursist() {
@@ -217,10 +236,14 @@ public class CursistFormFragment extends Fragment {
         }
 
         saveButton.setEnabled(false);
-        toggleLoading(true);
-        readCursist();
+        parentActivity.showProgressDialog();
+        populateCursist();
+        saveCursist();
+    }
 
-        mListener.saveCursist(cursist);
+    private void saveCursist() {
+        String groupId = PreferenceUtil.getPreferenceString(getContext(), getString(R.string.pref_current_group_id), "");
+        PersistCursist.saveCursist(groupId, cursist, this);
     }
 
     private void showMinimumFormDemand() {
@@ -229,106 +252,141 @@ public class CursistFormFragment extends Fragment {
 
     }
 
-    private void toggleLoading(boolean currentlyLoading) {
-        // Change this to call parent on loading.
-        if (loadingProgressBar == null)
-            return;
-        if (currentlyLoading)
-            loadingProgressBar.setVisibility(View.VISIBLE);
-        else
-            loadingProgressBar.setVisibility(View.INVISIBLE);
+    // ------------------------------- Implements PersistCursist.SavedCursist ----------------------
 
+    @Override
+    public void onCursistSaved(Cursist cursist) {
+        this.cursist = cursist;
+        parentActivity.onCursistSaved(cursist);
+
+        // Get preference for showing diploma's after creation of Cursist.
+    }
+
+    @Override
+    public void onCursistSaveFailed() {
+        parentActivity.hideProgressDialog();
+        parentActivity.showErrorDialog();
     }
 
 
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface OnFragmentInteractionListener {
-
-        void saveCursist(Cursist cursist);
-
-    }
 
 
     // ------------------------------------ PHOTO SUPPORT -----------------------------------------------
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_TAKE_PHOTO = 1;
-    private String mCurrentPhotoPath;
 
-    private void dispatchTakePictureIntent() {
-        takingPhoto = true;
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                        getString(R.string.file_authority),
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
+    private void onClickTakePicture(){
+        KeyboardUtil.hideKeyboard(getActivity());
+        //Initialize on every usage
+        new CroperinoConfig("IMG_" + System.currentTimeMillis() + ".jpg", "/MikeLau/Pictures", "/sdcard/MikeLau/Pictures");
+        CroperinoFileUtil.verifyStoragePermissions(getActivity());
+        CroperinoFileUtil.setupDirectory(getActivity());
+        try {
+            Croperino.prepareCamera(getActivity());
+        } catch(Exception e) {
+            e.printStackTrace();
+            // todo handle error
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new Timestamp(System.currentTimeMillis()).toString();
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
 
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void setPic() {
-        // Get the dimensions of the View
-        int targetW = fotoImageView.getWidth();
-        int targetH = fotoImageView.getHeight();
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        fotoImageView.setImageBitmap(bitmap);
-    }
-
-
+    private Uri tempImgUri;
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-        takingPhoto = false;
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            setPic();
+        switch (requestCode) {
+            case CroperinoConfig.REQUEST_TAKE_PHOTO:
+                if (resultCode == Activity.RESULT_OK) {
+                    /* Parameters of runCropImage = File, Activity Context, Image is Scalable or Not, Aspect Ratio X, Aspect Ratio Y, Button Bar Color, Background Color */
+                    Croperino.runCropImage(CroperinoFileUtil.getTempFile(), getActivity(), true, 1, 1, R.color.gray, R.color.gray_variant);
+                }
+                break;
+            case CroperinoConfig.REQUEST_CROP_PHOTO:
+                if (resultCode == Activity.RESULT_OK) {
+                    tempImgUri = Uri.fromFile(CroperinoFileUtil.getTempFile());
+                    fotoImageView.setImageURI(tempImgUri);
+
+                    //Do saving / uploading of photo method here.
+                    //The image file can always be retrieved via CroperinoFileUtil.getTempFile()
+                }
+                break;
+            default:
+                break;
         }
     }
+//    private static final int REQUEST_IMAGE_CAPTURE = 1;
+//    private static final int REQUEST_TAKE_PHOTO = 1;
+//    private String mCurrentPhotoPath;
+//
+//    private void dispatchTakePictureIntent() {
+//        takingPhoto = true;
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        // Ensure that there's a camera activity to handle the intent
+//        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+//            // Create the File where the photo should go
+//            File photoFile = null;
+//            try {
+//                photoFile = createImageFile();
+//            } catch (IOException ex) {
+//                // Error occurred while creating the File
+//            }
+//            // Continue only if the File was successfully created
+//            if (photoFile != null) {
+//                Uri photoURI = FileProvider.getUriForFile(getActivity(),
+//                        getString(R.string.file_authority),
+//                        photoFile);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+//            }
+//        }
+//    }
+//
+//    private File createImageFile() throws IOException {
+//        // Create an image file name
+//        String timeStamp = new Timestamp(System.currentTimeMillis()).toString();
+//        String imageFileName = "JPEG_" + timeStamp + "_";
+//        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//
+//        // Save a file: path for use with ACTION_VIEW intents
+//        mCurrentPhotoPath = image.getAbsolutePath();
+//        return image;
+//    }
+//
+//    private void setPic() {
+//        // Get the dimensions of the View
+//        int targetW = fotoImageView.getWidth();
+//        int targetH = fotoImageView.getHeight();
+//
+//        // Get the dimensions of the bitmap
+//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//        bmOptions.inJustDecodeBounds = true;
+//        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+//        int photoW = bmOptions.outWidth;
+//        int photoH = bmOptions.outHeight;
+//
+//        // Determine how much to scale down the image
+//        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+//
+//        // Decode the image file into a Bitmap sized to fill the View
+//        bmOptions.inJustDecodeBounds = false;
+//        bmOptions.inSampleSize = scaleFactor;
+//
+//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+//        fotoImageView.setImageBitmap(bitmap);
+//    }
+//
+//
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+//        takingPhoto = false;
+//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//
+//            setPic();
+//        }
+//    }
 }

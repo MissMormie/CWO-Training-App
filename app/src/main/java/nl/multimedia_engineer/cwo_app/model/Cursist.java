@@ -1,5 +1,6 @@
 package nl.multimedia_engineer.cwo_app.model;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -22,7 +23,18 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     private Set<Diploma> diplomaSet;
     private Set<DiplomaEis> diplomaEisSet;
+    private String photoPath;
 
+
+    private transient Uri tempImgUri;
+
+    public Uri getTempImgUri() {
+        return tempImgUri;
+    }
+
+    public void setTempImgUri(Uri tempImgUri) {
+        this.tempImgUri = tempImgUri;
+    }
 
     public Cursist() {
 
@@ -228,6 +240,9 @@ public class Cursist extends CursistPartial implements Parcelable{
 
         // In some cases the base64 string is too long for parcelable, this will be solved when moving to web assets
         // for now filtering it out and not parceling the image in that case.
+        if(fotoFileBase64 == null) {
+            fotoFileBase64 = "";
+        }
         if(fotoFileBase64.length() * 2 > 990000) {
             parcel.writeString("");
         } else {
@@ -272,12 +287,6 @@ public class Cursist extends CursistPartial implements Parcelable{
     // Note, the order IS important, if it's not the same as when parceling it doesn't work.
     private Cursist(Parcel parcel) {
         super(parcel);
-//        id = parcel.readString();
-//        voornaam = parcel.readString();
-//        tussenvoegsel = parcel.readString();
-//        achternaam = parcel.readString();
-//        opmerking = parcel.readString();
-//        verborgen = parcel.readByte() != 0;
 
         // Get around paspoortDate sometimes being null.
         Long paspoortTemp = parcel.readLong();

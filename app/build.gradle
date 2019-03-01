@@ -52,8 +52,10 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'com.android.support:preference-v7:28.0.0'
 
+    // Croperino photo crop library
+    implementation 'com.github.mike14u:croperino:1.1.8'
 
-// firebase
+    // firebase
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-database:16.0.6'
     implementation 'com.google.firebase:firebase-auth:16.1.0'

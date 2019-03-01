@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseError;
+import com.mikelau.croperino.CroperinoConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,6 @@ import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 public class CreateCursistActivity
         extends BaseActivity
         implements CursistFormFragment.OnFragmentInteractionListener,
-                   PersistCursist.SavedCursist,
                    PersistDiploma.ReceiveDiplomas {
     private CursistFormFragment cursistFormFragment;
     private Cursist cursist;
@@ -37,23 +38,10 @@ public class CreateCursistActivity
     }
 
 
-    @Override
-    public void saveCursist(Cursist cursist) {
-        String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
-
-        PersistCursist.saveCursist(groupId, cursist, this);
-    }
-
-    // ------------------------------- Implements PersistCursist.SavedCursist ----------------------
-
-    @Override
     public void onCursistSaved(Cursist cursist) {
         this.cursist = cursist;
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_opgeslagen), Toast.LENGTH_SHORT);
-        toast.show();
-
-        // Get preference for showing diploma's after creation of Cursist.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         Boolean showDiploma = sharedPreferences.getBoolean(getString(R.string.pref_show_diploma_after_create_key),
                 getResources().getBoolean(R.bool.pref_show_diploma_after_create_cursist));
 
@@ -64,13 +52,6 @@ public class CreateCursistActivity
             finish();
         }
     }
-
-    @Override
-    public void onCursistSaveFailed() {
-        hideProgressDialog();
-        showErrorDialog();
-    }
-
 
     // ------------------------------- Implements PersistDiploma.ReceiveDiplomas ------------------------
     @Override
@@ -94,5 +75,13 @@ public class CreateCursistActivity
     @Override
     public void onFailedReceivingDiplomas(DatabaseError databaseError) {
         showErrorDialog();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == CroperinoConfig.REQUEST_TAKE_PHOTO || requestCode == CroperinoConfig.REQUEST_CROP_PHOTO) {
+            cursistFormFragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

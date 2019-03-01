@@ -11,8 +11,8 @@ import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 public class EditCursistActivity
         extends BaseActivity
-        implements CursistFormFragment.OnFragmentInteractionListener,
-                   PersistCursist.SavedCursist {
+        implements CursistFormFragment.OnFragmentInteractionListener
+                    {
     private Cursist cursist;
     private CursistFormFragment cursistFormFragment;
 
@@ -23,12 +23,6 @@ public class EditCursistActivity
         cursist = getIntent().getExtras().getParcelable("cursist");
         cursistFormFragment = (CursistFormFragment) getSupportFragmentManager().findFragmentById(R.id.cursist_form_fragment);
         cursistFormFragment.setCursist(cursist);
-    }
-
-    @Override
-    public void saveCursist(Cursist cursist) {
-        this.cursist = cursist;
-        PersistCursist.saveCursist(PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), ""), cursist, this);
     }
 
     @Override
@@ -53,18 +47,11 @@ public class EditCursistActivity
 
     @Override
     public void onCursistSaved(Cursist cursist) {
-        hideProgressDialog();
-        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.cursist_opgeslagen), Toast.LENGTH_SHORT);
-        toast.show();
         Intent intent = new Intent();
         intent.putExtra(CursistDetailActivity.EXTRA_CURSIST, cursist);
         setResult(RESULT_OK, intent);
         finish();
     }
 
-    @Override
-    public void onCursistSaveFailed() {
-        hideProgressDialog();
-        showErrorDialog();
-    }
+
 }
