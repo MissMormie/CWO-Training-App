@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -127,16 +130,12 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
             diplomaTextView.setText(cursist.getHoogsteDiploma());
 
             // Set foto
-            // todo thumbnails
-//            if (cursist != null) {
-//                String imgData = cursist.getCursistFoto().getThumbnail();
-//                byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
-//                Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
-//                fotoImageView.setImageBitmap(bitmap);
-//            } else {
-//                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_user_image);
-//                fotoImageView.setImageDrawable(drawable);
-//            }
+            if(cursist.getPhotoPathThumbnail() != null) {
+                Glide.with(context)
+                        .load(Uri.parse(cursist.getPhotoPathThumbnail()))
+                        .placeholder(R.drawable.ic_user_image)
+                        .into(fotoImageView);
+            }
 
             // Set background color in case cursist is hidden.
             if (cursist.isVerborgen())

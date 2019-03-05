@@ -47,6 +47,8 @@ public class PersistGroepen {
         groupRef.removeValue();
     }
 
+
+    // todo !important should also remove all images.
     public static void removeGroupForAllUsers(FirebaseAuth auth, String groupId) {
         Map<String, Object> map = new HashMap<>();
         map.put("deleted", true);

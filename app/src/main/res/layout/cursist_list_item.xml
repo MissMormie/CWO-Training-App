@@ -40,8 +40,7 @@
 
     <ImageView
         android:id="@+id/imageViewFoto"
-
-        android:layout_width="1dp"
+        android:layout_width="59dp"
         android:layout_height="59dp"
         app:srcCompat="@drawable/ic_user_image"
         android:layout_marginLeft="8dp"
@@ -49,10 +48,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="4dp"
         android:layout_marginStart="8dp"
-        android:visibility="invisible"
         tools:ignore="ContentDescription" />
-    <!-- was : android:layout_width="51dp"
-               no android:visibility tag -->
 
     <TextView
         android:id="@+id/diplomaTextView"

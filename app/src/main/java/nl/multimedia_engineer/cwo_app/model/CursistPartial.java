@@ -6,36 +6,19 @@ import android.os.Parcelable;
 import java.io.File;
 
 public class CursistPartial implements Parcelable {
-    String id;
-    String voornaam;
-    String tussenvoegsel;
-    String achternaam;
-    boolean verborgen = false;
-    String hoogsteDiploma;
-    String thumbnailPhotoPath;
-
-    private transient File thumbnail;
-
+    protected String id;
+    protected String voornaam;
+    protected String tussenvoegsel;
+    protected String achternaam;
+    protected boolean verborgen = false;
+    protected String hoogsteDiploma;
+    protected String photoPathThumbnail;
+    protected transient File photoFileThumbnail;
 
     public CursistPartial() {
 
     }
 
-    public void setThumbnailPhotoFile(File thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public File getThumbnailPhotoFile() {
-        return thumbnail;
-    }
-
-    public String getThumbnailPhotoPath() {
-        return thumbnailPhotoPath;
-    }
-
-    public void setThumbnailPhotoPath(String thumbnailPhotoPath) {
-        this.thumbnailPhotoPath = thumbnailPhotoPath;
-    }
 
     public CursistPartial(Cursist cursist) {
         id = cursist.getId();
@@ -44,7 +27,8 @@ public class CursistPartial implements Parcelable {
         achternaam = cursist.getAchternaam();
         verborgen = cursist.isVerborgen();
         hoogsteDiploma = cursist.getHoogsteDiploma();
-        thumbnailPhotoPath = cursist.getThumbnailPhotoPath();
+        photoPathThumbnail = cursist.getPhotoPathThumbnail();
+        photoFileThumbnail = cursist.getPhotoFileThumbnail();
     }
 
     public void setHoogsteDiploma(String hoogsteDiploma) {
@@ -58,6 +42,12 @@ public class CursistPartial implements Parcelable {
         achternaam = in.readString();
         verborgen = in.readByte() != 0;
         hoogsteDiploma = in.readString();
+        photoPathThumbnail = in.readString();
+
+        String photoFileString = in.readString();
+        if(photoFileString != null && !photoFileString.isEmpty()) {
+            photoFileThumbnail = new File(photoFileString);
+        }
     }
 
 
@@ -118,6 +108,22 @@ public class CursistPartial implements Parcelable {
         verborgen = !verborgen;
     }
 
+    public String getPhotoPathThumbnail() {
+        return photoPathThumbnail;
+    }
+
+    public void setPhotoPathThumbnail(String photoPathThumbnail) {
+        this.photoPathThumbnail = photoPathThumbnail;
+    }
+
+    public File getPhotoFileThumbnail() {
+        return photoFileThumbnail;
+    }
+
+    public void setPhotoFileThumbnail(File photoFileThumbnail) {
+        this.photoFileThumbnail = photoFileThumbnail;
+    }
+
     public String nameToString() {
         String tussenstuk = "";
         if (tussenvoegsel != null && !tussenvoegsel.equals(""))
@@ -174,6 +180,13 @@ public class CursistPartial implements Parcelable {
         dest.writeString(achternaam);
         dest.writeByte((byte) (verborgen ? 1 : 0));
         dest.writeString(hoogsteDiploma);
+        dest.writeString(photoPathThumbnail);
+
+        if(getPhotoFileThumbnail() != null) {
+            dest.writeString(getPhotoFileThumbnail().getAbsolutePath());
+        } else {
+            dest.writeString("");
+        }
 
     }
 }

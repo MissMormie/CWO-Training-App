@@ -17,7 +17,7 @@ import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 
 public class Cursist extends CursistPartial implements Parcelable{
 
-    private String fotoFileBase64;
+//    private String fotoFileBase64;
 
     private Long paspoort;
     private String opmerking;
@@ -35,8 +35,8 @@ public class Cursist extends CursistPartial implements Parcelable{
     }
 
     public boolean isPartialCursist() {
-        if((fotoFileBase64 == null || fotoFileBase64.isEmpty())
-        && (paspoort == null || paspoort == 0L)
+//        if((fotoFileBase64 == null || fotoFileBase64.isEmpty())
+        if ((paspoort == null || paspoort == 0L)
         && (opmerking == null || opmerking.isEmpty())
         && (diplomaSet == null || diplomaSet.isEmpty())
         && (diplomaEisSet == null || diplomaEisSet.isEmpty())) {
@@ -183,13 +183,13 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     }
 
-    public String getFotoFileBase64() {
-        return fotoFileBase64;
-    }
-
-    public void setFotoFileBase64(String fotoFileBase64) {
-        this.fotoFileBase64 = fotoFileBase64;
-    }
+//    public String getFotoFileBase64() {
+//        return fotoFileBase64;
+//    }
+//
+//    public void setFotoFileBase64(String fotoFileBase64) {
+//        this.fotoFileBase64 = fotoFileBase64;
+//    }
 
     // Make this smarter with a map so i don't have to run through everything every time. Only the first time. (together with isAlleEisenBehaald)
     // Low prio, low numbers make this not very slow.
@@ -266,17 +266,17 @@ public class Cursist extends CursistPartial implements Parcelable{
 
         // In some cases the base64 string is too long for parcelable, this will be solved when moving to web assets
         // for now filtering it out and not parceling the image in that case.
-        if(fotoFileBase64 == null) {
-            fotoFileBase64 = "";
-        }
-        if(fotoFileBase64.length() * 2 > 990000) {
-            parcel.writeString("");
-        } else {
-            parcel.writeString(fotoFileBase64);
-        }
+//        if(fotoFileBase64 == null) {
+//            fotoFileBase64 = "";
+//        }
+//        if(fotoFileBase64.length() * 2 > 990000) {
+//            parcel.writeString("");
+//        } else {
+//            parcel.writeString(fotoFileBase64);
+//        }
 
-        if(diplomaSet == null || diplomaSet.size() == 0) {
-            parcel.writeInt(0);
+        if(diplomaSet == null || diplomaSet.isEmpty()) {
+            parcel.writeInt(0); // DiplomaSetSize
         } else {
             parcel.writeInt(diplomaSet.size());
             Diploma[] diploma = new Diploma[diplomaSet.size()];
@@ -284,10 +284,10 @@ public class Cursist extends CursistPartial implements Parcelable{
             parcel.writeTypedArray(diploma, 0);
         }
 
-        if(diplomaEisSet == null || diplomaEisSet.size() == 0) {
-            parcel.writeInt(0);
+        if(diplomaEisSet == null || diplomaEisSet.isEmpty()) {
+            parcel.writeInt(0); //diplomaEisSetSize
         } else {
-            parcel.writeInt(diplomaEisSet.size());
+            parcel.writeInt(diplomaEisSet.size());//diplomaEisSetSize
             DiplomaEis[] diplomaEisen = new DiplomaEis[diplomaEisSet.size()];
             diplomaEisSet.toArray(diplomaEisen);
             parcel.writeTypedArray(diplomaEisen, 0);
@@ -298,7 +298,17 @@ public class Cursist extends CursistPartial implements Parcelable{
         parcel.writeString(photoPathLarge);
         parcel.writeString(photoPathNormal);
 
+        if(photoFileLarge != null) {
+            parcel.writeString(photoFileLarge.getAbsolutePath());
+        } else {
+            parcel.writeString("");
+        }
 
+        if(photoFileNormal != null) {
+            parcel.writeString(photoFileNormal.getAbsolutePath());
+        } else {
+            parcel.writeString("");
+        }
     }
 
     public static final Parcelable.Creator<Cursist> CREATOR = new Parcelable.Creator<Cursist>() {
@@ -326,7 +336,7 @@ public class Cursist extends CursistPartial implements Parcelable{
             paspoort = paspoortTemp;
         }
 
-        fotoFileBase64 = parcel.readString();
+//        fotoFileBase64 = parcel.readString();
 
         diplomaSet = new HashSet<>();
         int diplomaSetSize = parcel.readInt();
@@ -351,6 +361,16 @@ public class Cursist extends CursistPartial implements Parcelable{
 
         photoPathLarge = parcel.readString();
         photoPathNormal = parcel.readString();
+
+        String photoFileL = parcel.readString();
+        if(photoFileL != null && !photoFileL.isEmpty()) {
+            photoFileLarge = new File(photoFileL);
+        }
+
+        String photoFileN = parcel.readString();
+        if(photoFileN != null && !photoFileN.isEmpty()) {
+            photoFileNormal = new File(photoFileN);
+        }
     }
 
 

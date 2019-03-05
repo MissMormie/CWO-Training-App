@@ -1,5 +1,6 @@
 package nl.multimedia_engineer.cwo_app.persistence;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -12,7 +13,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +56,9 @@ public class PersistCursist {
         void onCursistDeleteFailed();
     }
 
+    private static final String TAG = PersistCursist.class.getSimpleName();
+
+
     public static void requestDeleteCursist(final String groupId, final Cursist cursist, final DeletedCursist receiver) {
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         Map<String, Object> childUpdates = new HashMap<>();
@@ -67,84 +75,24 @@ public class PersistCursist {
                 receiver.onCursistDeleteFailed();
             }
         });
+
+        // Firebase does not allow to delete a folder, so we need to delete the various images directly.
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference cursistFilesRef = storage.getReference().child(groupId).child("cursisten").child(cursist.getId());
+        deleteFile(cursistFilesRef, cursist.getPhotoPathLarge());
+        deleteFile(cursistFilesRef, cursist.getPhotoPathNormal());
+        deleteFile(cursistFilesRef, cursist.getPhotoPathThumbnail());
     }
 
 
-    private static final String TAG = PersistCursist.class.getSimpleName();
+    private static void deleteFile(StorageReference cursistFileRef, String urlPath) {
+        if(urlPath == null)
+            return;
 
-    public static void saveCursist(String groupId, final Cursist cursist, final SavedCursist receiver) {
-        DatabaseReference groepenCursistenRef = DatabaseRefUtil.getGroepenCursisten(groupId);
-        if(cursist.getId() == null || cursist.getId().isEmpty()) {
-            String cursistId = groepenCursistenRef.push().getKey();
-            cursist.setId(cursistId);
-        }
-
-        saveCursistFoto(groupId, cursist);
-
-
-        CursistPartial cursistPartial = new CursistPartial(cursist);
-//        CursistPartialDTO cursistPartialDTO = new CursistPartialDTO(cursist);
-        CursistDTO cursistDTO = new CursistDTO(cursist);
-
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("cursistenPerGroep/" + groupId + "/" + cursist.getId(), cursistDTO);
-        childUpdates.put("groepen/" + groupId + "/cursisten/" + cursist.getId(), cursistPartial);
-
-        rootRef.updateChildren(childUpdates).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                receiver.onCursistSaved(cursist);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                receiver.onCursistSaveFailed();
-            }
-        });
-
+        Uri uri = Uri.parse(urlPath);
+        String filename = new File(uri.getPath()).getName();
+        cursistFileRef.child(filename).delete();
     }
-
-    /**
-     * This also adds the paths for the photos to the cursist Object
-     * @param groupId
-     * @param cursist
-     * @return
-     */
-    public static boolean saveCursistFoto(String groupId, Cursist cursist) {
-        String path = groupId + "/cursisten/" + cursist.getId();
-        String suffix = ".jgp";
-
-        if(cursist.getPhotoFileLarge() != null) {
-            String namedPath = path +"_large" + suffix;
-            PersistPhoto.savePhoto(groupId, cursist.getPhotoFileLarge(), namedPath);
-            cursist.setPhotoPathLarge(namedPath);
-        }
-
-        if(cursist.getPhotoFileNormal() != null) {
-            String namedPath = path + suffix;
-            PersistPhoto.savePhoto(groupId, cursist.getPhotoFileNormal(), namedPath);
-            cursist.setPhotoPathNormal(namedPath);
-        }
-
-        if(cursist.getThumbnailPhotoFile() != null) {
-            String namedPath = path +"_thumbnail" + suffix;
-            PersistPhoto.savePhoto(groupId, cursist.getThumbnailPhotoFile(), namedPath);
-            cursist.setThumbnailPhotoPath(namedPath);
-        }
-
-        return true;
-    }
-
-//    private static void saveFoto(String groupId, File photoFile, String path) {
-//        Uri uri = Uri.fromFile(photoFile);
-//        StorageReference fotoRef = FirebaseStorage.getInstance().getReference().child(path);
-//
-//        // Should add success & failure listener when I intend to do something with the result.
-//        fotoRef.putFile(uri);
-//
-//    }
-
 
     @Deprecated
     public static void getCursistList(String groupId, final ReceiveCursistList receiver) {
@@ -176,6 +124,7 @@ public class PersistCursist {
         });
     }
 
+    // TODO should move these to Persist Cursist List
     public static void getCursistList(String groupId, final ReceiveCursistList receiver, boolean includeVerborgen) {
         DatabaseReference databaseReference = DatabaseRefUtil.getCursistenPerGroep(groupId);
         Query query;

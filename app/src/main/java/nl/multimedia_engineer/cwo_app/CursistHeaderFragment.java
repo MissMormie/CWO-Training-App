@@ -1,7 +1,6 @@
 package nl.multimedia_engineer.cwo_app;
 
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,26 +12,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+
 import nl.multimedia_engineer.cwo_app.databinding.FragmentCursistHeaderBinding;
 import nl.multimedia_engineer.cwo_app.model.Cursist;
-import nl.multimedia_engineer.cwo_app.persistence.PersistPhoto;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CursistHeaderFragment extends Fragment implements PersistPhoto.ReceivePhoto {
-    private Cursist cursist;
+public class CursistHeaderFragment extends Fragment {
     private FragmentCursistHeaderBinding databinding;
-
 
     public CursistHeaderFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -43,20 +36,7 @@ public class CursistHeaderFragment extends Fragment implements PersistPhoto.Rece
         return databinding.getRoot(); // View
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     public void setCursist(Cursist cursist) {
-        this.cursist = cursist;
-
-
         if (cursist == null)
             return;
         databinding.textViewNaam.setText(cursist.nameToString());
@@ -70,19 +50,10 @@ public class CursistHeaderFragment extends Fragment implements PersistPhoto.Rece
         databinding.textViewPaspoort.setText(text);
 
         if(cursist.getPhotoPathNormal() != null) {
-            PersistPhoto.getPhoto(cursist.getPhotoPathNormal(), this);
-
-        } else if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
-            // Check if photo is included in cursist object
-                String imgData = cursist.getFotoFileBase64();
-                byte[] imgByteArray = Base64.decode(imgData, Base64.NO_WRAP);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
-                databinding.imageViewFoto.setImageBitmap(bitmap);
+            Glide.with(this)
+                .load(Uri.parse(cursist.getPhotoPathNormal()))
+                .placeholder(R.drawable.ic_user_image)
+                .into(databinding.imageViewFoto);
         }
-    }
-
-    @Override
-    public void onReceivePhotoUri(Uri uri) {
-        databinding.imageViewFoto.setImageURI(uri);
     }
 }

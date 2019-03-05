@@ -3,12 +3,10 @@ package nl.multimedia_engineer.cwo_app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,20 +20,20 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.mikelau.croperino.Croperino;
 import com.mikelau.croperino.CroperinoConfig;
 import com.mikelau.croperino.CroperinoFileUtil;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import nl.multimedia_engineer.cwo_app.model.Cursist;
+import nl.multimedia_engineer.cwo_app.persistence.BetterPersistCursist;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
 import nl.multimedia_engineer.cwo_app.tasks.ImageCompressTask;
 import nl.multimedia_engineer.cwo_app.util.KeyboardUtil;
@@ -54,10 +52,7 @@ import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 public class CursistFormFragment extends Fragment implements PersistCursist.SavedCursist {
     // bundle info
     final String CURSIST = "cursist";
-    final String IMG_URI = "imgUri";
-    final String FILE_THUMBNAIL = "fileThumbnail";
-    final String FILE_NORMAL = "fileNormal";
-    final String FILE_LARGE = "fileLarge";
+
 
     private OnFragmentInteractionListener parentActivity;
     private Cursist cursist;
@@ -134,20 +129,6 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         populateCursist();
         outState.putParcelable(CURSIST, cursist);
 
-        if(fileThumbnail != null) {
-            String path = fileThumbnail.getAbsolutePath();
-            outState.putString(FILE_THUMBNAIL, path);
-        }
-
-        if(fileNormal != null) {
-            String path = fileNormal.getAbsolutePath();
-            outState.putString(FILE_NORMAL, path);
-        }
-
-        if(fileLarge != null) {
-            String path = fileLarge.getAbsolutePath();
-            outState.putString(FILE_LARGE, path);
-        }
     }
 
     @Override
@@ -156,19 +137,19 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         takingPhoto = false;
         if(savedInstanceState != null && savedInstanceState.containsKey(CURSIST)) {
             cursist = savedInstanceState.getParcelable(CURSIST);
-
-            // get Files
-            if(savedInstanceState.containsKey(FILE_LARGE)) {
-                fileLarge = new File(savedInstanceState.getString(FILE_LARGE));
-            }
-
-            if(savedInstanceState.containsKey(FILE_NORMAL)) {
-                fileNormal = new File(savedInstanceState.getString(FILE_NORMAL));
-            }
-
-            if(savedInstanceState.containsKey(FILE_THUMBNAIL)) {
-                fileThumbnail = new File(savedInstanceState.getString(FILE_THUMBNAIL));
-            }
+//
+//            // get Files
+//            if(savedInstanceState.containsKey(FILE_LARGE)) {
+//                fileLarge = new File(savedInstanceState.getString(FILE_LARGE));
+//            }
+//
+//            if(savedInstanceState.containsKey(FILE_NORMAL)) {
+//                fileNormal = new File(savedInstanceState.getString(FILE_NORMAL));
+//            }
+//
+//            if(savedInstanceState.containsKey(FILE_THUMBNAIL)) {
+//                fileThumbnail = new File(savedInstanceState.getString(FILE_THUMBNAIL));
+//            }
 
             populateFields();
         }
@@ -206,7 +187,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
             setupFields();
         }
         // Check if we're working with an existing cursist or a new empty one.
-        if (cursist == null || cursist.getId() != null && !cursist.getId().isEmpty()) {
+        if (cursist != null ) {
             voornaamEditText.setText(cursist.getVoornaam());
             tussenvoegselEditText.setText(cursist.getTussenvoegsel());
             achternaamEditText.setText(cursist.getAchternaam());
@@ -216,20 +197,9 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
             } else {
                 paspoortCheckbox.setChecked(true);
             }
-//            if (cursist.getFotoFileBase64() == null || cursist.getFotoFileBase64().isEmpty()) {
-////                URL fotoUrl = NetworkUtils.buildUrl("foto", cursist.getCursistFoto().getId().toString());
-////                new DownloadAndSetImageTask(fotoImageView, getContext()).execute(fotoUrl.toString());
-//            }
-        }
-//        // Checking this because it may be called after rotating the screen. Other fields are filled automatically.
-//        if (cursist.getFotoFileBase64() != null && !cursist.getFotoFileBase64().isEmpty()) {
-//            placePicture(cursist.getFotoFileBase64());
-//        }
 
+            showImg();
 
-
-        if(tempImgUri != null) {
-            fotoImageView.setImageURI(tempImgUri);
         }
     }
 
@@ -249,32 +219,19 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         } else {
             cursist.setPaspoort(null);
         }
-        cursist.setThumbnailPhotoFile(fileThumbnail);
-        cursist.setPhotoFileNormal(fileNormal);
-        cursist.setPhotoFileLarge(fileLarge);
 
-        if(!isNewImageTaken()) {
-            showImg();
-        } else {
-            showTempImg();
-        }
     }
 
-
     private void showImg(){
-        String path;
-        if(cursist.getPhotoPathNormal() != null && !cursist.getPhotoPathNormal().isEmpty()) {
-            path = cursist.getPhotoPathNormal();
-        } else if (cursist.getPhotoPathLarge() != null && !cursist.getPhotoPathLarge().isEmpty()) {
-            path = cursist.getPhotoPathLarge();
-        } else if(cursist.getThumbnailPhotoPath() != null && !cursist.getThumbnailPhotoPath().isEmpty()) {
-            path = cursist.getThumbnailPhotoPath();
-        } else {
-            return;
+        if(cursist.getPhotoFileNormal() != null) {
+            fotoImageView.setImageURI(Uri.fromFile(cursist.getPhotoFileNormal()));
+        } else if(cursist.getPhotoPathNormal() != null && !cursist.getPhotoPathNormal().isEmpty()){
+            Uri uri = Uri.parse(cursist.getPhotoPathNormal());
+            Glide.with(this)
+                    .load(uri)
+                    .placeholder(R.drawable.ic_user_image)
+                    .into(fotoImageView);
         }
-
-
-
     }
 
     private void onClickSaveCursist() {
@@ -291,13 +248,13 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
 
     private void saveCursist() {
         String groupId = PreferenceUtil.getPreferenceString(getContext(), getString(R.string.pref_current_group_id), "");
-        PersistCursist.saveCursist(groupId, cursist, this);
+        BetterPersistCursist persistCursist = new BetterPersistCursist(groupId);
+        persistCursist.saveCursistWithPhotos(cursist, this);
     }
 
     private void showMinimumFormDemand() {
         Toast toast = Toast.makeText(getContext(), getString(R.string.minimum_form_demand), Toast.LENGTH_SHORT);
         toast.show();
-
     }
 
     // ------------------------------- Implements PersistCursist.SavedCursist ----------------------
@@ -316,25 +273,19 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         parentActivity.showErrorDialog();
     }
 
-
-
-
-
     // ------------------------------------ PHOTO SUPPORT -----------------------------------------------
     private ExecutorService mExecutorService = Executors.newFixedThreadPool(1);
     private ImageCompressTask imageCompressTask;
-    private File fileLarge;
-    private File fileNormal;
-    private File fileThumbnail;
+    private Uri tempImgUri;
 
     private boolean isNewImageTaken() {
-        return (fileLarge != null || fileNormal != null || fileThumbnail != null);
+        return cursist.getPhotoFileNormal() != null && cursist.getPhotoFileLarge() != null && cursist.getPhotoFileThumbnail() != null;
     }
 
     private void onClickTakePicture(){
         KeyboardUtil.hideKeyboard(getActivity());
         //Initialize on every usage
-        new CroperinoConfig("IMG_" + System.currentTimeMillis() + ".jpg", "/MikeLau/Pictures", "/sdcard/MikeLau/Pictures");
+        new CroperinoConfig("IMG_" + System.currentTimeMillis() + ".jpg", "/CWO_APP/Pictures", "/sdcard/SWO_APP/Pictures");
         CroperinoFileUtil.verifyStoragePermissions(getActivity());
         CroperinoFileUtil.setupDirectory(getActivity());
         try {
@@ -346,7 +297,6 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     }
 
 
-    private Uri tempImgUri;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -385,17 +335,6 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         }
     }
 
-    private void showTempImg() {
-        if(fileLarge != null) {
-            fotoImageView.setImageURI(Uri.fromFile(fileLarge));
-            fotoImageView.setImageURI(Uri.fromFile(fileLarge));
-        } else if(fileNormal != null){
-            fotoImageView.setImageURI(Uri.fromFile(fileNormal));
-        } else if(fileThumbnail != null) {
-            fotoImageView.setImageURI(Uri.fromFile(fileThumbnail));
-        }
-    }
-
     private ImageCompressTask.IImageCompressTaskListener iImageCompressTaskListener = new ImageCompressTask.IImageCompressTaskListener() {
         @Override
         public void onComplete(Map<ImageCompressTask.Size, File> compressed) {
@@ -403,17 +342,17 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
             //prepare for uploads. Use an Http library like Retrofit, Volley or async-http-client (My favourite)
 
             if(compressed.containsKey(ImageCompressTask.Size.LARGE)) {
-                fileLarge = compressed.get(ImageCompressTask.Size.LARGE);
+                cursist.setPhotoFileLarge(compressed.get(ImageCompressTask.Size.LARGE));
             }
 
             if(compressed.containsKey(ImageCompressTask.Size.NORMAL)) {
-                fileNormal = compressed.get(ImageCompressTask.Size.NORMAL);
+                cursist.setPhotoFileNormal(compressed.get(ImageCompressTask.Size.NORMAL));
             }
 
             if(compressed.containsKey(ImageCompressTask.Size.THUMBNAIL)) {
-                fileThumbnail = compressed.get(ImageCompressTask.Size.THUMBNAIL);
+                cursist.setPhotoFileThumbnail(compressed.get(ImageCompressTask.Size.THUMBNAIL));
             }
-            showTempImg();
+            showImg();
         }
 
 

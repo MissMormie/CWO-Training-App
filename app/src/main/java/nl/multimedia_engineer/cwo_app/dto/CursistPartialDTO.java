@@ -8,6 +8,8 @@ public class CursistPartialDTO {
     protected String tussenvoegsel;
     protected String achternaam;
     protected boolean verborgen;
+    protected String hoogsteDiploma;
+    protected String photoPathThumbnail;
 
     public CursistPartialDTO(CursistPartial cursistPartial) {
         id = cursistPartial.getId();
@@ -15,5 +17,7 @@ public class CursistPartialDTO {
         tussenvoegsel = cursistPartial.getTussenvoegsel();
         achternaam = cursistPartial.getAchternaam();
         verborgen = cursistPartial.isVerborgen();
+        hoogsteDiploma = cursistPartial.getHoogsteDiploma();
+        photoPathThumbnail = cursistPartial.getPhotoPathThumbnail();
     }
 }
