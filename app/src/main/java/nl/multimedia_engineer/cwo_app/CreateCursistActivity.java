@@ -34,7 +34,7 @@ public class CreateCursistActivity
         setContentView(R.layout.fragment_create_cursist);
         cursistFormFragment = (CursistFormFragment) getSupportFragmentManager().findFragmentById(R.id.cursist_form_fragment);
         Cursist cursist = new Cursist();
-        cursistFormFragment.setCursist(cursist);
+        cursistFormFragment.setCursist(cursist, false);
     }
 
 

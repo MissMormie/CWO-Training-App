@@ -25,7 +25,7 @@ public class EditCursistActivity
         setContentView(R.layout.activity_edit_cursist);
         cursist = getIntent().getExtras().getParcelable("cursist");
         cursistFormFragment = (CursistFormFragment) getSupportFragmentManager().findFragmentById(R.id.cursist_form_fragment);
-        cursistFormFragment.setCursist(cursist);
+        cursistFormFragment.setCursist(cursist, false);
     }
 
     @Override

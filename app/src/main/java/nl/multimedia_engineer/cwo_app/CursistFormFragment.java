@@ -137,33 +137,22 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         takingPhoto = false;
         if(savedInstanceState != null && savedInstanceState.containsKey(CURSIST)) {
             cursist = savedInstanceState.getParcelable(CURSIST);
-//
-//            // get Files
-//            if(savedInstanceState.containsKey(FILE_LARGE)) {
-//                fileLarge = new File(savedInstanceState.getString(FILE_LARGE));
-//            }
-//
-//            if(savedInstanceState.containsKey(FILE_NORMAL)) {
-//                fileNormal = new File(savedInstanceState.getString(FILE_NORMAL));
-//            }
-//
-//            if(savedInstanceState.containsKey(FILE_THUMBNAIL)) {
-//                fileThumbnail = new File(savedInstanceState.getString(FILE_THUMBNAIL));
-//            }
 
+        }
+        populateFields();
+    }
+
+//    todo use the preferred setArguments rather than setCursist.
+//    @Override
+//    public void setArguments(@Nullable Bundle args) {
+//        super.setArguments(args);
+//    }
+
+    public void setCursist(Cursist cursist, boolean overWrite) {
+        if(this.cursist == null || overWrite) {
+            this.cursist = cursist;
             populateFields();
         }
-    }
-
-    private void placePicture(String base64ImgInfo) {
-        byte[] imgByteArray = Base64.decode(base64ImgInfo, Base64.NO_WRAP);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.length);
-        fotoImageView.setImageBitmap(bitmap);
-    }
-
-    public void setCursist(Cursist cursist) {
-        this.cursist = cursist;
-        populateFields();
     }
 
     @Override
@@ -186,21 +175,24 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         if (voornaamEditText == null) {
             setupFields();
         }
-        // Check if we're working with an existing cursist or a new empty one.
-        if (cursist != null ) {
-            voornaamEditText.setText(cursist.getVoornaam());
-            tussenvoegselEditText.setText(cursist.getTussenvoegsel());
-            achternaamEditText.setText(cursist.getAchternaam());
-            opmerkingenEditText.setText(cursist.getOpmerking());
-            if (cursist.getPaspoort() == null) {
-                paspoortCheckbox.setChecked(false);
-            } else {
-                paspoortCheckbox.setChecked(true);
-            }
 
-            showImg();
-
+        if(cursist == null) {
+            return;
         }
+
+        // Check if we're working with an existing cursist or a new empty one.
+        voornaamEditText.setText(cursist.getVoornaam());
+        tussenvoegselEditText.setText(cursist.getTussenvoegsel());
+        achternaamEditText.setText(cursist.getAchternaam());
+        opmerkingenEditText.setText(cursist.getOpmerking());
+        if (cursist.getPaspoort() == null) {
+            paspoortCheckbox.setChecked(false);
+        } else {
+            paspoortCheckbox.setChecked(true);
+        }
+
+        showImg();
+
     }
 
     /**
