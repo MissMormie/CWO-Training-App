@@ -1,0 +1,10 @@
+<menu xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.home.activities.TransactionSearchActivity">
+    <!--
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom" /> -->
+</menu>
