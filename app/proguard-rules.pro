@@ -36,8 +36,8 @@
 }
 
 # for DexGuard only
--keepresourcexmlelements manifest/application/meta-data@value=GlideModule
-
--keepclassmembers class * implements android.os.Parcelable {
-    static ** CREATOR;
-}
+#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+#
+#-keepclassmembers class * implements android.os.Parcelable {
+#    static ** CREATOR;
+#}
