@@ -13,7 +13,6 @@ import nl.multimedia_engineer.cwo_app.databinding.ActivityCursistChecklistBindin
 import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.persistence.PersistCursist;
-import nl.multimedia_engineer.cwo_app.util.PreferenceUtil;
 
 
 public class CursistBehaaldDiplomaActivity extends BaseActivity implements PersistCursist.ReceiveCursist {
@@ -73,15 +72,6 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_CURSIST, cursist);
     }
-
-//    private void loadCursistData() {
-//        showProgressDialog();
-//
-//        String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
-//        PersistCursist.getCursist(groupId, cursist.getId(), this);
-//    }
-
-
 
     private void endActivity() {
         if(backAfterFinish) {

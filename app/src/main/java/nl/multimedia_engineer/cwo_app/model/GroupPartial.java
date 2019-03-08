@@ -6,11 +6,12 @@ public class GroupPartial {
     private String discipline;
 
 
-    GroupPartial() {}
+    public GroupPartial() {}
 
-    public GroupPartial(String id, String name) {
+    public GroupPartial(String id, String name, String discipline) {
         this.id = id;
         this.name = name;
+        this.discipline = discipline;
     }
 
     public String getId() {

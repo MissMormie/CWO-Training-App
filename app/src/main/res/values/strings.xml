@@ -91,6 +91,7 @@
     <string name="action_logout">Uitloggen</string>
     <string name="action_settings">Settings</string>
     <string name="action_new_group">Groepen beheren</string>
+    <string name="action_save">Opslaan</string>
 
     <!-- Groepen -->
     <string name="description_new_group">Kies de naam van de groep om een nieuwe groep te maken.</string>
@@ -134,6 +135,8 @@
     <string name="alert_dialog_no_cursist_title">Geen cursisten</string>
     <string name="alert_dialog_no_cursist_text">Voeg eerst minimaal 1 cursist toe in deze groep.</string>
 
+    <string name="alert_dialog_leave_without_saving_title">Terug naar menu</string>
+    <string name="alert_dialog_leave_without_saving_text">Wil je de ingevulde gegevens weggooien en terug gaan naar het menu?</string>
 
     <string name="alert_dialog_text_ok">OK</string>
     <string name="alert_dialog_text_cancel">Annuleren</string>

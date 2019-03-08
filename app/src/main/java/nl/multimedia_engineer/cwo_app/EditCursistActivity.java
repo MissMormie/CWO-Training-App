@@ -29,13 +29,18 @@ public class EditCursistActivity
     }
 
     @Override
+    public void onEndFragment() {
+        onBackPressed();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                break;
+                return true;
         }
-        return true;
+        return false;
     }
 
     @Override

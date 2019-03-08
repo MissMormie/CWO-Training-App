@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +54,11 @@ public class CreateCursistActivity
         }
     }
 
+    @Override
+    public void onEndFragment() {
+        onBackPressed();
+    }
+
     // ------------------------------- Implements PersistDiploma.ReceiveDiplomas ------------------------
     @Override
     public void onReceiveDiplomas(List<Diploma> diplomas) {
@@ -84,4 +90,10 @@ public class CreateCursistActivity
             cursistFormFragment.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
 }

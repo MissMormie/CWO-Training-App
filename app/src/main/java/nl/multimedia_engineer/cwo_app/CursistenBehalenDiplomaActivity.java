@@ -114,7 +114,12 @@ public class CursistenBehalenDiplomaActivity extends BaseActivity implements Per
                 if (!saveData)
                     return;
                 String groupId = PreferenceUtil.getPreferenceString(context, getString(R.string.pref_current_group_id), "");
-                PersistCursist.saveCursistDiploma(groupId, currentCursist.getId(), diploma.getId(), !isChecked);
+                if(isChecked) {
+                    currentCursist.addDiploma(diploma);
+                } else {
+                    currentCursist.removeDiploma(diploma);
+                }
+                PersistCursist.saveCursistDiploma(groupId, currentCursist, diploma.getId(), !isChecked);
             }
         });
 

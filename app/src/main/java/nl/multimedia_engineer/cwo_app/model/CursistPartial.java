@@ -133,24 +133,7 @@ public class CursistPartial implements Parcelable {
     }
 
     public String getHoogsteDiploma() {
-        // todo either remove this from CursistListActivity or add to Partial Cursist.
-//
-//        if (cursistHeeftDiplomas == null)
-//            return "";
-//
-//        CursistHeeftDiploma chdHolder = null;
-//        for (CursistHeeftDiploma cursistHeeftDiploma : cursistHeeftDiplomas) {
-//            if (chdHolder == null) {
-//                chdHolder = cursistHeeftDiploma;
-//            } else if (cursistHeeftDiploma.getDiploma().getNivo() > chdHolder.getDiploma().getNivo()) {
-//                chdHolder = cursistHeeftDiploma;
-//            }
-//        }
-//
-//        if (chdHolder == null)
-//            return "";
-//        return chdHolder.getDiploma().toString();
-        return "";
+        return hoogsteDiploma;
     }
 
 

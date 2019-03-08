@@ -65,7 +65,6 @@ public class GroupActivity extends BaseActivity
             String groupId = PreferenceUtil.getPreferenceString(this, getString(R.string.pref_current_group_id), "");
             mAdapter.setCurrentActiveGroupId(groupId);
         }
-
     }
 
     public void onClickAddGroup(View view) {
@@ -127,8 +126,7 @@ public class GroupActivity extends BaseActivity
     }
 
     private void saveGroupNameToDb(GroupPartial group) {
-        DatabaseReference groupRef = DatabaseRefUtil.getUserGroupsRef(mAuth).child(group.getId());
-        groupRef.setValue(group.getName());
+        PersistGroepen.renameGroup(mAuth, group);
     }
 
     @Override

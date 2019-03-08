@@ -219,17 +219,24 @@ public class PersistCursist {
     /**
      * Adds the diploma to cursist info, or removes it if delete is true
      * @param groupId
-     * @param curistId
+     * @param cursist
      * @param diplomaId
      * @param delete
      */
-    public static void saveCursistDiploma(String groupId, String curistId, String diplomaId, boolean delete) {
-          DatabaseReference databaseReference = DatabaseRefUtil.getDiplomaCursist(groupId, curistId, diplomaId);
+    public static void saveCursistDiploma(String groupId, Cursist cursist, String diplomaId, boolean delete) {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> childUpdates = new HashMap<>();
+        String diplomaPath = "cursistenPerGroep/" + groupId + "/" + cursist.getId() + "/diplomas/" +diplomaId;
+        String hoogsteDiplomaPath = "groepen/" + groupId + "/cursisten/" + cursist.getId() + "/hoogsteDiploma";
+
         if(delete) {
-            databaseReference.removeValue();
+            childUpdates.put(diplomaPath, null);
         } else {
-            databaseReference.setValue(diplomaId);
+            childUpdates.put(diplomaPath, diplomaId);
         }
+
+        childUpdates.put(hoogsteDiplomaPath, cursist.getHoogsteDiploma());
+        rootRef.updateChildren(childUpdates);
     }
 
     public static void updateCursistVerborgen(String groupId, String cursistId, boolean verborgen) {

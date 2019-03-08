@@ -1,7 +1,9 @@
 package nl.multimedia_engineer.cwo_app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,7 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -76,6 +82,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         void showProgressDialog();
         void hideProgressDialog();
         void showErrorDialog();
+        void onEndFragment();
     }
 
     public CursistFormFragment() {
@@ -108,7 +115,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cursist_form, container, false);
-
+        setHasOptionsMenu(true);
         // workaround because onClick in xml does not work for fragments, it sends the onClick to the activity instead.
         if(saveButton == null) {
             saveButton = (Button) v.findViewById(R.id.buttonSave);
@@ -128,7 +135,25 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         super.onSaveInstanceState(outState);
         populateCursist();
         outState.putParcelable(CURSIST, cursist);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.cursist_form_fragment_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    // todo the onOptionsItemSelected is not triggered for R.id.home...
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_save) {
+            onClickSaveCursist();
+
+        } else if (item.getItemId() == R.id.home ) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -137,9 +162,55 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         takingPhoto = false;
         if(savedInstanceState != null && savedInstanceState.containsKey(CURSIST)) {
             cursist = savedInstanceState.getParcelable(CURSIST);
-
         }
+
+        // Handle back pressed.
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        onBackPressed();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
         populateFields();
+    }
+
+    public void onBackPressed() {
+        populateCursist();
+        // Check if no photo is unsaved. Other unsaved data is harder to find, because it might be
+        // an edit rather than a new cursist.
+        if(     (cursist.getPhotoFileLarge()     == null) &&
+                (cursist.getPhotoFileNormal()    == null) &&
+                (cursist.getPhotoFileThumbnail() == null) ) {
+            parentActivity.onEndFragment();
+            return;
+        }
+
+        // Else check if user is sure to leave the changes unsaved.
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(getString(R.string.alert_dialog_leave_without_saving_text));
+        builder.setTitle(getString(R.string.alert_dialog_leave_without_saving_title));
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                parentActivity.onEndFragment();
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
 //    todo use the preferred setArguments rather than setCursist.
@@ -154,6 +225,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
             populateFields();
         }
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -358,6 +430,21 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
 
     @Override
     public void onDestroy() {
+        // clean up files
+        if(cursist.getPhotoFileLarge() != null) {
+            cursist.getPhotoFileLarge().deleteOnExit();
+        }
+
+        if(cursist.getPhotoFileNormal() != null) {
+            cursist.getPhotoFileNormal().deleteOnExit();
+        }
+
+        if(cursist.getPhotoFileThumbnail() != null) {
+            cursist.getPhotoFileThumbnail().deleteOnExit();
+        }
+
+
+
         super.onDestroy();
         mExecutorService.shutdown();
         mExecutorService = null;

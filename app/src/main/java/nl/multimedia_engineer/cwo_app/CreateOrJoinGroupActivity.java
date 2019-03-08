@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import nl.multimedia_engineer.cwo_app.model.Group;
+import nl.multimedia_engineer.cwo_app.model.GroupPartial;
 import nl.multimedia_engineer.cwo_app.persistence.PersistGroepen;
 import nl.multimedia_engineer.cwo_app.util.DatabaseRefUtil;
 
@@ -96,7 +97,7 @@ public class CreateOrJoinGroupActivity
     // ------------------ implements PersistGroepen.SavedUserGroepen -------------------------------
 
     @Override
-    public void onSuccesSavedUserGroup(Group group) {
+    public void onSuccesSavedUserGroup(GroupPartial group) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         hideProgressDialog();
         addGroupToSharedPreferences(group.getId(), group.getName(), group.getDiscipline());
@@ -110,7 +111,7 @@ public class CreateOrJoinGroupActivity
     }
 
     @Override
-    public void onSuccessJoinedGroup(Group group) {
+    public void onSuccessJoinedGroup(GroupPartial group) {
         onSuccesSavedUserGroup(group);
     }
 

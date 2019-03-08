@@ -81,12 +81,14 @@ class CursistBehaaldDiplomaAdapter extends RecyclerView.Adapter<CursistBehaaldDi
                         return;
 
                     Diploma diploma = diplomaList.get(getAdapterPosition());
-
-                    cursist.toggleDiploma(diploma);
-
+                    if(isChecked) {
+                        cursist.addDiploma(diploma);
+                    } else {
+                        cursist.removeDiploma(diploma);
+                    }
                     String activeGroup = PreferenceUtil.getPreferenceString(context, context.getString(R.string.pref_current_group_id), "");
 
-                    PersistCursist.saveCursistDiploma(activeGroup, cursist.getId(), diploma.getId(), !isChecked);
+                    PersistCursist.saveCursistDiploma(activeGroup, cursist, diploma.getId(), !isChecked);
                 }
             });
         }

@@ -141,6 +141,37 @@ public class Cursist extends CursistPartial implements Parcelable{
         }
 
         diplomaSet.add(diploma);
+        calculateHighestDiploma();
+    }
+
+    private void calculateHighestDiploma() {
+        if(diplomaSet == null || diplomaSet.isEmpty()) {
+            this.hoogsteDiploma = "";
+            return;
+        }
+
+        Diploma highestDiploma = null;
+        for(Diploma diploma : diplomaSet) {
+
+            if(highestDiploma == null) {
+                highestDiploma = diploma;
+            } else if(diploma.getNivo() > highestDiploma.getNivo()) {
+                highestDiploma = diploma;
+            }
+        }
+        this.hoogsteDiploma = highestDiploma.toString();
+    }
+
+    public boolean removeDiploma(Diploma diploma) {
+        if(diplomaSet == null) {
+            return false;
+        }
+        if(diplomaSet.remove(diploma)) {
+            calculateHighestDiploma();
+
+            return true;
+        }
+        return false;
     }
     
     public void toggleDiploma(Diploma diploma) {
@@ -150,6 +181,7 @@ public class Cursist extends CursistPartial implements Parcelable{
         if(!diplomaSet.remove(diploma)) {
             diplomaSet.add(diploma);
         }
+        calculateHighestDiploma();
     }
 
     public void toggleDiplomaEis(DiplomaEis diplomaEis) {
@@ -183,13 +215,6 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     }
 
-//    public String getFotoFileBase64() {
-//        return fotoFileBase64;
-//    }
-//
-//    public void setFotoFileBase64(String fotoFileBase64) {
-//        this.fotoFileBase64 = fotoFileBase64;
-//    }
 
     // Make this smarter with a map so i don't have to run through everything every time. Only the first time. (together with isAlleEisenBehaald)
     // Low prio, low numbers make this not very slow.
@@ -263,18 +288,6 @@ public class Cursist extends CursistPartial implements Parcelable{
             parcel.writeLong(0L);
         }
 
-
-        // In some cases the base64 string is too long for parcelable, this will be solved when moving to web assets
-        // for now filtering it out and not parceling the image in that case.
-//        if(fotoFileBase64 == null) {
-//            fotoFileBase64 = "";
-//        }
-//        if(fotoFileBase64.length() * 2 > 990000) {
-//            parcel.writeString("");
-//        } else {
-//            parcel.writeString(fotoFileBase64);
-//        }
-
         if(diplomaSet == null || diplomaSet.isEmpty()) {
             parcel.writeInt(0); // DiplomaSetSize
         } else {
@@ -336,7 +349,6 @@ public class Cursist extends CursistPartial implements Parcelable{
             paspoort = paspoortTemp;
         }
 
-//        fotoFileBase64 = parcel.readString();
 
         diplomaSet = new HashSet<>();
         int diplomaSetSize = parcel.readInt();
