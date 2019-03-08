@@ -23,7 +23,6 @@ public class NotificationService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Log.i("Notification service", "Service running");
 
         // Create an explicit intent for an Activity in your app
         Intent intention = new Intent(this, MainActivity.class);

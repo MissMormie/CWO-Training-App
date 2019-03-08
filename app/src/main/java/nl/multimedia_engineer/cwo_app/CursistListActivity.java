@@ -119,7 +119,6 @@ public class CursistListActivity extends BaseActivity implements CursistListAdap
                 // alle verborgen, of allebei niet verborgen.
 
                 int comparison = c1.getVoornaam().compareToIgnoreCase(c2.getVoornaam());
-                Log.d(TAG,  "" + comparison);
                 if(comparison != 0 ){
                     return comparison;
                 }

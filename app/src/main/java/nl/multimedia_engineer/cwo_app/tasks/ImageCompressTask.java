@@ -52,12 +52,10 @@ public class ImageCompressTask implements Runnable {
 
     @Override
     public void run() {
-    Log.wtf("Runnable", "In Runnable");
         try {
 
             //Loop through all the given paths and collect the compressed file from Util.getCompressed(Context, String)
             for (Size size: sizes) {
-                Log.wtf("Runnable", "adding size: " + size.toString());
 
                 File file = PhotoCompressionUtil.getCompressed(mContext, path, size.width, size.height);
                 //add it!
@@ -68,7 +66,6 @@ public class ImageCompressTask implements Runnable {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("Runnable", "CallBack");
                     if(mIImageCompressTaskListener != null)
                         mIImageCompressTaskListener.onComplete(resultMap);
                 }

@@ -244,7 +244,6 @@ public class CursistDetailActivity
     @Override
     public void onReceiveCursistFailed() {
         hideProgressDialog();
-        Log.d(TAG, "failed receiving cursist");
         showErrorDialog();
     }
 
@@ -264,14 +263,12 @@ public class CursistDetailActivity
             displayDiplomaEisInfo(diplomaEisenLijst);
         } else {
             showErrorDialog();
-            Log.d(TAG, "failed getting list of diploma's");
         }
     }
 
 
     @Override
     public void onFailedReceivingDiplomas(DatabaseError databaseError) {
-        Log.d(TAG, "failed receiving diplomas");
     }
 
     // ------------------------------------- Persist Cursist Deleted implementation ------------------------

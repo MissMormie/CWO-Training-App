@@ -424,7 +424,6 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         public void onError(Throwable error) {
             //very unlikely, but it might happen on a device with extremely low storage.
             //log it, log.WhatTheFuck?, or show a dialog asking the user to delete some files....etc, etc
-            Log.wtf("ImageCompressor", "Error occurred", error);
         }
     };
 
