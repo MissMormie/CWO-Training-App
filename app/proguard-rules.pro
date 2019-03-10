@@ -23,8 +23,8 @@
 
 
 # model classes depend on firebase naming conventions.
--keepclassmembers class nl.multimedia_engineer.cwo_app.model.** { *; }
--keepclassmembers class nl.multimedia_engineer.cwo_app.dto.** { *; }
+-keepclassmembers class watersport_training.model.** { *; }
+-keepclassmembers class watersport_training.dto.** { *; }
 
 #
 #Croperion

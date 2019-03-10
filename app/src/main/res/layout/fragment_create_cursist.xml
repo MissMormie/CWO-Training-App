@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nl.multimedia_engineer.cwo_app.CreateCursistActivity">
+    tools:context="nl.multimedia_engineer.watersport_training.CreateCursistActivity">
 
     <fragment
-        android:name="nl.multimedia_engineer.cwo_app.CursistFormFragment"
+        android:name="nl.multimedia_engineer.watersport_training.CursistFormFragment"
         android:id="@+id/cursist_form_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

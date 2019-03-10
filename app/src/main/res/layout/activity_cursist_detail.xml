@@ -9,7 +9,7 @@
         android:orientation="vertical">
         <fragment
             android:id="@+id/cursist_header_fragment"
-            android:name="nl.multimedia_engineer.cwo_app.CursistHeaderFragment"
+            android:name="nl.multimedia_engineer.watersport_training.CursistHeaderFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/fragment_cursist_header"

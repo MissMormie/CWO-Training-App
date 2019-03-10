@@ -3,4 +3,4 @@
     android:id="@+id/activity_settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="nl.multimedia_engineer.cwo_app.SettingsFragment" />
+    android:name="nl.multimedia_engineer.watersport_training.SettingsFragment" />

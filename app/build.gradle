@@ -21,7 +21,7 @@ android {
     }
     compileSdkVersion 28
     defaultConfig {
-        applicationId "nl.multimedia_engineer.cwo_app"
+        applicationId "nl.multimedia_engineer.watersport_training"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
