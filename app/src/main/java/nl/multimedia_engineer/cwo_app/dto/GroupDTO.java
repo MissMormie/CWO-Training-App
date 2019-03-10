@@ -1,5 +1,7 @@
 package nl.multimedia_engineer.cwo_app.dto;
 
+import android.support.annotation.Keep;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import nl.multimedia_engineer.cwo_app.model.User;
 /**
  * Use this dto for groups under root/groepen
  */
+@Keep
 public class GroupDTO {
     String discipline;
     Map<String, CursistPartial> cursisten;

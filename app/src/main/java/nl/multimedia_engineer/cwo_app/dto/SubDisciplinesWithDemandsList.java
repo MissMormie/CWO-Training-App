@@ -1,5 +1,7 @@
 package nl.multimedia_engineer.cwo_app.dto;
 
+import android.support.annotation.Keep;
+
 import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.Map;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 
+@Keep
 public class SubDisciplinesWithDemandsList {
     List<Diploma> diplomaList;
 

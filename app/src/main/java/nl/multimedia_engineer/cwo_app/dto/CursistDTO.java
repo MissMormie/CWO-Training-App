@@ -1,5 +1,7 @@
 package nl.multimedia_engineer.cwo_app.dto;
 
+import android.support.annotation.Keep;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +9,7 @@ import nl.multimedia_engineer.cwo_app.model.Cursist;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.DiplomaEis;
 
+@Keep
 public class CursistDTO extends CursistPartialDTO {
 
     protected final Long paspoort;

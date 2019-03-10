@@ -1,15 +1,18 @@
 package nl.multimedia_engineer.cwo_app.dto;
 
+import android.support.annotation.Keep;
+
 import nl.multimedia_engineer.cwo_app.model.CursistPartial;
 
+@Keep
 public class CursistPartialDTO {
-    protected String id;
-    protected String voornaam;
-    protected String tussenvoegsel;
-    protected String achternaam;
-    protected boolean verborgen;
-    protected String hoogsteDiploma;
-    protected String photoPathThumbnail;
+    public String id;
+    public String voornaam;
+    public String tussenvoegsel;
+    public String achternaam;
+    public boolean verborgen;
+    public String hoogsteDiploma;
+    public String photoPathThumbnail;
 
     public CursistPartialDTO(CursistPartial cursistPartial) {
         id = cursistPartial.getId();
@@ -20,4 +23,6 @@ public class CursistPartialDTO {
         hoogsteDiploma = cursistPartial.getHoogsteDiploma();
         photoPathThumbnail = cursistPartial.getPhotoPathThumbnail();
     }
+
+
 }

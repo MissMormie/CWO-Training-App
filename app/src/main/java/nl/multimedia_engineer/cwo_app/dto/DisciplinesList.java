@@ -1,5 +1,7 @@
 package nl.multimedia_engineer.cwo_app.dto;
 
+import android.support.annotation.Keep;
+
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.List;
 import nl.multimedia_engineer.cwo_app.model.Diploma;
 import nl.multimedia_engineer.cwo_app.model.Discipline;
 
+@Keep
 public class DisciplinesList {
 
     List<Discipline> disciplines;

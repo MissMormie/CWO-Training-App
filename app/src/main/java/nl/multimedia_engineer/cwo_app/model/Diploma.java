@@ -80,7 +80,10 @@ public class Diploma implements Parcelable {
 
     @Override
     public String toString() {
-        return titel + " " + nivo;
+        if(getNivo() == 0) {
+            return "";
+        }
+        return getTitel() + " " + getNivo();
     }
 
     @Override

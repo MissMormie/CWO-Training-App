@@ -1,5 +1,6 @@
 package nl.multimedia_engineer.cwo_app.dto;
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.widget.ProgressBar;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import nl.multimedia_engineer.cwo_app.model.GroupPartial;
 
+@Keep
 public class UserGroupPartialList {
     Map<String, String> groepen;
     private Map<String, GroupPartial> groupList = null;

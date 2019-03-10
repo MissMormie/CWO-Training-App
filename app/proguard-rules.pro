@@ -20,6 +20,12 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+
+
+# model classes depend on firebase naming conventions.
+-keepclassmembers class nl.multimedia_engineer.cwo_app.model.** { *; }
+-keepclassmembers class nl.multimedia_engineer.cwo_app.dto.** { *; }
+
 #
 #Croperion
 -dontwarn com.mikelau.croperino.**
@@ -35,9 +41,24 @@
   public *;
 }
 
-# for DexGuard only
+
+# Glide for DexGuard only
 #-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 #
 #-keepclassmembers class * implements android.os.Parcelable {
 #    static ** CREATOR;
 #}
+
+#Firebase
+# Add this global rule
+-keepattributes Signature
+
+-keep class com.firebase.** { *; }
+-keep class org.apache.** { *; }
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepnames class javax.servlet.** { *; }
+-keepnames class org.ietf.jgss.** { *; }
+-dontwarn org.w3c.dom.**
+-dontwarn org.joda.time.**
+-dontwarn org.shaded.apache.**
+-dontwarn org.ietf.jgss.**

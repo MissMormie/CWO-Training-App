@@ -1,6 +1,7 @@
 package nl.multimedia_engineer.cwo_app.persistence;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

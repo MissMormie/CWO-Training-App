@@ -38,4 +38,13 @@ public class GroupPartial {
     public void setDiscipline(String discipline) {
         this.discipline = discipline;
     }
+
+    @Override
+    public String toString() {
+        return "GroupPartial{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", discipline='" + discipline + '\'' +
+                '}';
+    }
 }
