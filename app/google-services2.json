@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1041792375153",
+    "firebase_url": "https://cwo-app.firebaseio.com",
+    "project_id": "cwo-app",
+    "storage_bucket": "cwo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041792375153:android:8d9edfcd51dab218",
+        "android_client_info": {
+          "package_name": "nl.multimedia_engineer.cwo_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1041792375153-fgql3rlqvcrbqup8rv5ibsfipc63uvms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "nl.multimedia_engineer.cwo_app",
+            "certificate_hash": "878ec92b8ed468c18f3efeae90d319c3c19bb72a"
+          }
+        },
+        {
+          "client_id": "1041792375153-5ped2hr3dn0s2lh3cotqn9fm6tdiiqoq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUMhzWSeScMi5IvZuwNaCTYhqJXZYQK30"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1041792375153-5ped2hr3dn0s2lh3cotqn9fm6tdiiqoq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="nl.multimedia_engineer.cwo_app">
+    package="nl.multimedia_engineer.watersport_training">
 
     <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -26,64 +26,64 @@
         <!--todo decide if any part of this should be indexable by google. -->
 
         <activity
-            android:name=".TrainingActivity"
+            android:name="nl.multimedia_engineer.watersport_training.TrainingActivity"
             android:label="@string/btn_nieuwe_training"/>
 
         <activity
-            android:name=".EditCursistActivity"
+            android:name="nl.multimedia_engineer.watersport_training.EditCursistActivity"
             android:label="@string/cursist_wijzigen"/>
 
         <activity
-            android:name=".DiplomaUitgevenActivity"
+            android:name="nl.multimedia_engineer.watersport_training.DiplomaUitgevenActivity"
             android:label="@string/btn_diploma_uitgeven"/>
 
         <activity
-            android:name=".CursistenBehalenDiplomaActivity"
+            android:name="nl.multimedia_engineer.watersport_training.CursistenBehalenDiplomaActivity"
             android:label="@string/btn_diploma_uitgeven"/>
 
 
         <activity
-            android:name=".CursistDetailActivity"
+            android:name="nl.multimedia_engineer.watersport_training.CursistDetailActivity"
             android:label="@string/cursist"/>
 
         <activity
-            android:name=".SettingsActivity"
+            android:name="nl.multimedia_engineer.watersport_training.SettingsActivity"
             android:label="@string/action_settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="nl.multimedia_engineer.watersport_training.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nl.multimedia_engineer.cwo_app.MainActivity">
+                android:value="nl.multimedia_engineer.watersport_training.MainActivity">
             </meta-data>
         </activity>
 
-        <activity android:name=".CursistBehaaldEisActivity"
+        <activity android:name="nl.multimedia_engineer.watersport_training.CursistBehaaldEisActivity"
             android:label="">
         </activity>
 
-        <activity android:name=".CursistBehaaldDiplomaActivity" />
+        <activity android:name="nl.multimedia_engineer.watersport_training.CursistBehaaldDiplomaActivity" />
 
         <activity
-            android:name=".CreateCursistActivity"
+            android:name="nl.multimedia_engineer.watersport_training.CreateCursistActivity"
             android:label="@string/btn_nieuwe_cursist"/>
 
-        <activity android:name=".DemandsPerDisciplineActivity" />
+        <activity android:name="nl.multimedia_engineer.watersport_training.DemandsPerDisciplineActivity" />
 
-        <activity android:name=".CursistListActivity"
+        <activity android:name="nl.multimedia_engineer.watersport_training.CursistListActivity"
             android:label="@string/btn_cursisten_lijst"/>
 
-        <activity android:name=".GroupActivity"
+        <activity android:name="nl.multimedia_engineer.watersport_training.GroupActivity"
             android:label="@string/actionbar_title_groupActivity"/>
 
-        <activity android:name=".CreateOrJoinGroupActivity"
+        <activity android:name="nl.multimedia_engineer.watersport_training.CreateOrJoinGroupActivity"
             android:label="@string/actionbar_title_new_group_activity" />
 
         <activity
-            android:name=".LoginActivity"
+            android:name="nl.multimedia_engineer.watersport_training.LoginActivity"
             android:launchMode="singleTask"
             android:noHistory="true" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="nl.multimedia_engineer.watersport_training.MainActivity"
             android:label="@string/app_name" >
             <!--android:launchMode="singleTask"-->
             <!--android:noHistory="true">-->
@@ -95,16 +95,16 @@
         </activity>
 
         <receiver
-            android:name=".notification.AlarmReceiver"
+            android:name="nl.multimedia_engineer.watersport_training.notification.AlarmReceiver"
             android:process=":remote" />
 
         <service
-            android:name=".notification.NotificationService"
+            android:name="nl.multimedia_engineer.watersport_training.notification.NotificationService"
             android:exported="false" />
 
         <!--<provider-->
             <!--android:name="android.support.v4.content.FileProvider"-->
-            <!--android:authorities="nl.multimedia_engineer.cwo_app.fileprovider"-->
+            <!--android:authorities="watersport_trainingort_training.fileprovider"-->
             <!--android:exported="false"-->
             <!--android:grantUriPermissions="true">-->
             <!--<meta-data-->
