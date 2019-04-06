@@ -30,8 +30,7 @@ public class CreateCursistActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_create_cursist);
         cursistFormFragment = (CursistFormFragment) getSupportFragmentManager().findFragmentById(R.id.cursist_form_fragment);
-        Cursist cursist = new Cursist();
-        cursistFormFragment.setCursist(cursist, false);
+        cursistFormFragment.setCursist(new Cursist(), false);
     }
 
 
@@ -86,10 +85,4 @@ public class CreateCursistActivity
             cursistFormFragment.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
 }

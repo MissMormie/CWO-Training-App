@@ -17,7 +17,7 @@ public class CreateOrJoinGroupActivity
         implements PersistGroepen.SavedUserGroepen,
                    PersistGroepen.JoinGroup {
     private static final String TAG = CreateOrJoinGroupActivity.class.getName();
-    private final String discipline = "windsurfen";
+    private final static String discipline = "windsurfen";
 
     // Intent Extras
     public static final String FIRST_GROUP = "firstGroup";
@@ -64,9 +64,6 @@ public class CreateOrJoinGroupActivity
         final String groupName = ((EditText) findViewById(R.id.editText_joinGroupName)).getText().toString();
         // when allowing more disciplines this needs to be changed.
 
-//        final Group group = new Group(discipline, "groupName");
-//        group.setId(accessCode);
-
         if(accessCode.isEmpty() || groupName.isEmpty() ) {
             Toast.makeText(this, getResources().getString(R.string.text_fields_filled_wrong), Toast.LENGTH_SHORT).show();
             return;
@@ -97,8 +94,7 @@ public class CreateOrJoinGroupActivity
 
     @Override
     public void onFailedSavedUserGroup() {
-        hideProgressDialog();
-        showErrorDialog();
+        showFailedAction();
     }
 
     @Override
@@ -108,6 +104,10 @@ public class CreateOrJoinGroupActivity
 
     @Override
     public void onFailedJoinedGroup() {
+        showFailedAction();
+    }
+
+    private void showFailedAction() {
         hideProgressDialog();
         showErrorDialog();
     }

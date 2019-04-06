@@ -28,7 +28,7 @@ public class BetterPersistCursist implements ReceiveFileUri {
         void onCursistDeleteFailed();
     }
 
-    final String ACTION_SAVE = "actionSave";
+    final static String ACTION_SAVE = "actionSave";
     String action;
     final String groupId;
     private Cursist mCursist;

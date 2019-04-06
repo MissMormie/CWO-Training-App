@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -345,7 +346,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     private void onClickTakePicture(){
         KeyboardUtil.hideKeyboard(getActivity());
         //Initialize on every usage
-        new CroperinoConfig("IMG_" + System.currentTimeMillis() + ".jpg", "/CWO_APP/Pictures", "/sdcard/SWO_APP/Pictures");
+        new CroperinoConfig("IMG_" + System.currentTimeMillis() + ".jpg", getString(R.string.img_path), Environment.getExternalStorageDirectory().getPath() + getString(R.string.img_path));
         CroperinoFileUtil.verifyStoragePermissions(getActivity());
         CroperinoFileUtil.setupDirectory(getActivity());
         try {

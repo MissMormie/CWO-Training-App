@@ -105,6 +105,7 @@
     <string name="context_description_edit">Wijzigen</string>
     <string name="context_description_delete">Verwijderen</string>
     <string name="context_description_active">Actief</string>
+    <string name="context_description_share">Delen</string>
     <string name="clip_data_group_code">Groep code</string>
 
     <!-- Alert Dialog -->
@@ -175,5 +176,8 @@
          </string>
 
     <string name="text_accept_conditions">Ik accepteer de voorwaarden.</string>
+
+    <!--  In app texts -->
+    <string name="img_path">/CWO_APP/Pictures</string>
 
 </resources>

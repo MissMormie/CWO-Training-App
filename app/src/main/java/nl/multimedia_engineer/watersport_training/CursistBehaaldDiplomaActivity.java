@@ -20,15 +20,10 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
     public static final String EXTRA_BACK_AFTER_FINISH = "nl.multimedia_engineer.watersport_training.CursistBehaaldDiplomaActivity.backAfterFinish";
     public static final String EXTRA_CURSIST = "nl.multimedia_engineer.watersport_training.CursistBehaaldDiplomaActivity.cursist";
 
-    private List<Diploma> diplomaList;
     private CursistBehaaldDiplomaAdapter cursistBehaaldDiplomaAdapter;
     private Cursist cursist;
     private ActivityCursistChecklistBinding dataBinding;
     private boolean backAfterFinish = false;
-
-    // Fragment
-    private CursistHeaderFragment cursistHeaderFragment;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +33,7 @@ public class CursistBehaaldDiplomaActivity extends BaseActivity implements Persi
 
         // Get parceled info
         Intent intent = getIntent();
-        diplomaList = intent.getParcelableArrayListExtra("selectedDiplomaList");
+        List<Diploma> diplomaList = intent.getParcelableArrayListExtra("selectedDiplomaList");
         if (intent.hasExtra(EXTRA_CURSIST)) {
             cursist = (Cursist) intent.getExtras().getParcelable(EXTRA_CURSIST);
         } else if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_CURSIST)) {

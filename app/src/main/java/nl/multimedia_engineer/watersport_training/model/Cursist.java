@@ -12,9 +12,6 @@ import java.util.Set;
 
 @Keep
 public class Cursist extends CursistPartial implements Parcelable{
-
-//    private String fotoFileBase64;
-
     private Long paspoort;
     private String opmerking;
 
@@ -31,7 +28,6 @@ public class Cursist extends CursistPartial implements Parcelable{
     }
 
     public boolean isPartialCursist() {
-//        if((fotoFileBase64 == null || fotoFileBase64.isEmpty())
         if ((paspoort == null || paspoort == 0L)
         && (opmerking == null || opmerking.isEmpty())
         && (diplomaSet == null || diplomaSet.isEmpty())
@@ -149,13 +145,15 @@ public class Cursist extends CursistPartial implements Parcelable{
         Diploma highestDiploma = null;
         for(Diploma diploma : diplomaSet) {
 
-            if(highestDiploma == null) {
-                highestDiploma = diploma;
-            } else if(diploma.getNivo() > highestDiploma.getNivo()) {
+            if(highestDiploma == null || diploma.getNivo() > highestDiploma.getNivo()) {
                 highestDiploma = diploma;
             }
         }
-        this.hoogsteDiploma = highestDiploma.toString();
+        if(highestDiploma ==  null) {
+            this.hoogsteDiploma = "";
+        } else {
+            this.hoogsteDiploma = highestDiploma.toString();
+        }
     }
 
     public boolean removeDiploma(Diploma diploma) {
@@ -270,12 +268,12 @@ public class Cursist extends CursistPartial implements Parcelable{
 
     // ---------------------------- Support for Parcelable --------------------------------------- //
 
-//    @Override
+    @Override
     public int describeContents() {
         return 0;
     }
 
-//    @Override
+    @Override
     public void writeToParcel(Parcel parcel, int flags) {
         super.writeToParcel(parcel, flags);
         if (paspoort != null) {

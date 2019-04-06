@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toStartOf="@+id/tv_group_list_item_name"
         app:layout_constraintTop_toTopOf="@+id/tv_group_list_item_name"
         app:srcCompat="@drawable/ic_check_black_24dp"
-        android:contentDescription="@string/context_description_active"/>
+        android:contentDescription="@string/context_description_share"/>
 
     <ImageView
         android:id="@+id/iv_group_list_item_share"
@@ -58,6 +58,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_group_list_item_edit"
         app:layout_constraintEnd_toStartOf="@+id/iv_group_list_item_edit"
         app:layout_constraintTop_toTopOf="@+id/iv_group_list_item_edit"
-        app:srcCompat="@android:drawable/ic_menu_share" />
+        app:srcCompat="@android:drawable/ic_menu_share"
+        android:contentDescription="" />
 
 </android.support.constraint.ConstraintLayout>

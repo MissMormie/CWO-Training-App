@@ -71,13 +71,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     public void initializeFireBaseAuth() {
@@ -115,8 +113,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         DatabaseReference myRef = DatabaseRefUtil.getUserGroupsRef(mAuth);
         final Context context = this;
 
-        Query query = myRef.orderByChild("id").limitToFirst(1);
-
         // todo move this to a persistence class
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -132,16 +128,15 @@ public abstract class BaseActivity extends AppCompatActivity {
                     startActivity(intent);
                 } else {
                     // User does have a group but data was removed from device, adding again.
-                    for(Map.Entry<String, Map> entry : map.entrySet()) {
-                        Map<String, String> results = entry.getValue();
-                        // Only need 1, to set as current group.
-                        // todo make sure that when this is set the information in the current activity also updates (example groupname in main)
-                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), results.get("name")).commit();
-                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), results.get("id")).apply();
-                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_discipline), results.get("discipline")).apply();
-                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_user), mAuth.getUid()).apply();
-                        break;
-                    }
+                    Map.Entry<String, Map> entry = map.entrySet().iterator().next();
+                    Map<String, String> results = entry.getValue();
+                    // Only need 1, to set as current group.
+                    // todo make sure that when this is set the information in the current activity also updates (example groupname in main)
+                    sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), results.get("name")).commit();
+                    sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_id), results.get("id")).apply();
+                    sharedPreferences.edit().putString(getResources().getString(R.string.pref_discipline), results.get("discipline")).apply();
+                    sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_user), mAuth.getUid()).apply();
+                    setGroupName();
                 }
                 hideProgressDialog();
             }
@@ -153,6 +148,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                 showErrorDialog();
             }
         });
+    }
+
+    /**
+     *
+     */
+    protected void setGroupName() {
+
     }
 
 
@@ -220,7 +222,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });
         builder.show();
-        return;
     }
 
     @Override
