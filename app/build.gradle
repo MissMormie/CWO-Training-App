@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 def buildTime() {
-    def timestamp = System.currentTimeMillis();
+    def timestamp = System.currentTimeMillis()
     return timestamp
 }
 
@@ -24,16 +24,23 @@ android {
         applicationId "nl.multimedia_engineer.watersport_training"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 1741979827
+        versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled true
+            // todo turn minified on again, but after solid testing.
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
             debuggable false
+        }
+        debugrelease {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            debuggable true
         }
         debug {
             debuggable true

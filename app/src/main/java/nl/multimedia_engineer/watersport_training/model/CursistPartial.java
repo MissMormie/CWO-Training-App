@@ -2,10 +2,13 @@ package nl.multimedia_engineer.watersport_training.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Keep;
 
 import java.io.File;
 
+@Keep
 public class CursistPartial implements Parcelable {
+    // Protected for use with firebase.
     protected String id;
     protected String voornaam;
     protected String tussenvoegsel;

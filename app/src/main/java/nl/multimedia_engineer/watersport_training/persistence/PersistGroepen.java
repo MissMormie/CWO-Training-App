@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import nl.multimedia_engineer.watersport_training.dto.GroupDTO;
+import nl.multimedia_engineer.watersport_training.dto.GroupPartialDTO;
 import nl.multimedia_engineer.watersport_training.model.GroupPartial;
 import nl.multimedia_engineer.watersport_training.model.User;
 import nl.multimedia_engineer.watersport_training.util.DatabaseRefUtil;
@@ -226,7 +227,7 @@ public class PersistGroepen {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<GroupPartial> groupPartialList = new ArrayList<>();
                 for(DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
-                    GroupPartial groupPartial = groupSnapshot.getValue(GroupPartial.class);
+                    GroupPartial groupPartial = new GroupPartial(groupSnapshot.getValue(GroupPartialDTO.class));
                     groupPartial.setId(groupSnapshot.getKey());
                     groupPartialList.add(groupPartial);
                 }

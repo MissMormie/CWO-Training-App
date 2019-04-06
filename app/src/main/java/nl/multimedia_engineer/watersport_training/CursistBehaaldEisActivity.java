@@ -162,11 +162,12 @@ public class CursistBehaaldEisActivity extends BaseActivity implements  PersistC
         }
 
         if(!showAlreadyCompleted) {
+            // todo check verborgen is filtered serverside, because it's not working.
             // filter cursistList. Verborgen is filtered out serverside, but can only filter once, so
             // filtering for already met demands here.
             List<Cursist> tempList = new ArrayList<>();
             for (Cursist cursist : cursistList) {
-                if (!cursist.isAlleEisenBehaald(diplomaEisList)) {
+                if (!cursist.isAlleEisenBehaald(diplomaEisList) && !cursist.isVerborgen()) {
                     tempList.add(cursist);
                 }
             }

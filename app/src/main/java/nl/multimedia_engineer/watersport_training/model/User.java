@@ -1,7 +1,10 @@
 package nl.multimedia_engineer.watersport_training.model;
 
+import android.support.annotation.Keep;
+
 import java.util.Map;
 
+@Keep
 public class User {
     private String userUid;
     private Map<String, String> groups; // group id, group name

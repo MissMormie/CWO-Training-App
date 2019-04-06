@@ -16,9 +16,9 @@ import nl.multimedia_engineer.watersport_training.model.User;
  */
 @Keep
 public class GroupDTO {
-    String discipline;
-    Map<String, CursistPartial> cursisten;
-    Map<String, String> users;
+    public String discipline;
+    public Map<String, CursistPartial> cursisten;
+    public Map<String, String> users;
 
     public GroupDTO(Group group) {
         discipline = group.getDiscipline();
@@ -41,4 +41,27 @@ public class GroupDTO {
         }
     }
 
+    public String getDiscipline() {
+        return discipline;
+    }
+
+    public void setDiscipline(String discipline) {
+        this.discipline = discipline;
+    }
+
+    public Map<String, CursistPartial> getCursisten() {
+        return cursisten;
+    }
+
+    public void setCursisten(Map<String, CursistPartial> cursisten) {
+        this.cursisten = cursisten;
+    }
+
+    public Map<String, String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Map<String, String> users) {
+        this.users = users;
+    }
 }

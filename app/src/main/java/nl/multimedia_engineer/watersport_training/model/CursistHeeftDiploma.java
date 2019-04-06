@@ -1,5 +1,7 @@
 package nl.multimedia_engineer.watersport_training.model;
 
+import android.support.annotation.Keep;
+
 import java.util.Date;
 
 /**
@@ -7,6 +9,7 @@ import java.util.Date;
  * CursistHeeftDiploma
  */
 
+@Keep
 public class CursistHeeftDiploma {
 
     private final String cursist;

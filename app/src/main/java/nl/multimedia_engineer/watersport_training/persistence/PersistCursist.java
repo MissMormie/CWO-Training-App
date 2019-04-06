@@ -225,6 +225,7 @@ public class PersistCursist {
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         Map<String, Object> childUpdates = new HashMap<>();
         String diplomaPath = "cursistenPerGroep/" + groupId + "/" + cursist.getId() + "/diplomas/" +diplomaId;
+        String cursistenPerGroepHoogsteDiploma = "cursistenPerGroep/" + groupId + "/" + cursist.getId() + "/hoogsteDiploma";
         String hoogsteDiplomaPath = "groepen/" + groupId + "/cursisten/" + cursist.getId() + "/hoogsteDiploma";
 
         if(delete) {
@@ -234,6 +235,7 @@ public class PersistCursist {
         }
 
         childUpdates.put(hoogsteDiplomaPath, cursist.getHoogsteDiploma());
+        childUpdates.put(cursistenPerGroepHoogsteDiploma, cursist.getHoogsteDiploma());
         rootRef.updateChildren(childUpdates);
     }
 

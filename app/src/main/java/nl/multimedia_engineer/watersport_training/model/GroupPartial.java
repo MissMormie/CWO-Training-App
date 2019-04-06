@@ -1,5 +1,10 @@
 package nl.multimedia_engineer.watersport_training.model;
 
+import android.support.annotation.Keep;
+
+import nl.multimedia_engineer.watersport_training.dto.GroupPartialDTO;
+
+@Keep
 public class GroupPartial {
     private String id;
     private String name;
@@ -12,6 +17,12 @@ public class GroupPartial {
         this.id = id;
         this.name = name;
         this.discipline = discipline;
+    }
+
+    public GroupPartial(GroupPartialDTO groupPartialDTO) {
+        this.id = groupPartialDTO.getId();
+        this.name = groupPartialDTO.getName();
+        this.discipline = groupPartialDTO.getDiscipline();
     }
 
     public String getId() {

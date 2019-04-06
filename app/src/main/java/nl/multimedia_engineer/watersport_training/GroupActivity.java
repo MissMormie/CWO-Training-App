@@ -97,6 +97,7 @@ public class GroupActivity extends BaseActivity
 
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setPadding(8,8,8,8);
         input.setText(name);
         builder.setView(input);
 
@@ -106,6 +107,11 @@ public class GroupActivity extends BaseActivity
             public void onClick(DialogInterface dialog, int which) {
                 String newName = input.getText().toString();
                 userGroupPartialList.get(position).setName(newName);
+
+                // Update name in preferences
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                sharedPreferences.edit().putString(getResources().getString(R.string.pref_current_group_name), newName).apply();
+
                 mAdapter.notifyItemChanged(position);
                 // Save name to db.
                 saveGroupNameToDb(groupPartial);

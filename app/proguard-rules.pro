@@ -25,8 +25,20 @@
 # model classes depend on firebase naming conventions.
 -keepclassmembers class watersport_training.model.** { *; }
 -keepclassmembers class watersport_training.dto.** { *; }
+-keepnames class nl.multimedia-engineer.watersport_training.model.** { *; }
+-keepclassmembers class nl.multimedia-engineer.watersport_training.model.** { *; }
+-keepclassmembers class nl.multimedia-engineer.watersport_training.dto.** { *; }
 
-#
+
+# Firebase
+-keepnames class com.firebase.** { *; }
+-keepnames class com.shaded.fasterxml.jackson.** { *; }
+-keepnames class org.shaded.apache.** { *; }
+-keepnames class javax.servlet.** { *; }
+-dontwarn org.w3c.dom.**
+-dontwarn org.joda.time.**
+-dontwarn org.shaded.apache.commons.logging.impl.**
+
 #Croperion
 -dontwarn com.mikelau.croperino.**
 -keep class com.mikelau.croperino.** { *; }

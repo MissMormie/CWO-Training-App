@@ -2,6 +2,7 @@ package nl.multimedia_engineer.watersport_training.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Keep
 public class Cursist extends CursistPartial implements Parcelable{
 
 //    private String fotoFileBase64;

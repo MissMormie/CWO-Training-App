@@ -2,10 +2,12 @@ package nl.multimedia_engineer.watersport_training.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Keep;
 
 import java.util.Objects;
 import java.util.Set;
 
+@Keep
 public class DiplomaEis implements Parcelable {
 
     private String id;

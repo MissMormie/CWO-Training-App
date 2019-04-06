@@ -2,6 +2,7 @@ package nl.multimedia_engineer.watersport_training.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Keep;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Objects;
  * Created by sonja on 3/14/2017.
  * Diploma information
  */
+@Keep
 public class Diploma implements Parcelable {
     private String id;
     private String titel;

@@ -1,12 +1,14 @@
 package nl.multimedia_engineer.watersport_training.model;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Keep;
 
 /**
  * Created by sonja on 3/30/2017.
  * Has Base64 string of cursist foto's
  */
 
+@Keep
 public class CursistFoto implements Parcelable {
     private final Long id;
     private String thumbnail;

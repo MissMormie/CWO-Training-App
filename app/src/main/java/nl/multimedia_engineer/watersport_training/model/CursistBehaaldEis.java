@@ -2,9 +2,11 @@ package nl.multimedia_engineer.watersport_training.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Keep;
 
 import java.util.Date;
 
+@Keep
 public class CursistBehaaldEis {
     private Long id;
 //    private Cursist cursist;

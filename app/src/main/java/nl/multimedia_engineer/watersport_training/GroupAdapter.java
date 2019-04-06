@@ -115,6 +115,4 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupAdapter
             }
         }
     }
-
-
 }

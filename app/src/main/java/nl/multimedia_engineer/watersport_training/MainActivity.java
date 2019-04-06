@@ -37,11 +37,19 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
+        setGroupName();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setGroupName();
+    }
+
+    private void setGroupName() {
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String activeGroup = sharedPreferences.getString(getResources().getString(R.string.pref_current_group_name), "");
-//        getSupportActionBar().setTitle(activeGroup);
-        String text = activeGroup;
-        tv_active_group.setText(text);
+        tv_active_group.setText(activeGroup);
     }
 
     @Override

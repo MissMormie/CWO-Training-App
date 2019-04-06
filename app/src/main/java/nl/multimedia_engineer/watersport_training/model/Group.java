@@ -1,9 +1,12 @@
 package nl.multimedia_engineer.watersport_training.model;
 
+import android.support.annotation.Keep;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Keep
 public class Group extends GroupPartial {
 
     private List<Cursist> cursisten;

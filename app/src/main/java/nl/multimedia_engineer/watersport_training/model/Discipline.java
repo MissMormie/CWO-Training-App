@@ -1,12 +1,15 @@
 package nl.multimedia_engineer.watersport_training.model;
 
+import android.support.annotation.Keep;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Keep
 public class Discipline {
-    String id;
+    private String id;
 
-    List<Diploma> diplomas;
+    private List<Diploma> diplomas;
 
     public String getId() {
         return id;
