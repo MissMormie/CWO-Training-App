@@ -100,6 +100,16 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
         return cursistList.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
 
     // -------------------------------- Viewholder class --------------------------------------------
 
@@ -138,6 +148,8 @@ class CursistListAdapater extends RecyclerView.Adapter<CursistListAdapater.Cursi
                 this.view.setBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.colorWhite, null));
 
         }
+
+
 
         @Override
         public void onClick(View v) {
