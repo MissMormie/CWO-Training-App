@@ -18,8 +18,8 @@ import nl.multimedia_engineer.watersport_training.util.PhotoCompressionUtil;
 public class ImageCompressTask implements Runnable {
 
     public interface IImageCompressTaskListener {
-        public void onComplete(Map<Size, File> compressed);
-        public void onError(Throwable error);
+        void onComplete(Map<Size, File> compressed);
+        void onError(Throwable error);
     }
 
     private Context mContext;

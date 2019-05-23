@@ -280,13 +280,14 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
         } else {
             cursist.setPaspoort(null);
         }
-
     }
 
     private void showImg(){
         if(cursist.getPhotoFileNormal() != null) {
             fotoImageView.setImageURI(Uri.fromFile(cursist.getPhotoFileNormal()));
         } else if(cursist.getPhotoPathNormal() != null && !cursist.getPhotoPathNormal().isEmpty()){
+            
+
             Uri uri = Uri.parse(cursist.getPhotoPathNormal());
             Glide.with(this)
                     .load(uri)
@@ -308,6 +309,12 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     }
 
     private void saveCursist() {
+        String groupId = PreferenceUtil.getPreferenceString(getContext(), getString(R.string.pref_current_group_id), "");
+        BetterPersistCursist persistCursist = new BetterPersistCursist(groupId);
+        persistCursist.saveCursistWithPhotos(cursist, this);
+    }
+
+    private void savePhoto() {
         String groupId = PreferenceUtil.getPreferenceString(getContext(), getString(R.string.pref_current_group_id), "");
         BetterPersistCursist persistCursist = new BetterPersistCursist(groupId);
         persistCursist.saveCursistWithPhotos(cursist, this);
@@ -413,6 +420,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
             if(compressed.containsKey(ImageCompressTask.Size.THUMBNAIL)) {
                 cursist.setPhotoFileThumbnail(compressed.get(ImageCompressTask.Size.THUMBNAIL));
             }
+            savePhoto();
             showImg();
         }
 

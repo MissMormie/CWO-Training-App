@@ -112,7 +112,7 @@ public class Cursist extends CursistPartial implements Parcelable{
     }
 
     public String getPhotoPathLarge() {
-        return photoPathLarge;
+        return getPhotoPath("large");
     }
 
     public void setPhotoPathLarge(String photoPathLarge) {
@@ -120,11 +120,33 @@ public class Cursist extends CursistPartial implements Parcelable{
     }
 
     public String getPhotoPathNormal() {
-        return photoPathNormal;
+        return getPhotoPath("normal");
     }
 
     public void setPhotoPathNormal(String photoPathNormal) {
         this.photoPathNormal = photoPathNormal;
+    }
+
+    private String getPhotoPath(String size) {
+        if(size.equals("normal") && photoFileNormal != null) {
+             return photoPathNormal;
+        }
+
+        if(size.equals("thumbnail") && photoPathThumbnail != null) {
+            return photoPathThumbnail;
+        }
+
+        if(size.equals("large" ) && photoPathLarge != null) {
+            return photoPathLarge;
+        }
+
+        if(photoPathLarge != null) {
+            return photoPathLarge;
+        } else if(photoPathNormal != null) {
+            return photoPathNormal;
+        } else {
+            return photoPathThumbnail;
+        }
     }
 
     public void addDiploma(Diploma diploma) {

@@ -46,18 +46,9 @@ public class CursistHeaderFragment extends Fragment {
         }
         databinding.textViewPaspoort.setText(text);
 
-        // In some cases not all photopaths are saved.
-        // Find photo
-        String photoPath = cursist.getPhotoPathNormal();
-        if(photoPath == null && cursist.getPhotoPathThumbnail() != null) {
-            photoPath = cursist.getPhotoPathThumbnail();
-        } else if(photoPath == null && cursist.getPhotoPathLarge() != null) {
-            photoPath = cursist.getPhotoPathLarge();
-        }
-
-        if(photoPath != null) {
+        if(cursist.getPhotoPathNormal() != null) {
             Glide.with(this)
-                .load(Uri.parse(photoPath))
+                .load(Uri.parse(cursist.getPhotoPathNormal()))
                 .placeholder(R.drawable.ic_user_image)
                 .into(databinding.imageViewFoto);
         }
