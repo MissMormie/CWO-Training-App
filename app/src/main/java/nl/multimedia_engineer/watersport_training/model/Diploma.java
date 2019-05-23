@@ -23,6 +23,12 @@ public class Diploma implements Parcelable {
 
     }
 
+    public Diploma(String id) {
+        this.id = id;
+        this.titel = id.substring(0, id.length()-1);
+        this.nivo = getNivo();
+    }
+
     public Diploma(String id, String titel, int nivo, List<DiplomaEis> diplomaEisList) {
         this.id = id;
         this.titel = titel;

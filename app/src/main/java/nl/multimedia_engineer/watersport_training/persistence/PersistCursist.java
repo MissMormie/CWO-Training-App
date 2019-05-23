@@ -163,7 +163,6 @@ public class PersistCursist {
                 receiver.onReceiveCursistPartialListFailed();
             }
         });
-
     }
 
     public static void getCursist(String groupId, String cursistId, final ReceiveCursist receiver) {
@@ -184,8 +183,7 @@ public class PersistCursist {
     static Cursist  getCursist(DataSnapshot cursistSnapshot) {
         Cursist cursist = cursistSnapshot.getValue(Cursist.class);
         for(DataSnapshot diplomaSnapShot : cursistSnapshot.child("diplomas").getChildren()) {
-            Diploma diploma = new Diploma();
-            diploma.setId(diplomaSnapShot.getValue(String.class));
+            Diploma diploma = new Diploma(diplomaSnapShot.getValue(String.class));
             cursist.addDiploma(diploma);
         }
 
