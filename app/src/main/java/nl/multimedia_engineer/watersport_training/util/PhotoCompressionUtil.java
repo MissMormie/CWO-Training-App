@@ -49,7 +49,7 @@ public class PhotoCompressionUtil {
         Bitmap bitmap = decodeImageFromFiles(path, width, height);
 
         //create placeholder for the compressed image file
-        File compressed = new File(root, SDF.format(new Date()) + ".jpg" /*Your desired format*/);
+        File compressed = new File(root, SDF.format(new Date()) + width + "x" + height + ".jpg" /*Your desired format*/);
 
         //convert the decoded bitmap to stream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

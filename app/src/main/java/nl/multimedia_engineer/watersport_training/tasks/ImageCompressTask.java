@@ -53,8 +53,9 @@ public class ImageCompressTask implements Runnable {
     public void run() {
         try {
 
-            //Loop through all the given paths and collect the compressed file from Util.getCompressed(Context, String)
+            //Loop through all the given sizes and collect the compressed file from Util.getCompressed(Context, String)
             for (Size size: sizes) {
+
 
                 File file = PhotoCompressionUtil.getCompressed(mContext, path, size.width, size.height);
                 //add it!
