@@ -315,6 +315,10 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     }
 
     private void savePhoto() {
+//        // If the cursist is not yet saved we don't have an id, so can't proactively save the images.
+//        if(cursist == null || cursist.getId() == null || cursist.getId().equals("")) {
+//            return;
+//        }
         String groupId = PreferenceUtil.getPreferenceString(getContext(), getString(R.string.pref_current_group_id), "");
         BetterPersistCursist persistCursist = new BetterPersistCursist(groupId, cursist);
         persistCursist.saveCursistWithPhotos(this);

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.view.MenuItem;
 
 import com.google.firebase.database.DatabaseError;
 import com.mikelau.croperino.CroperinoConfig;

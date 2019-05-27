@@ -182,7 +182,7 @@ public class CursistDetailActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EDIT_CURSIST || requestCode == GIVE_DIPLOMA)
-            if (resultCode == RESULT_OK && data.hasExtra(EXTRA_CURSIST)) {
+            if (data != null && data.hasExtra(EXTRA_CURSIST) && (resultCode == RESULT_OK || resultCode == RESULT_CANCELED) ) {
                 this.cursist = data.getExtras().getParcelable(EXTRA_CURSIST);
                 displayCursistInfo();
             }

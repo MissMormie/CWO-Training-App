@@ -73,11 +73,18 @@ public class BetterPersistCursist implements ReceiveFileUri {
     public void saveCursist(final PersistCursist.SavedCursist receiver) {
         this.mSavedCursistReceiver = receiver;
 
-        if(mCursist.getId() == null || !mCursist.getId().isEmpty()) {
+        if(mCursist.getId() == null || mCursist.getId().isEmpty()) {
             setCursistId();
         }
         CursistPartialDTO cursistPartialDTO = new CursistPartialDTO(mCursist);
         CursistDTO cursistDTO = new CursistDTO(mCursist);
+
+        // This should never happen, but if it does it'll mess up the database badly, so added just in case check.
+        if(groupId == null || groupId.isEmpty() || mCursist.getId() == null || mCursist.getId().isEmpty()) {
+            System.out.println("Cursist Id or Group Id not set");
+            mSavedCursistReceiver.onCursistSaveFailed();
+            return;
+        }
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         Map<String, Object> childUpdates = new HashMap<>();
@@ -99,8 +106,8 @@ public class BetterPersistCursist implements ReceiveFileUri {
     }
 
     private void setCursistId() {
-        DatabaseReference groepenCursistenRef = DatabaseRefUtil.getGroepenCursisten(groupId);
         if(mCursist.getId() == null || mCursist.getId().isEmpty()) {
+            DatabaseReference groepenCursistenRef = DatabaseRefUtil.getGroepenCursisten(groupId);
             String cursistId = groepenCursistenRef.push().getKey();
             mCursist.setId(cursistId);
         }
