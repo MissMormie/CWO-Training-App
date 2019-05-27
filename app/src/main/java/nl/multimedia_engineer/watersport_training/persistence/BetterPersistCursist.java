@@ -34,7 +34,8 @@ public class BetterPersistCursist implements ReceiveFileUri {
     private Cursist mCursist;
     private PersistCursist.SavedCursist mSavedCursistReceiver;
 
-    public BetterPersistCursist(String groupId) {
+    public BetterPersistCursist(String groupId, Cursist cursist) {
+        this.mCursist = cursist;
         this.groupId = groupId;
     }
 
@@ -58,9 +59,8 @@ public class BetterPersistCursist implements ReceiveFileUri {
         // todo delete images of mCursist
     }
 
-    public void saveCursistWithPhotos(final Cursist cursistIn, final PersistCursist.SavedCursist receiver) {
+    public void saveCursistWithPhotos(final PersistCursist.SavedCursist receiver) {
         action = ACTION_SAVE;
-        this.mCursist = cursistIn;
         this.mSavedCursistReceiver = receiver;
 
         setCursistId();
@@ -70,7 +70,9 @@ public class BetterPersistCursist implements ReceiveFileUri {
 
     }
 
-    private void saveCursist() {
+    public void saveCursist(final PersistCursist.SavedCursist receiver) {
+        this.mSavedCursistReceiver = receiver;
+
         if(mCursist.getId() == null || !mCursist.getId().isEmpty()) {
             setCursistId();
         }
@@ -128,8 +130,6 @@ public class BetterPersistCursist implements ReceiveFileUri {
         if(!map.isEmpty()) {
             PersistPhoto persistPhoto = new PersistPhoto();
             persistPhoto.saveFiles(groupId, map, this);
-        } else {
-            saveCursist();
         }
     }
 
@@ -148,7 +148,7 @@ public class BetterPersistCursist implements ReceiveFileUri {
         }
 
         if(action.equals(ACTION_SAVE)) {
-            saveCursist();
+            saveCursist(mSavedCursistReceiver);
         }
     }
 

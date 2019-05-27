@@ -69,7 +69,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     private ImageView fotoImageView;
     private Button saveButton;
 
-    private boolean takingPhoto = false;
+    private boolean savingPhoto = false;
 
 
     /**
@@ -156,7 +156,7 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        takingPhoto = false;
+        savingPhoto = false;
         if(savedInstanceState != null && savedInstanceState.containsKey(CURSIST)) {
             cursist = savedInstanceState.getParcelable(CURSIST);
         }
@@ -310,14 +310,15 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
 
     private void saveCursist() {
         String groupId = PreferenceUtil.getPreferenceString(getContext(), getString(R.string.pref_current_group_id), "");
-        BetterPersistCursist persistCursist = new BetterPersistCursist(groupId);
-        persistCursist.saveCursistWithPhotos(cursist, this);
+        BetterPersistCursist persistCursist = new BetterPersistCursist(groupId, cursist);
+        persistCursist.saveCursist(this);
     }
 
     private void savePhoto() {
         String groupId = PreferenceUtil.getPreferenceString(getContext(), getString(R.string.pref_current_group_id), "");
-        BetterPersistCursist persistCursist = new BetterPersistCursist(groupId);
-        persistCursist.saveCursistWithPhotos(cursist, this);
+        BetterPersistCursist persistCursist = new BetterPersistCursist(groupId, cursist);
+        persistCursist.saveCursistWithPhotos(this);
+        savingPhoto = true;
     }
 
     private void showMinimumFormDemand() {
@@ -330,7 +331,11 @@ public class CursistFormFragment extends Fragment implements PersistCursist.Save
     @Override
     public void onCursistSaved(Cursist cursist) {
         this.cursist = cursist;
-        parentActivity.onCursistSaved(cursist);
+        if(savingPhoto) {
+            savingPhoto = false;
+        } else {
+            parentActivity.onCursistSaved(cursist);
+        }
 
         // Get preference for showing diploma's after creation of Cursist.
     }

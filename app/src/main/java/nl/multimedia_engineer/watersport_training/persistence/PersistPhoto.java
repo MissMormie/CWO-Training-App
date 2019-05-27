@@ -51,18 +51,18 @@ public class PersistPhoto implements ReceiveFileUri {
             }
         });
     }
-
-    public static void getFile(final String path, final ReceiveFileUri receiver) {
-        StorageReference fotoRef = FirebaseStorage.getInstance().getReference().child(path);
-        fotoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Map map = new HashMap<>();
-                map.put(path, uri);
-                receiver.onReceiveFileUri(map);
-            }
-        });
-    }
+//
+//    public static void getFile(final String path, final ReceiveFileUri receiver) {
+//        StorageReference fotoRef = FirebaseStorage.getInstance().getReference().child(path);
+//        fotoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                Map map = new HashMap<>();
+//                map.put(path, uri);
+//                receiver.onReceiveFileUri(map);
+//            }
+//        });
+//    }
 
     @Override  public void onReceiveFileUri(Map<String, Uri> pathUriMap) {
         photosReceived += pathUriMap.size();
